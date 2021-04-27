@@ -1,8 +1,8 @@
 from flask import Flask
-from exts import db
+from exts import db, migrate
 import config
 from model import User
-
+import pymysql
 # print a nice greeting.
 def say_hello(username="World"):
     return '<p>Hello %s!</p>\n' % username
@@ -22,6 +22,7 @@ footer_text = '</body>\n</html>'
 application = Flask(__name__)
 application.config.from_object(config)
 db.init_app(application)
+migrate.init_app(application, db)
 # add a rule for the index page.
 application.add_url_rule('/', 'index', (lambda: header_text +
                                                 say_hello() + instructions + footer_text))

@@ -2,7 +2,7 @@ DIALECT = 'mysql'
 DRIVER = 'pymysql'
 USERNAME = 'root'
 PASSWORD = '12345678'
-HOST = 'aa1l899272u4d1.csxiwhxc3cul.eu-central-1.rds.amazonaws.com'
+HOST = 'aa19xv5tffrd9pr.csxiwhxc3cul.eu-central-1.rds.amazonaws.com'
 PORT = '3306'
 DATABASE = 'ebdb'
 

@@ -18,8 +18,90 @@ class User(db.Model, EntityBase):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     type = db.Column(db.String(10))
-
+    photourl = db.Column(db.String(100))
+    carboncontrib = db.Column(db.String(50))
     def __init__(self, name, passwd, mobile):
         self.name = name
         self.passwd = passwd
         self.mobile = mobile
+    def __repr__(self):
+        return '<User: {}>'.format(self.name)
+
+class Farm(db.Model, EntityBase):
+    __tablename__ = 'farm'
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer)
+    name = db.Column(db.String(50))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    photourl = db.Column(db.String(100))
+    def __init__(self, userid, name, latitude, longitude):
+        self.userid = userid
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
+    def __repr__(self):
+        return '<Farm: {}>'.format(self.name)
+
+class Product(db.Model, EntityBase):
+    __tablename__ = 'product'
+    id = db.Column(db.Integer, primary_key=True)
+    farmid = db.Column(db.Integer)
+    name = db.Column(db.String(50))
+    quantity = db.Column(db.Integer)
+    price = db.Column(db.Float)
+    photourl = db.Column(db.String(100))
+    def __init__(self, farmid, name, price):
+        self.farmid = farmid
+        self.name = name
+        self.price = price
+        self.available = "0"
+        self.quantity = 0
+    def __repr__(self):
+        return '<Product: {}>'.format(self.name)
+
+class SingleOrder(db.Model, EntityBase):
+    __tablename__ = 'singleorder'
+    id = db.Column(db.Integer, primary_key=True)
+    startuserid = db.Column(db.Integer)
+    receiveuserid = db.Column(db.Integer)
+    destlongitude = db.Column(db.Float)
+    destlatitude = db.Column(db.Float)
+    description = db.Column(db.String(200))
+    candidates = db.Column(db.String(400))
+    state = db.Column(db.Integer)
+    farmvolunteertime = db.Column(db.String(200))
+    desttime = db.Column(db.String(50))
+    def __init__(self, startuserid, destlongitude, destlatitude, description = ''):
+        self.startuserid = startuserid
+        self.destlongitude = destlongitude
+        self.destlatitude = destlatitude
+        self.description = description
+    def __repr__(self):
+        return '<SingleOrder: {}>'.format(self.description)
+
+class FarmOrder(db.Model, EntityBase):
+    __tablename__ = 'farmorder'
+    id = db.Column(db.Integer, primary_key=True)
+    orderlist = db.Column(db.String(400))
+    volunteerselected = db.Column(db.String(500))
+    timeselected = db.Column(db.String(50))
+    entrepotlist = db.Column(db.String(500))
+    estimatedfee = db.Column(db.Float)
+    def __init__(self, orderlist = '', volunteerselected = '', timeselected = ''):
+        self.orderlist = orderlist
+        self.volunteerselected = volunteerselected
+        self.timeselected = timeselected
+    def __repr__(self):
+        return '<FarmOrder: {}>'.format(self.description)
+
+class Coupon(db.Model, EntityBase):
+    __tablename__ = 'coupon'
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer)
+    value = db.Column(db.Float)
+    def __init__(self, userid, value):
+        self.userid = userid
+        self.value = value
+    def __repr__(self):
+        return '<Coupon: {}>'.format(self.description)
