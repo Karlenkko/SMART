@@ -1,4 +1,5 @@
 from exts import db
+from flask import jsonify
 
 
 class EntityBase(object):
@@ -25,6 +26,7 @@ class User(db.Model, EntityBase):
     volunteertotal = db.Column(db.Integer)
     volunteeractual = db.Column(db.Integer)
     balance = db.Column(db.Float)
+
     def __init__(self, name, passwd, mobile):
         self.name = name
         self.passwd = passwd
@@ -51,7 +53,9 @@ class Farm(db.Model, EntityBase):
         self.longitude = longitude
 
     def __repr__(self):
-        return '<Farm: {}>'.format(self.name)
+        # return '<Farm: {}>'.format(self.name)
+        return '{"id":%s,"userid":%s,"name":"%s","latitude":%s,"longitude":%s,"address":"%s","photourl":"%s"}' % (
+        self.id, self.userid, self.name, self.latitude, self.longitude, self.address, self.photourl)
 
 
 class Product(db.Model, EntityBase):
@@ -64,6 +68,7 @@ class Product(db.Model, EntityBase):
     photourl = db.Column(db.String(100))
     category = db.Column(db.String(20))
     carbonredu = db.Column(db.Integer)
+
     def __init__(self, farmid, name, price):
         self.farmid = farmid
         self.name = name

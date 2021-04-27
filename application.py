@@ -1,8 +1,10 @@
 from flask import Flask
 from exts import db, migrate
 import config
-from model import User
-import pymysql
+
+from blueprints.index.index import index_bp
+from blueprints.farm.farm import farm_bp
+
 # print a nice greeting.
 def say_hello(username="World"):
     return '<p>Hello %s!</p>\n' % username
@@ -32,6 +34,8 @@ application.add_url_rule('/', 'index', (lambda: header_text +
 application.add_url_rule('/<username>', 'hello', (lambda username:
                                                   header_text + say_hello(username) + home_link + footer_text))
 
+application.register_blueprint(index_bp)
+application.register_blueprint(farm_bp)
 # @application.before_first_request
 # def setup():
 #     db.create_all()
