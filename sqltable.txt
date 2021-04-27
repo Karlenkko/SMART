@@ -1,0 +1,86 @@
+CREATE TABLE `ebdb`.`coupon` (
+  `id` INT NOT NULL,
+  `userid` INT NULL,
+  `value` FLOAT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+CREATE TABLE `ebdb`.`farm` (
+  `id` INT NOT NULL,
+  `userid` INT NULL,
+  `name` VARCHAR(50) NULL,
+  `latitude` FLOAT NULL,
+  `longitude` FLOAT NULL,
+  `photourl` VARCHAR(100) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+CREATE TABLE `ebdb`.`user` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(50) NULL,
+  `passwd` VARCHAR(50) NULL,
+  `mobile` VARCHAR(20) NULL,
+  `latitude` FLOAT NULL,
+  `longitude` FLOAT NULL,
+  `address` VARCHAR(60) NULL,
+  `type` VARCHAR(10) NULL,
+  `photourl` VARCHAR(100) NULL,
+  `carbontotal` INT NULL,
+  `carbonactual` INT NULL,
+  `volunteertotal` INT NULL,
+  `volunteeractual` INT NULL,
+  `balance` FLOAT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+CREATE TABLE `ebdb`.`product` (
+  `id` INT NOT NULL,
+  `farmid` INT NULL,
+  `name` VARCHAR(50) NULL,
+  `quantity` INT NULL,
+  `price` FLOAT NULL,
+  `photourl` VARCHAR(100) NULL,
+  `category` VARCHAR(20) NULL,
+  `carbonredu` INT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+CREATE TABLE `ebdb`.`singleorder` (
+  `id` INT NOT NULL,
+  `startuserid` INT NULL,
+  `receiveuserid` INT NULL,
+  `destlongitude` FLOAT NULL,
+  `destlatitude` FLOAT NULL,
+  `description` VARCHAR(200) NULL,
+  `candidates` VARCHAR(200) NULL,
+  `state` INT NULL,
+  `farmvolunteertime` VARCHAR(100) NULL,
+  `desttime` VARCHAR(50) NULL,
+  `price` FLOAT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+CREATE TABLE `ebdb`.`farmorder` (
+  `id` INT NOT NULL,
+  `farmid` INT NULL,
+  `orderlist` VARCHAR(200) NULL,
+  `volunteerselected` VARCHAR(200) NULL,
+  `timeselected` VARCHAR(50) NULL,
+  `entrepotlist` VARCHAR(400) NULL,
+  `estimatedfee` FLOAT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;

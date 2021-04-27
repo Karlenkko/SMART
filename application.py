@@ -32,12 +32,12 @@ application.add_url_rule('/', 'index', (lambda: header_text +
 application.add_url_rule('/<username>', 'hello', (lambda username:
                                                   header_text + say_hello(username) + home_link + footer_text))
 
-@application.before_first_request
-def setup():
-    db.create_all()
-    admin = User('admin', 'admin', '123456')
-    db.session.add(admin)
-    db.session.commit()
+# @application.before_first_request
+# def setup():
+#     db.create_all()
+#     admin = User('admin', 'admin', '123456')
+#     db.session.add(admin)
+#     db.session.commit()
 
 # run the app.
 if __name__ == "__main__":
