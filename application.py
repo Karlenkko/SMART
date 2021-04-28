@@ -39,9 +39,9 @@ application.add_url_rule('/<username>', 'hello', (lambda username:
 application.register_blueprint(index_bp)
 application.register_blueprint(farm_bp)
 
-@application.before_first_request
-def setup():
-    init()
+# @application.before_first_request
+# def setup():
+#     init()
 
 # run the app.
 if __name__ == "__main__":
