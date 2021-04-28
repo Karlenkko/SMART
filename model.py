@@ -99,49 +99,67 @@ class Product(db.Model, EntityBase):
 
 
 
-class SingleOrder(db.Model, EntityBase):
+class Order(db.Model, EntityBase):
     __tablename__ = 'singleorder'
     id = db.Column(db.Integer, primary_key=True)
-    startuserid = db.Column(db.Integer)
-    receiveuserid = db.Column(db.Integer)
-    destlongitude = db.Column(db.Float)
-    destlatitude = db.Column(db.Float)
+    # farmer or the person publishes
+    ownerid = db.Column(db.Integer)             
+    # depart and destination for the personal request (initialized when publish the order) 
+    # path of delivery for the farm order (initialized when validate the order)
+    entrepotlist = db.Column(db.String(400))
+    # detail of the order for personal order
+    # detail of delivery for farm order 
     description = db.Column(db.String(200))
-    candidates = db.Column(db.String(200))
+    # selected candidates for personal order
+    # selected volunteers for farm order
+    selectedperson = db.Column(db.String(200))
+    # requestId list
+    requestList = db.Column(db.String(200))
+    # 0 en cours; 1 validé; 2 annulé
     state = db.Column(db.Integer)
-    farmvolunteertime = db.Column(db.String(100))
-    desttime = db.Column(db.String(50))
+    time = db.Column(db.String(50))
     price = db.Column(db.Float)
 
-    def __init__(self, startuserid, destlongitude, destlatitude, description=''):
-        self.startuserid = startuserid
-        self.destlongitude = destlongitude
-        self.destlatitude = destlatitude
+    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestList, state, time, price):
+        self.id = id
+        self.ownerid = ownerid
+        self.entrepotlist = entrepotlist
         self.description = description
+        self.selectedperson = selectedperson
+        self.requestList = requestList
+        self.state = state
+        self.time = time
+        self.price = price
+        
 
     def __repr__(self):
-        return '{"id":%s,"startuserid":%s,"receiveuserid":%s,"destlongitude":%s,"destlatitude":%s,"description":%s,"candidates":%s,"state":%s,"farmvolunteertime":%s,"desttime":%s,"price":%s}' % (
-            self.id, self.startuserid, self.receiveuserid, self.destlongitude, self.destlatitude, self.description, self.candidates, self.state, self.farmvolunteertime, self.desttime, self.price)
+        return '<Order: {}>'.format(self.description)
 
 
-class FarmOrder(db.Model, EntityBase):
+class Request(db.Model, EntityBase):
     __tablename__ = 'farmorder'
     id = db.Column(db.Integer, primary_key=True)
-    farmid = db.Column(db.Integer)
-    orderlist = db.Column(db.String(200))
-    volunteerselected = db.Column(db.String(200))
-    timeselected = db.Column(db.String(50))
-    entrepotlist = db.Column(db.String(400))
-    estimatedfee = db.Column(db.Float)
+    orderid = db.Column(db.Integer)
+    userid = db.Column(db.Integer)
+    userlocation = db.Column(db.String(50))
+    timeproposed = db.Column(db.String(100))
+    volunteerTime = db.Column(db.String(100))
+    description = db.Column(db.String(200))
+    price = db.Column(db.Float)
+    
 
-    def __init__(self, orderlist='', volunteerselected='', timeselected=''):
-        self.orderlist = orderlist
-        self.volunteerselected = volunteerselected
-        self.timeselected = timeselected
+    def __init__(self, id, orderid, userid, userlocation, timeproposed, volunteerTime, description, price):
+        self.id = id
+        self.orderid = orderid
+        self.userid = userid
+        self.userlocation = userlocation
+        self.timeproposed = timeproposed
+        self.volunteerTime = volunteerTime
+        self.description = description
+        self.price = price
 
     def __repr__(self):
-        return '{"id":%s,"farmid":%s,"orderlist":%s,"volunteerselected":%s,"timeselected":%s,"entrepotlist":%s,"estimatedfee":%s}' % (
-            self.id, self.farmid, self.orderlist, self.volunteerselected, self.timeselected, self.entrepotlist, self.estimatedfee)
+        return '<FarmOrder: {}>'.format(self.description)
 
 
 class Coupon(db.Model, EntityBase):

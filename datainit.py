@@ -1,5 +1,5 @@
 from exts import db, migrate
-from model import User, FarmOrder, Farm, SingleOrder, Coupon, Product
+from model import User, Request, Farm, Order, Coupon, Product
 from random import randint
 import pandas as pd
 import numpy as np 
@@ -125,12 +125,6 @@ def couponInit():
 
 			id = id +1 
 
-def singleOrderInit():
-
-	SingleOrder.query.delete()
-
-	
-
 def productInit():
 
 	Product.query.delete()
@@ -215,6 +209,27 @@ def productInit():
 			db.session.add(Product(id, farmid, name, price, quantity, "other", photourl, origincarrefour, pricecarrefour))
 			id = id + 1
 
+destinationList = [{
+  					"latitude"  : 44.8366,
+					"longitude" : -0.5781},
+				   {
+				    "latitude"  : 43.6178,
+					"longitude" : 1.4349
+				   },
+				   {
+				    "latitude"  : 43.6178,
+					"longitude" : 1.4349
+				   },
+				   {
+				    "latitude"  : 43.6241,
+					"longitude" : 3.8669
+				   },
+				   {
+				    "latitude"  : 48.8302,
+					"longitude" : 2.3590
+				   }]
+
+description = ["I can help you carry something during my journey ! ", "Can someone help me to carry something ? "]
 
 		
 
