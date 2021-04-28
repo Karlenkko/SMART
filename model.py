@@ -65,7 +65,7 @@ class Farm(db.Model, EntityBase):
     def __repr__(self):
         # return '<Farm: {}>'.format(self.name)
         return '{"id":%s,"userid":%s,"name":"%s","latitude":%s,"longitude":%s,"address":"%s","photourl":"%s"}' % (
-        self.id, self.userid, self.name, self.latitude, self.longitude, self.address, self.photourl)
+            self.id, self.userid, self.name, self.latitude, self.longitude, self.address, self.photourl)
 
 
 
@@ -94,7 +94,9 @@ class Product(db.Model, EntityBase):
         self.pricecarrefour = pricecarrefour
 
     def __repr__(self):
-        return '<Product: {}>'.format(self.name)
+        return '{"id":%s,"farmid":%s,"name":%s,"quantity":%s,"price":%s,"photourl":%s,"category":%s,"carbonredu":%s,"origincarrefour":%s,"pricecarrefour":%s}' % (
+            self.id, self.farmid, self.name, self.quantity, self.price, self.photourl, self.category, self.carbonredu, self.origincarrefour, self.pricecarrefour)
+
 
 
 class SingleOrder(db.Model, EntityBase):
@@ -118,7 +120,8 @@ class SingleOrder(db.Model, EntityBase):
         self.description = description
 
     def __repr__(self):
-        return '<SingleOrder: {}>'.format(self.description)
+        return '{"id":%s,"startuserid":%s,"receiveuserid":%s,"destlongitude":%s,"destlatitude":%s,"description":%s,"candidates":%s,"state":%s,"farmvolunteertime":%s,"desttime":%s,"price":%s}' % (
+            self.id, self.startuserid, self.receiveuserid, self.destlongitude, self.destlatitude, self.description, self.candidates, self.state, self.farmvolunteertime, self.desttime, self.price)
 
 
 class FarmOrder(db.Model, EntityBase):
@@ -137,7 +140,8 @@ class FarmOrder(db.Model, EntityBase):
         self.timeselected = timeselected
 
     def __repr__(self):
-        return '<FarmOrder: {}>'.format(self.description)
+        return '{"id":%s,"farmid":%s,"orderlist":%s,"volunteerselected":%s,"timeselected":%s,"entrepotlist":%s,"estimatedfee":%s}' % (
+            self.id, self.farmid, self.orderlist, self.volunteerselected, self.timeselected, self.entrepotlist, self.estimatedfee)
 
 
 class Coupon(db.Model, EntityBase):
@@ -152,4 +156,4 @@ class Coupon(db.Model, EntityBase):
         self.value = value
 
     def __repr__(self):
-        return '<Coupon: {}>'.format(self.description)
+        return '{"id":%s,"userid":%s,"value":%s}' % (self.id, self.userid, self.value)

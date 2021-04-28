@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import abort, request, jsonify
+from model import Product
 
 farm_bp = Blueprint('farm', __name__)
 
@@ -9,8 +10,22 @@ def getAllProducts():
     if not request.args or not 'farmId' in request.args:
         abort(400)
     else:
-        print(request.args.get('farmId'))
-    return 'Get All Products of' + request.args.get('farmId')
+        products = Product.query.filter(Product.farmid == request.args.get('farmId'))
+        res = []
+        for product in products:
+            res.append({
+                "idProduct" : product.id,
+                "productName" : product.name,
+                "quantity" : product.quantity,
+                "price" : product.price,
+                "url" : product.photourl,
+                "category" : product.category,
+                "carbonRedu" : product.carbonredu,
+                "origin" : product.origincarrefour,
+                "carrefourPrice" : product.pricecarrefour
+            })
+
+    return jsonify(res), 200
 
 
 @farm_bp.route('/farm/order/', methods=['POST'])

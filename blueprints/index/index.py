@@ -27,7 +27,7 @@ def getAllFarms():
     for product in products:
         if product.farmid == farmid:
             if temp < 4:
-                productLists[farmid] += product.name + ";"
+                productLists[farmid] += product.name + ","
                 temp = temp + 1
             else:
                 productLists.append("")
