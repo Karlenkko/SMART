@@ -26,7 +26,7 @@ class User(db.Model, EntityBase):
     volunteertotal = db.Column(db.Integer)
     volunteeractual = db.Column(db.Integer)
     balance = db.Column(db.Float)
-    def __init__(self, id, name, passwd, mobile, latitude, longitude, type, carbonactual, volunteeractual, carbontotal, volunteertotal):
+    def __init__(self, id, name, passwd, mobile, latitude, longitude, type, carbonactual, volunteeractual, carbontotal, volunteertotal, balance):
         self.id = id
         self.name = name
         self.passwd = passwd
@@ -38,6 +38,7 @@ class User(db.Model, EntityBase):
         self.volunteeractual = volunteeractual
         self.carbontotal = carbontotal
         self.volunteertotal = volunteertotal
+        self.balance = balance
 
     def __repr__(self):
         return '<User: {}>'.format(self.name)
@@ -78,7 +79,9 @@ class Product(db.Model, EntityBase):
     photourl = db.Column(db.String(100))
     category = db.Column(db.String(20))
     carbonredu = db.Column(db.Integer)
-    def __init__(self, id, farmid, name, price, quantity, category, photourl):
+    origincarrefour = db.Column(db.String(100))
+    pricecarrefour = db.Column(db.Float)
+    def __init__(self, id, farmid, name, price, quantity, category, photourl, origincarrefour, pricecarrefour):
         self.id = id
         self.farmid = farmid
         self.name = name
@@ -87,6 +90,8 @@ class Product(db.Model, EntityBase):
         self.category = category
         self.quantity = quantity
         self.photourl = photourl
+        self.origincarrefour = origincarrefour
+        self.pricecarrefour = pricecarrefour
 
     def __repr__(self):
         return '<Product: {}>'.format(self.name)
