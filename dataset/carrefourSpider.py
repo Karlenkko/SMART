@@ -6,7 +6,12 @@ import urllib.request
 
 def main():
 
-	baseurl = "https://www.carrefour.fr/s?filters%5Bproduct.categories.sub_node.id%5D%5B0%5D=28129&%20filters%5Bproduct.categories.sub_node.id%5D%5B1%5D=28130&q=fromage&sq=fromage&noRedirect"
+	# https://www.carrefour.fr/s?q=legume
+	# https://www.carrefour.fr/s?q=legume&noRedirect=1&page=2
+	# https://www.carrefour.fr/r/fruits-et-legumes/fruits?sq=fruit&noRedirect
+	# https://www.carrefour.fr/r/frais/cremerie/oeufs?sq=Oeufs&noRedirect
+	# https://www.carrefour.fr/s?filters%5Bproduct.categories.sub_node.id%5D%5B0%5D=28129&%20filters%5Bproduct.categories.sub_node.id%5D%5B1%5D=28130&q=fromage&sq=fromage&noRedirect
+	baseurl = "https://www.carrefour.fr/r/frais/cremerie/oeufs?sq=Oeufs&noRedirect"
 
 	getData(baseurl)
 
@@ -23,6 +28,8 @@ def getData(baseurl):
 	for item in items:
 		origin = ""
 		price = ""
+		unit = ""
+
 		try:
 			origin = item.find_all("div", class_="product-card__origin")[0].string.replace(" ", "")
 			origin = origin.strip('\t\r\n')
@@ -30,18 +37,25 @@ def getData(baseurl):
 			pass
 
 		try:
-			price = item.find_all("div", class_="product-card-per-unit-label")[0].string.replace(" ", "")
+			price = item.find_all("div", class_="product-card-price")[0].span.string.replace(" ", "")
 			price = price.strip('\t\r\n')
 		except Exception as e:
 			pass
+
+		try:
+			unit = item.find_all("div", class_="product-card-packaging")[0].string.strip()
+			unit = unit.strip('\t\r\n')
+		except Exception as e:
+			raise
+
 
 		url = item.find_all("div", class_="ds-product-card--vertical-image")[0].img.attrs['data-src']
 
 		itemsDict = {}
 
-		itemsDict["product"] = item.a.attrs['title'].strip()
+		itemsDict["product"] = item.a.attrs['title'].strip() + " ( " + unit.replace(",", ".") + " ) "
 		itemsDict["origin"] = origin
-		itemsDict["price"] = price
+		itemsDict["price"] = price.replace(",", ".")
 		itemsDict["url"] = "https://www.carrefour.fr" + url
 
 		itemsList.append(itemsDict)

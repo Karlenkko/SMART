@@ -13,6 +13,7 @@ carbonactualRange = 500
 volunteeractualRange = 30
 carbontotalRange = 10000
 volunteertotalRange = 400
+balanceRange = 400
 
 farmList = [ {
 		"name" : "Earl la Seigliere",
@@ -45,6 +46,9 @@ legume = pd.read_csv("dataset/legume.csv").to_numpy().tolist()
 fruit = pd.read_csv("dataset/fruit.csv").to_numpy().tolist()
 other = pd.read_csv("dataset/other.csv").to_numpy().tolist()
 
+def isNaN(string):
+    return string != string
+
 
 def init():
 	db.create_all()
@@ -74,8 +78,9 @@ def userInit():
 		volunteeractual = randint(0, volunteeractualRange)
 		carbontotal = randint(0, carbontotalRange)
 		volunteertotal = randint(0, volunteertotalRange)
+		balance = randint(100, balanceRange)
 
-		db.session.add(User(i, name, passwd, mobile, latitude, longitude, type, carbonactual, volunteeractual, carbontotal, volunteertotal))
+		db.session.add(User(i, name, passwd, mobile, latitude, longitude, type, carbonactual, volunteeractual, carbontotal, volunteertotal, balance))
 
 def farmInit():
 
@@ -99,8 +104,9 @@ def farmInit():
 		volunteeractual = randint(0, volunteeractualRange)
 		carbontotal = randint(0, carbontotalRange)
 		volunteertotal = randint(0, volunteertotalRange)
+		balance = randint(100, balanceRange)
 
-		db.session.add(User(userid, name, "passwd", mobile, latitude, longitude, "farmer", carbonactual, volunteeractual, carbontotal, volunteertotal))
+		db.session.add(User(userid, name, "passwd", mobile, latitude, longitude, "farmer", carbonactual, volunteeractual, carbontotal, volunteertotal, balance))
 
 		userid = userid + 1 
 
@@ -118,6 +124,12 @@ def couponInit():
 			db.session.add(Coupon(id, userid, value))
 
 			id = id +1 
+
+def singleOrderInit():
+
+	SingleOrder.query.delete()
+
+	
 
 def productInit():
 
@@ -140,13 +152,17 @@ def productInit():
 
 			length = len(legume[item])
 
-			name = legume[item][0]
-			price = legume[item][length-2]
+			name = legume[item][0].replace("CARREFOUR", "").replace("carrefour", "")
+			pricecarrefour = float(legume[item][length-2].replace("€",""))
+			price = pricecarrefour*(float(randint(80, 90))/100)
 			photourl = legume[item][length-1]
 
 			quantity = randint(10, 200)
 
-			db.session.add(Product(id, farmid, name, price, quantity, "legume", photourl))
+			origincarrefour = "France" if isNaN(legume[item][1]) else legume[item][1]
+
+
+			db.session.add(Product(id, farmid, name, price, quantity, "legume", photourl, origincarrefour, pricecarrefour))
 			id = id + 1
 
 		itemList = []
@@ -159,15 +175,19 @@ def productInit():
 
 			itemList.append(item)
 
-			length = len(legume[item])
+			length = len(fruit[item])
 
-			name = legume[item][0]
-			price = legume[item][length-2]
-			photourl = legume[item][length-1]
+			name = fruit[item][0].replace("CARREFOUR", "").replace("carrefour", "")
+			pricecarrefour = float(fruit[item][length-2].replace("€",""))
+			price = pricecarrefour*(float(randint(80, 90))/100)
+			photourl = fruit[item][length-1]
 
 			quantity = randint(10, 200)
 
-			db.session.add(Product(id, farmid, name, price, quantity, "fruit", photourl))
+			origincarrefour = "France" if isNaN(fruit[item][1]) else fruit[item][1]
+
+
+			db.session.add(Product(id, farmid, name, price, quantity, "fruit", photourl, origincarrefour, pricecarrefour))
 			id = id + 1
 
 		itemList = []
@@ -180,16 +200,21 @@ def productInit():
 
 			itemList.append(item)
 
-			length = len(legume[item])
+			length = len(other[item])
 
-			name = legume[item][0]
-			price = legume[item][length-2]
-			photourl = legume[item][length-1]
+			name = other[item][0].replace("CARREFOUR", "").replace("carrefour", "")
+			pricecarrefour = float(other[item][length-2].replace("€",""))
+			price = pricecarrefour*(float(randint(80, 90))/100)
+			photourl = other[item][length-1]
 
 			quantity = randint(10, 200)
 
-			db.session.add(Product(id, farmid, name, price, quantity, "other", photourl))
+			origincarrefour = "France" if isNaN(other[item][1]) else other[item][1]
+
+
+			db.session.add(Product(id, farmid, name, price, quantity, "other", photourl, origincarrefour, pricecarrefour))
 			id = id + 1
+
 
 		
 
