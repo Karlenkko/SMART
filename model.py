@@ -26,14 +26,16 @@ class User(db.Model, EntityBase):
     volunteertotal = db.Column(db.Integer)
     volunteeractual = db.Column(db.Integer)
     balance = db.Column(db.Float)
-    def __init__(self, id, name, passwd, mobile, latitude, longitude, type, carbonactual, volunteeractual, carbontotal, volunteertotal, balance):
+    def __init__(self, id, name, passwd, mobile, latitude, longitude, address, type, photourl, carbonactual, volunteeractual, carbontotal, volunteertotal, balance):
         self.id = id
         self.name = name
         self.passwd = passwd
         self.mobile = mobile
         self.latitude = latitude
         self.longitude = longitude
+        self.address = address
         self.type = type
+        self.photourl = photourl
         self.carbonactual = carbonactual
         self.volunteeractual = volunteeractual
         self.carbontotal = carbontotal
@@ -41,7 +43,8 @@ class User(db.Model, EntityBase):
         self.balance = balance
 
     def __repr__(self):
-        return '<User: {}>'.format(self.name)
+        return '{"id":%s,"name":%s,"passwd":%s,"mobile":%s,"latitude":%s,"longitude":%s,"address":%s,"type":%s,"photourl":%s,"carbontotal":%s,"carbonactual":%s,"volunteertotal":%s,"volunteeractual":%s,"balance":%s}' % (
+            self.id, self.name, self.passwd, self.mobile, self.latitude, self.longitude, self.address, self.type, self.photourl, self.carbontotal, self.carbonactual, self.volunteertotal, self.volunteeractual, self.balance)
         
 
 class Farm(db.Model, EntityBase):
@@ -100,7 +103,7 @@ class Product(db.Model, EntityBase):
 
 
 class Order(db.Model, EntityBase):
-    __tablename__ = 'singleorder'
+    __tablename__ = 'order'
     id = db.Column(db.Integer, primary_key=True)
     # farmer or the person publishes
     ownerid = db.Column(db.Integer)             
@@ -114,52 +117,54 @@ class Order(db.Model, EntityBase):
     # selected volunteers for farm order
     selectedperson = db.Column(db.String(200))
     # requestId list
-    requestList = db.Column(db.String(200))
+    requestlist = db.Column(db.String(200))
     # 0 en cours; 1 validé; 2 annulé
     state = db.Column(db.Integer)
     time = db.Column(db.String(50))
     price = db.Column(db.Float)
 
-    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestList, state, time, price):
+    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price):
         self.id = id
         self.ownerid = ownerid
         self.entrepotlist = entrepotlist
         self.description = description
         self.selectedperson = selectedperson
-        self.requestList = requestList
+        self.requestlist = requestlist
         self.state = state
         self.time = time
         self.price = price
         
 
     def __repr__(self):
-        return '<Order: {}>'.format(self.description)
+        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s}' % (
+            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist, self.state, self.time, self.price)
 
 
 class Request(db.Model, EntityBase):
-    __tablename__ = 'farmorder'
+    __tablename__ = 'request'
     id = db.Column(db.Integer, primary_key=True)
     orderid = db.Column(db.Integer)
     userid = db.Column(db.Integer)
     userlocation = db.Column(db.String(50))
     timeproposed = db.Column(db.String(100))
-    volunteerTime = db.Column(db.String(100))
+    volunteertime = db.Column(db.String(100))
     description = db.Column(db.String(200))
     price = db.Column(db.Float)
     
 
-    def __init__(self, id, orderid, userid, userlocation, timeproposed, volunteerTime, description, price):
+    def __init__(self, id, orderid, userid, userlocation, timeproposed, volunteertime, description, price):
         self.id = id
         self.orderid = orderid
         self.userid = userid
         self.userlocation = userlocation
         self.timeproposed = timeproposed
-        self.volunteerTime = volunteerTime
+        self.volunteertime = volunteertime
         self.description = description
         self.price = price
 
     def __repr__(self):
-        return '<FarmOrder: {}>'.format(self.description)
+        return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s}' % (
+            self.id, self.orderid, self.userid, self.userlocation, self.timeproposed, self.volunteertime, self.description, self.price)
 
 
 class Coupon(db.Model, EntityBase):
