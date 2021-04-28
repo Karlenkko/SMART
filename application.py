@@ -5,6 +5,8 @@ import config
 from blueprints.index.index import index_bp
 from blueprints.farm.farm import farm_bp
 
+from datainit import init
+
 # print a nice greeting.
 def say_hello(username="World"):
     return '<p>Hello %s!</p>\n' % username
@@ -36,12 +38,10 @@ application.add_url_rule('/<username>', 'hello', (lambda username:
 
 application.register_blueprint(index_bp)
 application.register_blueprint(farm_bp)
-# @application.before_first_request
-# def setup():
-#     db.create_all()
-#     admin = User('admin', 'admin', '123456')
-#     db.session.add(admin)
-#     db.session.commit()
+
+@application.before_first_request
+def setup():
+    init()
 
 # run the app.
 if __name__ == "__main__":

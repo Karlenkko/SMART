@@ -26,15 +26,22 @@ class User(db.Model, EntityBase):
     volunteertotal = db.Column(db.Integer)
     volunteeractual = db.Column(db.Integer)
     balance = db.Column(db.Float)
-
-    def __init__(self, name, passwd, mobile):
+    def __init__(self, id, name, passwd, mobile, latitude, longitude, type, carbonactual, volunteeractual, carbontotal, volunteertotal):
+        self.id = id
         self.name = name
         self.passwd = passwd
         self.mobile = mobile
+        self.latitude = latitude
+        self.longitude = longitude
+        self.type = type
+        self.carbonactual = carbonactual
+        self.volunteeractual = volunteeractual
+        self.carbontotal = carbontotal
+        self.volunteertotal = volunteertotal
 
     def __repr__(self):
         return '<User: {}>'.format(self.name)
-
+        
 
 class Farm(db.Model, EntityBase):
     __tablename__ = 'farm'
@@ -43,19 +50,22 @@ class Farm(db.Model, EntityBase):
     name = db.Column(db.String(50))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    address = db.Column(db.String(60))
+    address = db.Column(db.String(100))
     photourl = db.Column(db.String(100))
 
-    def __init__(self, userid, name, latitude, longitude):
+    def __init__(self, id, userid, name, latitude, longitude, address):
+        self.id = id
         self.userid = userid
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
+        self.address = address
 
     def __repr__(self):
         # return '<Farm: {}>'.format(self.name)
         return '{"id":%s,"userid":%s,"name":"%s","latitude":%s,"longitude":%s,"address":"%s","photourl":"%s"}' % (
         self.id, self.userid, self.name, self.latitude, self.longitude, self.address, self.photourl)
+
 
 
 class Product(db.Model, EntityBase):
@@ -68,13 +78,15 @@ class Product(db.Model, EntityBase):
     photourl = db.Column(db.String(100))
     category = db.Column(db.String(20))
     carbonredu = db.Column(db.Integer)
-
-    def __init__(self, farmid, name, price):
+    def __init__(self, id, farmid, name, price, quantity, category, photourl):
+        self.id = id
         self.farmid = farmid
         self.name = name
         self.price = price
-        self.available = "0"
         self.quantity = 0
+        self.category = category
+        self.quantity = quantity
+        self.photourl = photourl
 
     def __repr__(self):
         return '<Product: {}>'.format(self.name)
@@ -129,7 +141,8 @@ class Coupon(db.Model, EntityBase):
     userid = db.Column(db.Integer)
     value = db.Column(db.Float)
 
-    def __init__(self, userid, value):
+    def __init__(self, id, userid, value):
+        self.id = id
         self.userid = userid
         self.value = value
 
