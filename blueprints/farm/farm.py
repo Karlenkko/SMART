@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import abort, request, jsonify
-from model import Product
+from model import Product, Request, User
+from exts import db
 
 farm_bp = Blueprint('farm', __name__)
 
@@ -28,13 +29,18 @@ def getAllProducts():
     return jsonify(res), 200
 
 
-@farm_bp.route('/farm/order/', methods=['POST'])
-def addOrder():
-    if not request.form or not 'name' in request.form:
+@farm_bp.route('/farm/request/', methods=['POST'])
+def addRequest():
+    if not request.form or not 'userid' in request.form:
         abort(400)
     else:
         try:
-            print(request)
+            user = User.query.filter(User.id == request.form.get('userid', type=int)).first()
+            userlocation = str(user.longitude) + "," + str(user.latitude)
+            requestid = Request.query.count()
+            newRequest = Request(requestid, request.form.get('orderid', type=int), request.form.get('userid', type=int), userlocation, request.form.get('destTime'), request.form.get('volunteerTime'), request.form.get('description'), request.form.get('totalPrice', type=float))
+            db.session.add(newRequest)
+            db.session.commit()
         except:
             abort(500)
         else:

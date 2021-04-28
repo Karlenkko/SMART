@@ -152,7 +152,7 @@ class Request(db.Model, EntityBase):
     price = db.Column(db.Float)
     
 
-    def __init__(self, id, orderid, userid, userlocation, timeproposed, volunteertime, description, price):
+    def __init__(self,id ,orderid, userid, userlocation, timeproposed, volunteertime, description, price):
         self.id = id
         self.orderid = orderid
         self.userid = userid
