@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import abort, request, jsonify
-from model import Product, Request, User
+from model import Product, Request, User, Order
 from exts import db
 
 farm_bp = Blueprint('farm', __name__)
@@ -38,8 +38,16 @@ def addRequest():
             user = User.query.filter(User.id == request.form.get('userid', type=int)).first()
             userlocation = str(user.longitude) + "," + str(user.latitude)
             requestid = Request.query.count()
-            newRequest = Request(requestid, request.form.get('orderid', type=int), request.form.get('userid', type=int), userlocation, request.form.get('destTime'), request.form.get('volunteerTime'), request.form.get('description'), request.form.get('totalPrice', type=float))
+            newRequest = Request(requestid,
+                                 request.form.get('orderid', type=int),
+                                 request.form.get('userid', type=int),
+                                 userlocation, request.form.get('destTime'),
+                                 request.form.get('volunteerTime'),
+                                 request.form.get('description'),
+                                 request.form.get('totalPrice', type=float))
             db.session.add(newRequest)
+            oldorder = Order.query.filter(Order.id == request.form.get('orderid', type=int)).first()
+            db.session.query(Order).filter(Order.id == request.form.get('orderid', type=int)).update({"requestlist" : oldorder.requestlist + str(requestid) + ","})
             db.session.commit()
         except:
             abort(500)

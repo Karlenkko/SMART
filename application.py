@@ -4,7 +4,7 @@ import config
 
 from blueprints.index.index import index_bp
 from blueprints.farm.farm import farm_bp
-
+from blueprints.publish.publish import publish_bp
 from datainit import init
 
 # print a nice greeting.
@@ -38,7 +38,7 @@ application.add_url_rule('/<username>', 'hello', (lambda username:
 
 application.register_blueprint(index_bp)
 application.register_blueprint(farm_bp)
-
+application.register_blueprint(publish_bp)
 # @application.before_first_request
 # def setup():
 #     init()
