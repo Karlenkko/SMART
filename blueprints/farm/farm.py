@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint
 from flask import abort, request, jsonify
 from model import Product, Request, User, Order, Farm
@@ -31,27 +33,32 @@ def getAllProducts():
 
 @farm_bp.route('/farm/request/', methods=['POST'])
 def addRequest():
-    if not request.form or not 'userid' in request.form:
-        abort(400)
-    else:
+    # if not request.form or not 'userid' in request.form:
+    #     abort(400)
+    # else:
         try:
-            user = User.query.filter(User.id == request.form.get('userid', type=int)).first()
+            data = json.loads(request.get_data(as_text=True))
+            user = User.query.filter(User.id == data['userId']).first()
             userlocation = str(user.longitude) + "," + str(user.latitude)
             requestid = Request.query.count()
             desttime = ''
-            for time in request.form.get('deliveryTime'):
-                desttime = desttime + time.day + " " + time.time + ";"
+
+            for time in data['deliveryTime']:
+                desttime = desttime + time['day'] + " " + time['time'] + ";"
 
             volunteertime = ''
-            for time in request.form.get('volunteerTime'):
-                volunteertime = volunteertime + time.day + " " + time.time + ";"
+            if data['volunteer']['do'] == 1:
+                for time in data['volunteer']['timelist']:
+                    volunteertime = volunteertime + time['day'] + " " + time['time'] + ";"
             requestorderid = 0
-            existingorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId', type=int)).first()
+
+            existingorder = Order.query.filter(Order.ownerid == data['farmOwnerId']).first()
+
             if not existingorder:
                 orderid = Order.query.count()
-                farm = Farm.query.filter(Farm.userid == request.form.get('farmOwnerId')).first()
-                neworder = Order(orderid,
-                                 request.form.get('farmOwnerId', type=int),
+                farm = Farm.query.filter(Farm.userid == data['farmOwnerId']).first()
+                neworder = Order(int(orderid),
+                                 int(data['farmOwnerId']),
                                  str(farm.longitude) + "," + str(farm.latitude),
                                  "",
                                  "",
@@ -60,24 +67,29 @@ def addRequest():
                                  "",
                                  0)
                 db.session.add(neworder)
-                db.commit()
                 requestorderid = orderid
             else:
                 requestorderid = existingorder.id
 
-            newRequest = Request(requestid,
-                                 requestorderid,
-                                 request.form.get('userid', type=int),
+
+            description = ''
+            for item in data['cart']:
+                description = description + item['productName'] + "_" + item['amount'] + ";"
+
+            newRequest = Request(int(requestid),
+                                 int(requestorderid),
+                                 int(data['userId']),
                                  userlocation,
                                  desttime,
                                  volunteertime,
-                                 request.form.get('description'),
-                                 request.form.get('totalPrice', type=float))
+                                 description,
+                                 float(data['totalPrice']))
+            print("checkpoint")
             db.session.add(newRequest)
-            oldorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId', type=int)).first()
-            db.session.query(Order).filter(Order.ownerid == request.form.get('farmOwnerId', type=int)).update({"requestlist" : oldorder.requestlist + str(requestid) + ","})
+            oldorder = Order.query.filter(Order.ownerid == data['farmOwnerId']).first()
+            db.session.query(Order).filter(Order.ownerid == data['farmOwnerId']).update({"requestlist" : oldorder.requestlist + str(requestid) + ","})
             db.session.commit()
         except:
             abort(500)
         else:
-            return jsonify(request.form), 201
+            return jsonify(request.get_data(as_text=True)), 201

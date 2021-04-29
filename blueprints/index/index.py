@@ -3,6 +3,7 @@ from model import Farm, Product, Order, Request, User
 from flask import abort, request, jsonify
 from flask_cors import cross_origin
 from exts import db
+import json
 
 index_bp = Blueprint('index', __name__)
 
@@ -25,14 +26,14 @@ def getAllFarmOrders():
                     count = count + 1;
             totalMembers = len(order.requestlist.split(',')) - 1
             res.append({
-                "orderId" : order.id,
-                "farmId" : farmuserids[order.ownerid].id,
-                "farmOwnerId" : farmuserids[order.ownerid].userid,
-                "farmName" : farmuserids[order.ownerid].name,
-                "farmAddress" : farmuserids[order.ownerid].address,
-                "url" : farmuserids[order.ownerid].photourl,
-                "totalMembers" : totalMembers,
-                "totalVolunteers" : count
+                "orderId": order.id,
+                "farmId": farmuserids[order.ownerid].id,
+                "farmOwnerId": farmuserids[order.ownerid].userid,
+                "farmName": farmuserids[order.ownerid].name,
+                "farmAddress": farmuserids[order.ownerid].address,
+                "url": farmuserids[order.ownerid].photourl,
+                "totalMembers": totalMembers,
+                "totalVolunteers": count
             })
     return jsonify(res), 200
 
@@ -53,17 +54,17 @@ def getAllUserOrders():
             points = order.entrepotlist.split(';')
             res.append({
                 "orderId": order.id,
-                "userId" : order.ownerid,
-                "userName" : userdict[order.ownerid].name,
-                "date" : order.time,
-                "state" : order.state,
-                "description" : order.description,
-                "totalCandidate" : totalMembers,
-                "depart" : points[0],
-                "destination" : points[1],
-                "url" : userdict[order.ownerid].photourl,
-                "tel" : userdict[order.ownerid].mobile,
-                "price" : order.price
+                "userId": order.ownerid,
+                "userName": userdict[order.ownerid].name,
+                "date": order.time,
+                "state": order.state,
+                "description": order.description,
+                "totalCandidate": totalMembers,
+                "depart": points[0],
+                "destination": points[1],
+                "url": userdict[order.ownerid].photourl,
+                "tel": userdict[order.ownerid].mobile,
+                "price": order.price
             })
 
     return jsonify(res), 200
@@ -91,7 +92,7 @@ def getAllFarms():
     for farm in farms:
         res.append({
             "farmId": farm.id,
-            "farmOwnerId" : farm.userid,
+            "farmOwnerId": farm.userid,
             "farmName": farm.name,
             "location": {
                 "longitude": farm.longitude,
@@ -106,30 +107,25 @@ def getAllFarms():
 @index_bp.route('/index/participateUserOrder/', methods=['POST'])
 @cross_origin()
 def participateUserOrder():
-    if not request.form or not 'orderId' in request.form:
-        abort(400)
+    # if True or not request.form or not 'orderId' in request.form:
+    #     abort(400)
+    # else:
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        requestid = Request.query.count()
+        order = Order.query.filter(Order.id == data['orderId']).first()
+        user = User.query.filter(User.id == data['userId']).first()
+        times = ''
+        for time in data['timelist']:
+            times = times + time['day'] + " " + time['time'] + ";"
+        newRequest = Request(int(requestid), int(data['orderId']), int(data['userId']), str(user.longitude) + "," + str(user.latitude), times, "", data['description'], order.price)
+        db.session.add(newRequest)
+        print("added new request")
+        oldorder = Order.query.filter(Order.id == data['orderId']).first()
+        db.session.query(Order).filter(Order.id == data['orderId']).update({"requestlist": oldorder.requestlist + str(requestid) + ","})
+        db.session.commit()
+        db.session.close()
+    except:
+        abort(500)
     else:
-        try:
-            requestid = Request.query.count()
-            order = Order.query.filter(Order.id == request.form.get('orderId', type=int))
-            user = User.query.filter(User.id == request.form.get('userId', type=int)).first()
-            times = ''
-            for time in request.form.get('timelist'):
-                times = times + time.day + " " + time.time + ";"
-            newRequest = Request(requestid,
-                                 request.form.get('orderId', type=int),
-                                 request.form.get('userId', type=int),
-                                 str(user.longitude) + "," + str(user.latitude),
-                                 times,
-                                 "",
-                                 request.form.get('description'),
-                                 order.price)
-            db.session.add(newRequest)
-            oldorder = Order.query.filter(Order.id == request.form.get('orderid', type=int)).first()
-            db.session.query(Order).filter(Order.id == request.form.get('orderid', type=int)).update(
-                {"requestlist": oldorder.requestlist + str(requestid) + ","})
-            db.session.commit()
-        except:
-            abort(500)
-        else:
-            return jsonify(request.form), 201
+        return jsonify(request.get_data(as_text=True)), 201
