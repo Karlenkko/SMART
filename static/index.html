@@ -201,6 +201,21 @@
                 stockid(data){
                     this.selectedUser = data;
                 }
+            },
+            created(){
+                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarmOrders')
+                    .then(function(data){
+                        this.farmOrders = data;
+                    })
+                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllUserOrders')
+                    .then(function(data){
+                        this.clientOrders = data;
+                    })
+
+                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarms')
+                    .then(function(data){
+                        this.clientOrders = data;
+                    })
             }
         })
 
