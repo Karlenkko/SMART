@@ -1,12 +1,12 @@
 from flask import Blueprint
 from model import Farm, Product, Order, Request, User
 from flask import abort, request, jsonify
-import json
-
+from flask_cors import cross_origin
 index_bp = Blueprint('index', __name__)
 
 
 @index_bp.route('/index/getAllFarmOrders/', methods=['GET'])
+@cross_origin()
 def getAllFarmOrders():
     orders = Order.query.all()
     farms = Farm.query.all()
@@ -34,6 +34,7 @@ def getAllFarmOrders():
 
 
 @index_bp.route('/index/getAllUserOrders/', methods=['GET'])
+@cross_origin()
 def getAllUserOrders():
     orders = Order.query.all()
     users = User.query.all()
@@ -63,6 +64,7 @@ def getAllUserOrders():
 
 
 @index_bp.route('/index/getAllFarms/', methods=['GET'])
+@cross_origin()
 def getAllFarms():
     farms = Farm.query.all()
     products = Product.query.all()
