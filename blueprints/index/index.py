@@ -27,6 +27,7 @@ def getAllFarmOrders():
             res.append({
                 "orderId" : order.id,
                 "farmId" : farmuserids[order.ownerid].id,
+                "farmOwnerId" : farmuserids[order.ownerid].userid,
                 "farmName" : farmuserids[order.ownerid].name,
                 "farmAddress" : farmuserids[order.ownerid].address,
                 "url" : farmuserids[order.ownerid].photourl,
@@ -90,6 +91,7 @@ def getAllFarms():
     for farm in farms:
         res.append({
             "farmId": farm.id,
+            "farmOwnerId" : farm.userid,
             "farmName": farm.name,
             "location": {
                 "longitude": farm.longitude,
