@@ -2,6 +2,8 @@ from flask import Blueprint
 from model import Farm, Product, Order, Request, User
 from flask import abort, request, jsonify
 from flask_cors import cross_origin
+from exts import db
+
 index_bp = Blueprint('index', __name__)
 
 
@@ -23,6 +25,7 @@ def getAllFarmOrders():
                     count = count + 1;
             totalMembers = len(order.requestlist.split(',')) - 1
             res.append({
+                "orderId" : order.id,
                 "farmId" : farmuserids[order.ownerid].id,
                 "farmName" : farmuserids[order.ownerid].name,
                 "farmAddress" : farmuserids[order.ownerid].address,
@@ -48,6 +51,7 @@ def getAllUserOrders():
             totalMembers = len(order.requestlist.split(',')) - 1
             points = order.entrepotlist.split(';')
             res.append({
+                "orderId": order.id,
                 "userId" : order.ownerid,
                 "userName" : userdict[order.ownerid].name,
                 "date" : order.time,
@@ -57,7 +61,8 @@ def getAllUserOrders():
                 "depart" : points[0],
                 "destination" : points[1],
                 "url" : userdict[order.ownerid].photourl,
-                "tel" : userdict[order.ownerid].mobile
+                "tel" : userdict[order.ownerid].mobile,
+                "price" : order.price
             })
 
     return jsonify(res), 200
@@ -94,3 +99,35 @@ def getAllFarms():
             "productList": productLists[farm.id]
         })
     return jsonify(res), 200
+
+
+@index_bp.route('/index/participateUserOrder/', methods=['POST'])
+@cross_origin()
+def participateUserOrder():
+    if not request.form or not 'orderId' in request.form:
+        abort(400)
+    else:
+        try:
+            requestid = Request.query.count()
+            order = Order.query.filter(Order.id == request.form.get('orderId', type=int))
+            user = User.query.filter(User.id == request.form.get('userId', type=int)).first()
+            times = ''
+            for time in request.form.get('timelist'):
+                times = times + time.day + " " + time.time + ";"
+            newRequest = Request(requestid,
+                                 request.form.get('orderId', type=int),
+                                 request.form.get('userId', type=int),
+                                 str(user.longitude) + "," + str(user.latitude),
+                                 times,
+                                 "",
+                                 request.form.get('description'),
+                                 order.price)
+            db.session.add(newRequest)
+            oldorder = Order.query.filter(Order.id == request.form.get('orderid', type=int)).first()
+            db.session.query(Order).filter(Order.id == request.form.get('orderid', type=int)).update(
+                {"requestlist": oldorder.requestlist + str(requestid) + ","})
+            db.session.commit()
+        except:
+            abort(500)
+        else:
+            return jsonify(request.form), 201
