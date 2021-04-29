@@ -46,6 +46,9 @@ def addRequest():
             for time in request.form.get('volunteerTime'):
                 volunteertime = volunteertime + time.day + " " + time.time + ";"
 
+            existingorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId')).first()
+
+
             newRequest = Request(requestid,
                                  request.form.get('orderid', type=int),
                                  request.form.get('userid', type=int),

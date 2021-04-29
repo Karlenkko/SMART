@@ -58,41 +58,42 @@
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
             <div class="sy-title">Contact {{selectedUser.userName}}</div>
             <div class="sy-content">Description of the task: <span class="longDescription">{{selectedUser.description}}</span></div>
+            <div class="sy-content">Price: <span>{{selectedUser.price}}</span></div>
             <div class="sy-content commentaire">
                 Commentaire(optionelle):
                 <br>
-                <textarea v-model="aide.msg" placeholder="Entrée vos situations et vos raison pour joindre cette aide"></textarea>
+                <textarea v-model="aide.description" placeholder="Entrée vos situations et vos raison pour joindre cette aide"></textarea>
             </div>
 
             <div class="sy-content aide">
                 <div class="aideOption" v-for="(item,index) in aide.timelist">
                     <span>Chosir ci-desous le jour sur la livrason. Option {{index + 1}}</span>
                     <div class="btn-group">
-                        <input type="button" :class="['btn',item.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="item.day='Lundi'">
-                        <input type="button" :class="['btn',item.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="item.day='Mardi'">
-                        <input type="button" :class="['btn',item.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="item.day='Mercredi'">
-                        <input type="button" :class="['btn',item.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="item.day='Jeudi'">
-                        <input type="button" :class="['btn',item.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="item.day='Vendredi'">
-                        <input type="button" :class="['btn',item.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="item.day='Samedi'">
-                        <input type="button" :class="['btn',item.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="item.day='Dimanche'">
+                        <input type="button" :class="['btn',item.day == 'Monday'?'btn-selected':'']" value="Monday" @click="item.day='Monday'">
+                        <input type="button" :class="['btn',item.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="item.day='Tuesday'">
+                        <input type="button" :class="['btn',item.day == 'Wednesday'?'btn-selected':'']" value="Wednesday" @click="item.day='Wednesday'">
+                        <input type="button" :class="['btn',item.day == 'Thursday'?'btn-selected':'']" value="Thursday" @click="item.day='Thursday'">
+                        <input type="button" :class="['btn',item.day == 'Friday'?'btn-selected':'']" value="Friday" @click="item.day='Friday'">
+                        <input type="button" :class="['btn',item.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="item.day='Saturday'">
+                        <input type="button" :class="['btn',item.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="item.day='Sunday'">
                     </div>
                     <span>Choisir ci-desous le temps pour la livraison</span>
                     <div>
                         <input type="radio" :id="'morning1b'+index"
-                               value="8:00~10:00" v-model="item.time">
+                               value="8-10" v-model="item.time">
                         <label :for="'morning1b'+index">8:00~10:00</label>
 
                         <input type="radio" :id="'morning2b'+index"
-                               value="10:00~12:00" v-model="item.time">
-                        <label :for="'morning1b'+index">10:00~12:00</label>
+                               value="10-12" v-model="item.time">
+                        <label :for="'morning2b'+index">10:00~12:00</label>
 
                         <input type="radio" :id="'afternoon1b'+index"
-                               value="14:00~16:00" v-model="item.time">
-                        <label :for="'morning1b'+index">14:00~16:00</label>
+                               value="14-16" v-model="item.time">
+                        <label :for="'afternoon1b'+index">14:00~16:00</label>
 
                         <input type="radio" :id="'afternoon2b'+index"
-                               value="16:00~18:00" v-model="item.time">
-                        <label :for="'morning1b'+index">16:00~18:00</label>
+                               value="16-18" v-model="item.time">
+                        <label :for="'afternoon2b'+index">16:00~18:00</label>
                     </div>
                 </div>
             </div>
@@ -120,7 +121,7 @@
                 <div class="etat valide" v-if="farmorder.state==1">Validé!</div>
                 <div class="type typeFarm" v-if="farmorder.farmId!=undefined">Farm Direct</div>
             </div>
-            <div class="button">Shopping!</div>
+            <div class="button" @click="transferToFarm(farmorder.farmId,farmorder.farmOwnerId)">Shopping!</div>
         </div>
     </template>
     <template id="clientOrder">
@@ -156,7 +157,7 @@
                 </div>
                 <div class="type typeFarm" v-if="farm.farmId!=undefined">Farm Direct</div>
             </div>
-            <div class="button">Shopping!</div>
+            <div class="button" @click="transferToFarm(farm.farmId,farm.farmOwnerId)">Shopping!</div>
         </div>
     </template>
 
@@ -166,12 +167,20 @@
     <script src="/static/lib/vue-router-v3.0.1.js"></script>
     <script src="/static/lib/jquery-1.12.4.min.js"></script>
     <script src="/static/lib/syalert.min.js"></script>
-    <script src="/static/lib/axios-v0.17.1.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/js/sideBar.js"></script>
     <script>
         Vue.component('farm-order',{
             template:'#farmOrder',
-            props:['farmorder']
+            props:['farmorder'],
+            methods:{
+                transferToFarm(id,id2){
+                    window.localStorage.farmid = id;
+                    window.localStorage.farmownerid = id2;
+                    //转移界面
+                    window.location.href = 'farm.html'
+                }
+            }
         })
 
         Vue.component('client-order',{
@@ -186,7 +195,15 @@
 
         Vue.component('farm-all',{
             template:'#farm',
-            props:['farm']
+            props:['farm'],
+            methods:{
+                transferToFarm(id,id2){
+                    window.localStorage.farmid = id;
+                    window.localStorage.farmownerid = id2;
+                    //转移界面
+                    window.location.href = 'farm.html'
+                }
+            }
         })
 
 
@@ -202,12 +219,14 @@
                 farms:[
                     // {"farmId":0,"farmName":"Earl la Seigliere","location":{"latitude":45.7524,"longitude":5.01988},"productList":"Haricots verts extra-fins CASSEGRAIN ( la boite de,Potimarron ( la pi\u00e8ce ) ,Choux-fleurs en fleurettes  EXTRA ( le sachet d'1K,Oignons jaunes bio  BIO ( le filet de 1 kg ) ,","url":null},{"farmId":1,"farmName":"Girard Yvonne","location":{"latitude":45.7771,"longitude":5.00056},"productList":"Choux-fleurs en fleurettes  EXTRA ( le sachet d'1K,Haricots verts extra fins  BIO ( le bocal de 180g ,Pommes de terre vari\u00e9t\u00e9 marabel FILIERE QUALITE  (,Mandarines \u00e0 jus ( le filet de 2 kg ) ,","url":null},{"farmId":2,"farmName":"Ferme de la Foresti\u00e8re","location":{"latitude":45.8049,"longitude":5.00227},"productList":"Carottes agro\u00e9cologie FILIERE QUALITE  ( le sachet,Oignons jaunes PETIT PRIX ( le filet de 2 kg ) ,Haricots verts tr\u00e8s fins  ( la boite de 440g net \u00e9,Tomates rondes en grappe ( le kilo ) ,","url":null},{"farmId":3,"farmName":"Earl la Ferme de Lena","location":{"latitude":45.7211,"longitude":4.7523},"productList":"Haricots verts tr\u00e8s fins D'AUCY ( la boite de 440g,Oignons jaunes PETIT PRIX ( le filet de 2 kg ) ,Aubergines Bio ( la barquette de 2 ) ,Concombre ( la pi\u00e8ce ) ,","url":null},{"farmId":4,"farmName":"Marchetto Marin Cecile Brune","location":{"latitude":45.6547,"longitude":4.90114},"productList":"Tomates allong\u00e9es coeur ( le kilo ) ,Choux-fleurs en fleurettes  CLASSIC' ( le sachet d,Oignons jaunes ( le filet de 5 kg ) ,Radis roses ( la botte ) ,","url":null}
                 ],
-                //0 === allOrders, 1 === farmOrder, 2 === clientOrder, 3 === farm
+
                 state:0,
                 selectedUser: {},
                 aide:{
-                    msg:'',
-                    timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                    description:'',
+                    timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}],
+                    orderId:'',
+                    userId:1 //在没有做登录系统之前使用1代表当前用户
                 },
                 host:''
             },
@@ -220,27 +239,27 @@
                 },
                 updateAide(){
                     //TODO:发送post请求提交aide
-                    this.aide.targetUserId = this.selectedUser.userId
-                    console.log(this.aide)
+                    this.aide.orderId = this.selectedUser.orderId
+                    axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalkfar.com/index/participateUserOrder',this.aide)
                     this.aide={
-                        msg:'',
-                        timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                        description:'',
+                        timelist:[{day:'Monday',time:'8~10'},{day:'',time:''},{day:'',time:''}]
                     }
                     this.selectedUser={}
                 }
             },
             created(){
                 axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarmOrders')
-                    .then((res) => {
+                    .then((res)=>{
                         this.farmOrders = res.data;
                     })
                 axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllUserOrders')
-                    .then((res) => {
+                    .then((res)=>{
                         this.clientOrders = res.data;
                     })
 
                 axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarms')
-                    .then((res) => {
+                    .then((res)=>{
                         this.farms = res.data;
                     })
             }
