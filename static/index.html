@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/animate.min.css">
+    <link rel="stylesheet" href="static/css/syalert.min.css">
+    <link rel="stylesheet" href="static/css/index.css">
+    <title>COLIV</title>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <a href="" class="logo">COLIV</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="" class="menu-item">Acceuil</a></li>
+                    <li><a href="" class="menu-item">Mes Comptes</a></li>
+                    <li><a href="" class="menu-item">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
+        <section class="section">
+            <div id="menu">
+                <div id="open">
+                    <div class="navBox">
+                        <ul>
+                            <li>
+                                <h2 class="obtain">Les commandes<i></i></h2>
+                                <div class="secondary">
+                                    <h3 @click="state=1">Les commandes des fermes</h3>
+                                    <h3 @click="state=2">Les commandes des clients</h3>
+                                </div>
+                            </li>
+                            <li>
+                                <h2 class="obtain" @click="state=3">Les fermes</h2>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="listsContent" v-show="state==0">
+                <farm-order v-for="item in farmOrders" :key="item.farmId" :farmorder="item"></farm-order>
+                <client-order v-for="item in clientOrders" :key="item.userId" :clientorder="item" @receivenewid="stockid"></client-order>
+            </div>
+            <transition-group name="Farm" tag="div" class="listsContent" v-show="state==1">
+                <farm-order v-for="item in farmOrders" :key="item.farmId" :farmorder="item" v-show="state==1"></farm-order>
+            </transition-group>
+            <transition-group name="Client" tag="div" class="listsContent" v-show="state==2">
+                <client-order v-for="item in clientOrders" :key="item.userId" :clientorder="item" v-show="state==2" @receivenewid="stockid"></client-order>
+            </transition-group>
+            <transition-group name="Farm" tag="div" class="listsContent" v-show="state==3">
+                <farm-all v-for="item in farms" :key="item.farmId" :farm="item" v-show="state==3"></farm-all>
+            </transition-group>
+        </section>
+    <modal :user="getUserById(selectedUser)"></modal>
+
+    </div>
+    <template id="farmOrder">
+        <div class="farmOrderClass">
+            <h2 class="farmname">{{farmorder.farmName}}</h2>
+            <div class="farmContainer">
+                <div class="infoLeft">
+                    <div class="participantNbr">Participant: <span>{{farmorder.totalVolunteers}}</span></div>
+                    <div class="benevoleNbr">Bénévole requis: <span>{{farmorder.totalMembers}}</span></div>
+                    <div class="Adress">Adress: <span class="twoLineEllipsis">{{farmorder.farmLocation}}</span> </div>
+                </div>
+                <div class="photo">
+                    <img :src="farmorder.url" alt="">
+                </div>
+                <div class="etat encours" v-if="farmorder.state==0">En cours</div>
+                <div class="etat valide" v-if="farmorder.state==1">Validé!</div>
+                <div class="type typeFarm" v-if="farmorder.farmId!=undefined">Farm Direct</div>
+            </div>
+            <div class="button">Shopping!</div>
+        </div>
+    </template>
+    <template id="clientOrder">
+        <div class="farmOrderClass">
+            <h2 class="farmname">{{clientorder.userName}}</h2>
+            <div class="farmContainer">
+                <div class="infoLeftClient infoLeft">
+                    <div class="dateDuration">Date: <span>{{clientorder.date}}</span></div>
+                    <div class="benevoleNbr">Candidats en total: <span>{{clientorder.totalCandidate}}</span></div>
+                    <div class="trajet">From&nbsp;<span>{{clientorder.depart}}&nbsp;</span>to&nbsp;<span>{{clientorder.destination}}</span></div>
+                    <div class="Description">Description: <span class="twoLineEllipsis">{{clientorder.description}}</span> </div>
+                </div>
+                <div class="photo">
+                    <img :src="clientorder.url" alt="">
+                </div>
+                <div class="etat encours" v-if="clientorder.state==0">En cours</div>
+                <div class="etat valide" v-if="clientorder.state==1">Validé!</div>
+                <div class="type typeClient" v-if="clientorder.userId!=undefined">Aide Client</div>
+            </div>
+            <div class="button" @click="getId" onClick="syalert.syopen('alert2')">Contact</div>
+        </div>
+    </template>
+    <template id="farm">
+        <div class="farmOrderClass">
+            <h2 class="farmname">{{farm.farmName}}</h2>
+            <div class="farmContainer">
+                <div class="infoLeft">
+                    <div class="Products">Nos Produits: <span class="twoLineEllipsis">{{farm.productList}}</span></div>
+                    <div class="Adress">Adress: <span class="twoLineEllipsis">{{farm.location}}</span> </div>
+                </div>
+                <div class="photo">
+                    <img :src="farm.url" alt="">
+                </div>
+                <div class="type typeFarm" v-if="farm.farmId!=undefined">Farm Direct</div>
+            </div>
+            <div class="button">Shopping!</div>
+        </div>
+    </template>
+    <template id="modal">
+        <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
+            <div class="sy-title">Contact {{user.userName}}</div>
+            <div class="sy-content">Description of the task: <span class="longDescription">{{user.description}}</span></div>
+            <div class="sy-content">For more information, please contact <span>&nbsp;{{user.userName}}&nbsp;</span> at <span>&nbsp;{{user.tel}}&nbsp;</span></div>
+            <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('alert2')">Confirm</div>
+            </div>
+        </div>
+    </template>
+
+
+    <script src="static/lib/vue-2.5.9.js"></script>
+    <script src="static/lib/vue-router-v3.0.1.js"></script>
+    <script src="static/lib/jquery-1.12.4.min.js"></script>
+    <script src="static/lib/syalert.min.js"></script>
+    <script src="static/js/sideBar.js"></script>
+    <script>
+        Vue.component('farm-order',{
+            template:'#farmOrder',
+            props:['farmorder']
+        })
+
+        Vue.component('client-order',{
+            template:'#clientOrder',
+            methods:{
+                getId(){
+                    this.$emit("receivenewid",this.clientorder.userId)
+                }
+            },
+            props:['clientorder']
+        })
+
+        Vue.component('farm-all',{
+            template:'#farm',
+            props:['farm']
+        })
+
+        Vue.component('modal',{
+            template:'#modal',
+            methods:{
+            },
+            props:['user']
+        })
+
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                farmOrders:[
+                    {farmId:0,farmName:'XX Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'./img/1.jpg'},
+                    {farmId:1,farmName:'X2 Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'./img/1.jpg'},
+                    {farmId:2,farmName:'X3X Farm',totalMembers:39,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:0,url:'./img/1.jpg'},
+                    {farmId:3,farmName:'X4X Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'./img/1.jpg'},
+                    {farmId:4,farmName:'X5 Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:0,url:'./img/1.jpg'},
+                    {farmId:5,farmName:'9X Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'./img/1.jpg'},
+                    {farmId:6,farmName:'7X Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:0,url:'./img/1.jpg'},
+                    {farmId:7,farmName:'XX7 Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'./img/1.jpg'},
+                ],
+                clientOrders:[
+                    {userId:0,userName:'Shihang',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:1,userName:'Yuxuan',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:2,userName:'Xinyu',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:3,userName:'Gong',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:4,userName:'Jiadong',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:5,userName:'Muye',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:6,userName:'Shi',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:0, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:7,userName:'Sh',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:0, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                    {userId:8,userName:'Shiha',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:0, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'./img/1.jpg',tel:"0623232325"},
+                ],
+                farms:[
+                    {farmId:0,farmName:'XX Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'},
+                    {farmId:0,farmName:'X1 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'},
+                    {farmId:0,farmName:'X2 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'},
+                    {farmId:0,farmName:'X3 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'},
+                    {farmId:0,farmName:'X4 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'},
+                    {farmId:0,farmName:'22 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'},
+                    {farmId:0,farmName:'66 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'./img/1.jpg'}
+                ],
+                //0 === allOrders, 1 === farmOrder, 2 === clientOrder, 3 === farm
+                state:0,
+                selectedUser:0,
+            },
+            methods:{
+                getUserById(id){
+                    return this.clientOrders.find(element => element.userId == id)
+                },
+                stockid(data){
+                    this.selectedUser = data;
+                }
+            }
+        })
+
+    </script>
+</body>
+</html>

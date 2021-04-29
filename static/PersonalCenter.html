@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <title>Farm</title>
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/syalert.min.css">
+    <link rel="stylesheet" href="css/farm.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_2519039_01p6o84lck5y.css">
+</head>
+<body>
+    <div>
+        <header class = "header">
+            <a href="" class="logo">Logo</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="" class="menu-items">PersonalCenter</a></li>
+                    <li><a href="" class="menu-items">OnboardMessages</a></li>
+                    <li><a href="" class="menu-items">LogOut</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="section">
+            <div id="menu">
+                <div id="open">
+                    <div class="navBox">
+                        <ul>
+                            <li>
+                                <h2 class="obtain">My Client Command<i></i></h2>
+                                <div class="secondary">
+                                    <h3 @click="StatementClient();state=2">EnCours</h3>
+                                    <h3 @click="StatementClient();state=1">EnLivraison</h3>
+                                    <h3 @click="StatementClient();state=3">Achevé</h3>
+                                </div>
+                            </li>
+                            <li>
+                                <h2 class="obtain">My Farm Command<i></i></h2>
+                                <div class="secondary">
+                                    <h3 @click="StatementFarm();state=4">EnCours</h3>
+                                    <h3 @click="StatementFarm();state=5">EnLivraison</h3>
+                                    <h3 @click="StatementFarm();state=6">Achevé<h3>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

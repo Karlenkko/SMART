@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farm</title>
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/syalert.min.css">
+    <link rel="stylesheet" href="css/farm.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_2519039_01p6o84lck5y.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <a href="" class="logo">COLIV</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="" class="menu-item">Cart at</a></li>
+                    <li><a href="" class="menu-item">Acceuil</a></li>
+                    <li><a href="" class="menu-item">Mes Comptes</a></li>
+                    <li><a href="" class="menu-item">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
+        <section class="section">
+            <div id="menu">
+                <div id="open">
+                    <div class="navBox">
+                        <ul>
+                            <li>
+                                <h2 class="obtain">Produit<i></i></h2>
+                                <div class="secondary">
+                                    <h3 @click="getLegume();state=2">Légumes</h3>
+                                    <h3 @click="getFruit();state=1">Fruits</h3>
+                                    <h3 @click="getAutre();state=3">Autre</h3>
+                                </div>
+                            </li>
+                            <li>
+                                <h2 class="obtain">Contribution Carbonne<i></i></h2>
+                                <div class="secondary">
+                                    <h3 @click="getLowCarbon();state=4">Jusqu'à 2500 g</h3>
+                                    <h3 @click="getMoyCarbon();state=5">2500 à 5000 g</h3>
+                                    <h3 @click="getHighCarbon();state=6">5000g et plus</h3>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="produits" v-show="state==0">
+                <product v-for="item in products" :key="item.idProduct" :productlist="item"></product>
+            </div>
+
+            <!--     fruit       -->
+            <transition-group tag="div" class="produits" v-show="state==1">
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+            </transition-group>
+
+            <!--     legume       -->
+            <transition-group tag="div" class="produits" v-show="state==2">
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+            </transition-group>
+
+            <!--     autre       -->
+            <transition-group tag="div" class="produits" v-show="state==3">
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+            </transition-group>
+
+            <!--     low       -->
+            <transition-group tag="div" class="produits" v-show="state==4">
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+            </transition-group>
+
+            <!--     moyenne       -->
+            <transition-group tag="div" class="produits" v-show="state==5">
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+            </transition-group>
+
+            <!--     high       -->
+            <transition-group tag="div" class="produits" v-show="state==6">
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+            </transition-group>
+        </section>
+    </div>
+
+    <template id="produitItem">
+        <div class="product">
+            <div class="produitItem">
+                <div class="photo">
+                    <img :src="productlist.url" alt="">
+                </div>
+                <div class="InfoPrincipal">
+                    <div class="name"><span>{{productlist.productName}}</span></div>
+                    <div class="price"><span>{{productlist.price}}</span>&nbsp;€</div>
+                    <div class="quantity">Quantité disponible pour la semaine prochaine: <span>{{productlist.quantity}}</span> unité(s)</div>
+                    <div class="category">Catégory:&nbsp;<span>{{productlist.category}}</span></div>
+                </div>
+                <div class="InfoComparation">
+                    <div>Comparing with <i class="iconfont icon-bianzu"></i>&nbsp;:</div>
+                    <div><i class="iconfont icon-bianzu"></i>&nbsp; price: <span>{{productlist.carrefourPrice}}</span>€</div>
+                    <div>Origin:&nbsp;<span>{{productlist.origin}}</span></div>
+                    <div class="contribution">Donc si vous achetez nos produit, votre contribution sur la réduction de &nbsp;<i class="iconfont icon-eryanghuatan"></i>&nbsp;: <span class="contributionValue">{{productlist.carbonRedu}}</span>g</div>
+                </div>
+            </div>
+            <div class="button">
+                Add to cart
+            </div>
+        </div>
+    </template>
+
+    <script src="lib/vue-2.5.9.js"></script>
+    <script src="lib/vue-router-v3.0.1.js"></script>
+    <script src="lib/jquery-1.12.4.min.js"></script>
+    <script src="lib/syalert.min.js"></script>
+    <script src="js/sideBarFarm.js"></script>
+
+    <script>
+        Vue.component('product',{
+            template:"#produitItem",
+            props:['productlist']
+        })
+
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                products:[
+                    {idProduct:0, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:6000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:1, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:4000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:2, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'legume', carbonRedu:2000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:3, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:2000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:4, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'autre', carbonRedu:4000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:5, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:1000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:6, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'legume', carbonRedu:1000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:7, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:3000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:8, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'autre', carbonRedu:2400, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                ],
+                productsCondition:[],
+                state:0
+            },
+            methods:    {
+                getFruit(){
+                    this.productsCondition = this.products.filter(product => product.category === 'fruit')
+                },
+                getLegume(){
+                    this.productsCondition = this.products.filter(product => product.category === 'legume')
+                },
+                getAutre(){
+                    this.productsCondition = this.products.filter(product => product.category === 'autre')
+                },
+                getLowCarbon(){
+                    this.productsCondition = this.products.filter(product => product.carbonRedu <= 2500)
+                },
+                getMoyCarbon(){
+                    this.productsCondition = this.products.filter(product => (product.carbonRedu > 2500 && product.carbonRedu < 5000))
+                },
+                getHighCarbon(){
+                    this.productsCondition = this.products.filter(product => product.carbonRedu >= 5000)
+                }
+            }
+        })
+    </script>
+</body>
+</html>

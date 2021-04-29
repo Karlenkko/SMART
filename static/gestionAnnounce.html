@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/syalert.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <title>COLIV</title>
+</head>
+
+<body>
+    <div id="app">
+        <header class="header">
+        <a href="" class="logo">COLIV</a>
+        <nav>
+            <ul class="menu-items">
+                <li><a href="" class="menu-item">Acceuil</a></li>
+                <li><a href="" class="menu-item">Mes Comptes</a></li>
+                <li><a href="" class="menu-item">Mes Annonces</a></li>
+                <li><a href="" class="menu-item">Log Out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section" >
+        <div id="menu">
+            <!--显示菜单-->
+            <div id="open">
+                <div class="navBox">
+                    <ul>
+                        <li>
+                            <h2 class="obtain">Mes demandes<i></i></h2>
+                            <div class="secondary">
+                                <h3 @click="state=11">En cours</h3>
+                                <h3 @click="state=12">Validé</h3>
+                            </div>
+                        </li>
+                        <li>
+                            <h2 class="obtain">Mes offres fermières</h2>
+                            <div class="secondary">
+                                <h3 @click="state=21">En cours</h3>
+                                <h3 @click="state=22">Validé</h3>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <client-demand v-for="item in clientDemands" :key="item.demandId" :demand="item"></client-demand>
+        <farm-offer v-for="item in farmOffers" :key="item.offerId" :offer="item"></farm-offer>
+
+    </section>
+
+    </div>
+    <template id="clientdemand">
+            <h2>Titre: <span>{{demand.titre}}</span></h2>
+                <div>
+                    <div >Date: <span>{{demand.date}}</span></div>
+                    <div >Description: <span >{{demand.description}}</span> </div>
+                </div>
+                <div class="photo">
+                    <img :src="" alt="">
+                </div>
+                <div class="etat encours" v-show="demand.state==0">En cours</div>
+                <div class="etat valide" v-show="demand.state==1">Validé</div>
+                <div class="etat " v-show="demand.state==2">Achevé</div>
+    </template>
+    <template id="farmoffer">
+            <h2 class="farmname">{{offer.name}}</h2>
+                <div>
+                    <div>Nom: <span>{{offer.name}}</span></div>
+                    <div>Prix: <span>{{offer.price}}</span></div>
+                    <div>Quantité max: <span>{{offer.quantityMax}}</span></div>
+                    <div>Quantité demandée: <span>{{offer.quantityOrdered}}</span></div>
+                </div>
+                <div class="photo">
+                    <img :src="" alt="">
+                </div>
+                <div class="etat " v-show="offer.state==0">En cours</div>
+                <div class="etat " v-show="offer.state==1">Validé</div>
+                <div class="etat " v-show="offer.state==2">Achevé</div>
+            <div class="button" v-show="offer.state==0">Valider</div>
+            <div class="button" v-show="offer.state==1">Achever</div>
+    </template>
+
+    <script src="lib/vue-2.5.9.js"></script>
+    <script src="lib/vue-router-v3.0.1.js"></script>
+    <script src="lib/jquery-1.12.4.min.js"></script>
+    <script src="lib/syalert.min.js"></script>
+    <script src="js/sideBar.js"></script>
+    <script>
+        Vue.component('farm-offer',{
+            template:'#farmoffer',
+            props:['offer'],
+        })
+
+        Vue.component('client-demand',{
+            template:'#clientdemand',
+            methods:{
+                getId(){
+                    this.$emit("receivenewid",this.clientDemand.userId)
+                }
+            },
+            props:['demand']
+        })
+
+        Vue.component('modal',{
+            template:'#modal',
+            methods:{
+            },
+            props:['user']
+        })
+
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                farmOffers:[
+                    {name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
+                ],
+                clientDemands: [
+                    {demandId:0, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai trois kilo de pates à transporter à Paris", tel:"0623232325"},
+                    {demandId:1, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai trois kilo de pates à transporter à Paris", tel:"0623232325"},
+                    {demandId:2, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai trois kilo de pates à transporter à Paris", tel:"0623232325"},
+                ],
+                state:11,
+                selectedCandidate:0,
+            },
+            methods:{
+                getUserById(id){
+                    return this.clientOrders.find(element => element.userId == id)
+                },
+                stockid(data){
+                    this.selectedCandidate = data;
+                }
+            }
+        })
+
+    </script>
+</body>
+</html>

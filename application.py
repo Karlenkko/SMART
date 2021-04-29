@@ -37,8 +37,8 @@ application.config.from_object(config)
 db.init_app(application)
 migrate.init_app(application, db)
 # add a rule for the index page.
-application.add_url_rule('/', 'index', (lambda: header_text +
-                                                say_hello() + instructions + footer_text))
+# application.add_url_rule('/', 'index', (lambda: header_text +
+#                                                 say_hello() + instructions + footer_text))
 
 # add a rule when the page is accessed with a name appended to the site
 # URL.
@@ -53,10 +53,15 @@ application.register_blueprint(algo_bp)
 # def setup():
 #     init()
 
-@application.route("/map", methods=['GET'])
+@application.route("/map/", methods=['GET'])
 def map():
     return render_template("map.html")
 
+
+@application.route("/", methods=['GET'])
+def index():
+    return application.send_static_file('index.html')
+    # return render_template("index.html")
 
 # run the app.
 if __name__ == "__main__":

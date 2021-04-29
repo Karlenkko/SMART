@@ -1,0 +1,343 @@
+/* globals */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Titillium+Web:wght@400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Montserrat, sans-serif;
+  line-height: 1.5;
+  background-color: #f0ffee;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* header */
+.header {
+  background: #527242;
+  position: relative;
+  width:100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  z-index: 1;
+}
+.header a {
+  text-decoration: none;
+  color: #ffffff;
+}
+.header ul {
+  list-style: none;
+}
+.logo {
+  font-size: 2rem;
+}
+.menu-items {
+  display: flex;
+  align-items: center;
+}
+.menu-items li {
+  padding: 0.5rem 1rem;
+  transition: background 0.3s ease-in-out;
+}
+.menu-items li:hover {
+  background-color: #2a3827;
+}
+
+/* section */
+section{
+  overflow: hidden;
+  display: flex;
+}
+
+section #menu{
+  overflow: hidden;
+  float: left;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+section #menu #open {
+  /*显示菜单样式*/
+  width: 200px;
+  height: 100%;
+  background-color: #363a45;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  -webkit-transition: all 0.8s ease;
+  -moz-transition: all 0.8s ease;
+  -o-transition: all 0.8s ease;
+  -ms-transition: all 0.8s ease;
+}
+
+section #menu #open .navBox {
+  height: 100%;
+  overflow-y: auto;
+  padding-left: 5px;
+  padding-right: 7px;
+  padding-top: 5px;
+}
+section #menu #open .navBox ul li {
+  background-color: #393c4a;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+section #menu #open .navBox ul li .obtain {
+  background-color: #3889D4;
+}
+section #menu #open .navBox ul li .obtain:hover {
+  background-color: #3D8332;
+}
+section #menu #open .navBox ul li h2 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 16px;
+  padding: 16px 0;
+  -webkit-transition: all 0.6s ease;
+  -moz-transition: all 0.6s ease;
+  -o-transition: all 0.6s ease;
+  -ms-transition: all 0.6s ease;
+}
+
+#menu #open .navBox ul li h2 i {
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  border-top: 7px transparent dashed;
+  border-left: 7px solid #fff;
+  border-right: 7px transparent dashed;
+  border-bottom: 7px transparent dashed;
+  display: inline-block;
+  -webkit-transition: -webkit-transform 0.6s ease;
+  -moz-transition: -moz-transform 0.6s ease;
+  -o-transition: -o-transform 0.6s ease;
+  -ms-transition: -ms-transform 0.6s ease;
+  transform-origin: 4px 3px;
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+
+section #menu #open .navBox ul li h2 .arrowRot {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+section #menu #open .navBox ul li .secondary {
+  overflow: hidden;
+  height: 0;
+  -webkit-transition: all 0.6s ease;
+  -moz-transition: all 0.6s ease;
+  -o-transition: all 0.6s ease;
+  -ms-transition: all 0.6s ease;
+}
+section #menu #open .navBox ul li .secondary h3 {
+  /*padding: 10px 0;*/
+  text-align: center;
+  font-size: 12px;
+  background-color: #282c3a;
+  color: #ffffff;
+  height: 40px;
+  line-height: 40px;
+  margin-bottom: 5px;
+  border-bottom: 0.8px solid #42495d;
+  -webkit-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -ms-transition: all 0.4s ease;
+}
+section #menu #open .navBox ul li .secondary h3:hover {
+  background-color: #1acbfc;
+}
+section #menu #open .navBox ul li .secondary .seconFocus {
+  background-color: #1acbfc;
+  -webkit-box-shadow: 3px 3px 3px #aa8c51;
+  -moz-box-shadow: 3px 3px 3px #aa8c51;
+  box-shadow: 3px 3px 3px #aa8c51;
+}
+
+section .listsContent{
+  flex: 1;
+  display: flex;
+  padding: 20px;
+  flex-flow: row wrap;
+  align-content: flex-start;
+  justify-content: space-around;
+}
+
+/*For template*/
+.farmOrderClass{
+  color: #606266;
+  height: 270px;
+  width:400px;
+  border:1px solid #008c8c;
+  position:relative;
+  float: left;
+  margin-right: 10px;
+  margin-top: 20px;
+  flex: 0 0 30%;
+  border-radius: 10px;
+}
+
+.farmOrderClass h2{
+  font-size:26px;
+  text-align: center;
+  line-height: 26px;
+  margin: 20px 0;
+}
+
+.farmOrderClass .farmContainer{
+  display: flex;
+  justify-content: space-between;
+}
+
+.farmOrderClass .farmContainer .infoLeft{
+  padding: 20px 10px 20px 20px;
+  font-size: 14px;
+  width: 240px;
+  height: 150px;
+}
+
+.farmOrderClass .farmContainer .infoLeftClient{
+  padding: 10px 10px 20px 20px;
+  font-size: 14px;
+  width: 240px;
+  height: 150px;
+}
+
+.farmOrderClass .farmContainer .infoLeft span{
+  color: rgb(234, 153, 153);
+}
+
+.farmOrderClass .farmContainer .infoLeft .twoLineEllipsis{
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.farmOrderClass .farmContainer .photo img{
+  height: 120px;
+  width: 120px;
+  margin-top: 10px;
+  margin-right: 20px;
+}
+
+.farmOrderClass .farmContainer .etat{
+  position: absolute;
+  right: 5px;
+  top: 21px;
+  transform: rotate(30deg);
+}
+
+.farmOrderClass .farmContainer .etat.encours{
+  color: #aa8c51;
+}
+
+.farmOrderClass .farmContainer .etat.valide{
+  color:#527242;
+}
+
+.farmOrderClass .farmContainer .type{
+  position: absolute;
+}
+
+.farmOrderClass .farmContainer .type.typeFarm{
+  background-color: #527242;
+  color: #fff;
+  top: 20px;
+  left: -20px;
+  transform: rotate(-40deg);
+}
+
+.farmOrderClass .farmContainer .type.typeClient{
+  background-color: #aa8c51;
+  color: #fff;
+  top: 20px;
+  left: -20px;
+  transform: rotate(-40deg);
+}
+
+.farmOrderClass .button{
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  border-radius:5px;
+  width: 110px;
+  margin: auto;
+  background-color: #527242;
+  color: #fff;
+}
+
+/* Vue animation */
+.Farm-enter,
+.Farm-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.Farm-enter-active,
+.Farm-leave-active {
+  transition: all 0.4s ease;
+}
+
+.Client-enter,
+.Client-leave-to {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+
+.Client-enter-active,
+.Client-leave-active {
+  transition: all 0.4s ease;
+}
+
+/*Modal*/
+.sy-alert-model{
+  width: 400px;
+  background-color: #e2fade;
+}
+
+.sy-title{
+  text-align: center;
+}
+
+.sy-content span.longDescription{
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  color: #2a3827;
+}
+
+.sy-content span{
+  color: rgb(234, 153, 153);
+}
+
+.sy-btn .button{
+  text-align: center;
+  height: 45px;
+  line-height: 45px;
+  cursor:pointer;
+  color: #333;
+  padding: 0 12px;
+  font-size: 15px;
+}
