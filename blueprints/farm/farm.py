@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import abort, request, jsonify
-from model import Product, Request, User, Order
+from model import Product, Request, User, Order, Farm
 from exts import db
 
 farm_bp = Blueprint('farm', __name__)
@@ -45,12 +45,28 @@ def addRequest():
             volunteertime = ''
             for time in request.form.get('volunteerTime'):
                 volunteertime = volunteertime + time.day + " " + time.time + ";"
-
-            existingorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId')).first()
-
+            requestorderid = 0
+            existingorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId', type=int)).first()
+            if not existingorder:
+                orderid = Order.query.count()
+                farm = Farm.query.filter(Farm.userid == request.form.get('farmOwnerId')).first()
+                neworder = Order(orderid,
+                                 request.form.get('farmOwnerId', type=int),
+                                 str(farm.longitude) + "," + str(farm.latitude),
+                                 "",
+                                 "",
+                                 "",
+                                 0,
+                                 "",
+                                 0)
+                db.session.add(neworder)
+                db.commit()
+                requestorderid = orderid
+            else:
+                requestorderid = existingorder.id
 
             newRequest = Request(requestid,
-                                 request.form.get('orderid', type=int),
+                                 requestorderid,
                                  request.form.get('userid', type=int),
                                  userlocation,
                                  desttime,
@@ -58,8 +74,8 @@ def addRequest():
                                  request.form.get('description'),
                                  request.form.get('totalPrice', type=float))
             db.session.add(newRequest)
-            oldorder = Order.query.filter(Order.id == request.form.get('orderid', type=int)).first()
-            db.session.query(Order).filter(Order.id == request.form.get('orderid', type=int)).update({"requestlist" : oldorder.requestlist + str(requestid) + ","})
+            oldorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId', type=int)).first()
+            db.session.query(Order).filter(Order.ownerid == request.form.get('farmOwnerId', type=int)).update({"requestlist" : oldorder.requestlist + str(requestid) + ","})
             db.session.commit()
         except:
             abort(500)
