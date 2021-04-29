@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Titillium+Web:wght@400;700&display=swap");
+.dialog {
+    position: relative;
+    color: #2e2c2d;
+    font-size: 16px;
+}
+
+   .dialog-cover {
+       background: rgba(0,0,0, 0.8);
+       position: fixed;
+       z-index: 200;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+   }
+
+   .dialog-content{
+       position: fixed;
+       top: 35%;
+   // 移动端使用felx布局
+   display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       z-index: 300;
+   }
