@@ -38,11 +38,23 @@ def addRequest():
             user = User.query.filter(User.id == request.form.get('userid', type=int)).first()
             userlocation = str(user.longitude) + "," + str(user.latitude)
             requestid = Request.query.count()
+            desttime = ''
+            for time in request.form.get('deliveryTime'):
+                desttime = desttime + time.day + " " + time.time + ";"
+
+            volunteertime = ''
+            for time in request.form.get('volunteerTime'):
+                volunteertime = volunteertime + time.day + " " + time.time + ";"
+
+            existingorder = Order.query.filter(Order.ownerid == request.form.get('farmOwnerId')).first()
+
+
             newRequest = Request(requestid,
                                  request.form.get('orderid', type=int),
                                  request.form.get('userid', type=int),
-                                 userlocation, request.form.get('destTime'),
-                                 request.form.get('volunteerTime'),
+                                 userlocation,
+                                 desttime,
+                                 volunteertime,
                                  request.form.get('description'),
                                  request.form.get('totalPrice', type=float))
             db.session.add(newRequest)

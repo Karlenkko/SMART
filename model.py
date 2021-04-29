@@ -57,13 +57,14 @@ class Farm(db.Model, EntityBase):
     address = db.Column(db.String(100))
     photourl = db.Column(db.String(100))
 
-    def __init__(self, id, userid, name, latitude, longitude, address):
+    def __init__(self, id, userid, name, latitude, longitude, address, photourl):
         self.id = id
         self.userid = userid
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
         self.address = address
+        self.photourl = photourl
 
     def __repr__(self):
         # return '<Farm: {}>'.format(self.name)
@@ -118,6 +119,7 @@ class Order(db.Model, EntityBase):
     selectedperson = db.Column(db.String(200))
     # requestId list
     requestlist = db.Column(db.String(200))
+    labellist = db.Column(db.String(200))
     # 0 en cours; 1 validé; 2 annulé
     state = db.Column(db.Integer)
     time = db.Column(db.String(50))
@@ -136,8 +138,8 @@ class Order(db.Model, EntityBase):
         
 
     def __repr__(self):
-        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s}' % (
-            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist, self.state, self.time, self.price)
+        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"labellist"%s,"state":%s,"time":%s,"price":%s}' % (
+            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist, self.labellist, self.state, self.time, self.price)
 
 
 class Request(db.Model, EntityBase):
@@ -165,6 +167,24 @@ class Request(db.Model, EntityBase):
     def __repr__(self):
         return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s}' % (
             self.id, self.orderid, self.userid, self.userlocation, self.timeproposed, self.volunteertime, self.description, self.price)
+
+class Volunteer(db.Model, EntityBase):
+    __tablename__ = 'volunteer'
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer)
+    entrepotlist = db.Column(db.String(400))
+    requestlist = db.Column(db.String(200))
+    date = db.Column(db.String(50))
+
+    def __init__(self, id, userid, entrepotlist, requestlist, date):
+        self.id = id
+        self.userid = userid
+        self.entrepotlist = entrepotlist
+        self.requestlist = requestlist
+        self.date = date
+
+    def __repr__(self):
+        return '{"id":%s,"userid":%s,"entrepotlist":%s,"requestlist":%s,"date":%s}' % (self.id, self.userid, self.entrepotlist, self.requestlist, self.date)
 
 
 class Coupon(db.Model, EntityBase):
