@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from exts import db, migrate
 from model import User, Request, Farm, Order, Coupon, Product
 import config
-
+import pymysql
 from blueprints.index.index import index_bp
 from blueprints.farm.farm import farm_bp
 from blueprints.publish.publish import publish_bp
@@ -34,6 +34,7 @@ application.config['GOOGLEMAPS_KEY'] = "AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48"
 GoogleMaps(application)
 
 application.config.from_object(config)
+pymysql.connect(host=config.HOST, port=int(config.PORT), user=config.USERNAME, passwd=config.PASSWORD, db=config.DATABASE)
 db.init_app(application)
 migrate.init_app(application, db)
 # add a rule for the index page.
