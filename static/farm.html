@@ -47,39 +47,151 @@
                 </div>
             </div>
             <div class="produits" v-show="state==0">
-                <product v-for="item in products" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in products" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </div>
 
             <!--     fruit       -->
             <transition-group tag="div" class="produits" v-show="state==1">
-                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </transition-group>
 
             <!--     legume       -->
             <transition-group tag="div" class="produits" v-show="state==2">
-                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </transition-group>
 
             <!--     autre       -->
             <transition-group tag="div" class="produits" v-show="state==3">
-                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </transition-group>
 
             <!--     low       -->
             <transition-group tag="div" class="produits" v-show="state==4">
-                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </transition-group>
 
             <!--     moyenne       -->
             <transition-group tag="div" class="produits" v-show="state==5">
-                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </transition-group>
 
             <!--     high       -->
             <transition-group tag="div" class="produits" v-show="state==6">
-                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item"></product>
+                <product v-for="item in productsCondition" :key="item.idProduct" :productlist="item" @fatherreceiveproduct="saveProductSelected"></product>
             </transition-group>
+
+
+
+            <!--      Modal for adding to cart      -->
+            <div class="sy-alert sy-alert-model cart animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert1">
+                <div class="sy-title">{{productSelected.productName}}</div>
+                <div class="sy-content main">
+                    <div class="photoDetail">
+                        <img :src="productSelected.url" alt="">
+                    </div>
+                    <div class="pricecalculate">
+                        <div class="counter">
+                            <span class="minus" @click="minusAmount">-</span>
+                            <span class="display"> {{productAmount}} </span>
+                            <span class="add" @click="addAmount">+</span>
+                        </div>
+                        <div class="priceTotal"><span>{{productTotalPrice}}</span>€</div>
+                        <span class="notif">{{productNotification}}</span>
+                    </div>
+                </div>
+                <div class="sy-btn">
+                    <div class="button" onClick="syalert.syhide('alert1')" @click="saveToCart">Confirm</div>
+                </div>
+            </div>
+
+            <!--     Modal for the final reglage       -->
+            <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
+                <div class="sy-title">Réglage</div>
+                <div class="sy-content deliveryTime">
+                    <span>Chosir ci-desous le jour sur la livrason.</span>
+                    <div class="btn-group">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="deliveryTime.day='Lundi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="deliveryTime.day='Mardi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="deliveryTime.day='Mercredi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="deliveryTime.day='Jeudi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="deliveryTime.day='Vendredi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="deliveryTime.day='Samedi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="deliveryTime.day='Dimanche'">
+                    </div>
+                    <span>Choisir ci-desous le temps pour la livraison</span>
+                    <div>
+                        <input type="radio" id="morning1"
+                               value="8:00~10:00" v-model="deliveryTime.time">
+                        <label for="morning1">8:00~10:00</label>
+
+                        <input type="radio" id="morning2"
+                               value="10:00~12:00" v-model="deliveryTime.time">
+                        <label for="morning2">10:00~12:00</label>
+
+                        <input type="radio" id="afternoon1"
+                               value="14:00~16:00" v-model="deliveryTime.time">
+                        <label for="afternoon1">14:00~16:00</label>
+
+                        <input type="radio" id="afternoon2"
+                               value="16:00~18:00" v-model="deliveryTime.time">
+                        <label for="afternoon2">16:00~18:00</label>
+                    </div>
+                </div>
+                <div class="sy-content benevole">
+                    <span>Est-ce que vous avez des envies pour faire des bénévole?</span>
+                    <div>
+                        <input type="radio" id="acceptBenevole"
+                               value="1" v-model="benevole.do">
+                        <label for="acceptBenevole">Oui</label>
+
+                        <input type="radio" id="refuseBenevole"
+                               value="0" v-model="benevole.do">
+                        <label for="refuseBenevole">Non</label>
+                    </div>
+
+                    <div v-show="benevole.do==1">
+                        <span>Merci de votre contribution! Maintenant vous devez chosir au moins un temps pour réaliser le bénévole.</span>
+                        <div class="benevoleOption" v-for="(item,index) in benevole.timelist">
+                            <span>Chosir ci-desous le jour sur la livrason. Option {{index + 1}}</span>
+                            <div class="btn-group">
+                                <input type="button" :class="['btn',item.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="item.day='Lundi'">
+                                <input type="button" :class="['btn',item.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="item.day='Mardi'">
+                                <input type="button" :class="['btn',item.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="item.day='Mercredi'">
+                                <input type="button" :class="['btn',item.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="item.day='Jeudi'">
+                                <input type="button" :class="['btn',item.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="item.day='Vendredi'">
+                                <input type="button" :class="['btn',item.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="item.day='Samedi'">
+                                <input type="button" :class="['btn',item.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="item.day='Dimanche'">
+                            </div>
+                            <span>Choisir ci-desous le temps pour la livraison</span>
+                            <div>
+                                <input type="radio" :id="'morning1b'+index"
+                                       value="8:00~10:00" v-model="item.time">
+                                <label :for="'morning1b'+index">8:00~10:00</label>
+
+                                <input type="radio" :id="'morning2b'+index"
+                                       value="10:00~12:00" v-model="item.time">
+                                <label :for="'morning1b'+index">10:00~12:00</label>
+
+                                <input type="radio" :id="'afternoon1b'+index"
+                                       value="14:00~16:00" v-model="item.time">
+                                <label :for="'morning1b'+index">14:00~16:00</label>
+
+                                <input type="radio" :id="'afternoon2b'+index"
+                                       value="16:00~18:00" v-model="item.time">
+                                <label :for="'morning1b'+index">16:00~18:00</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="sy-btn">
+                    <div class="button" onClick="syalert.syhide('alert2')" @click="upLoadCart">Confirm</div>
+                </div>
+            </div>
+
         </section>
+        <button class="validate" onClick="syalert.syopen('alert2')">Valider le cart!</button>
+
     </div>
 
     <template id="produitItem">
@@ -101,7 +213,7 @@
                     <div class="contribution">Donc si vous achetez nos produit, votre contribution sur la réduction de &nbsp;<i class="iconfont icon-eryanghuatan"></i>&nbsp;: <span class="contributionValue">{{productlist.carbonRedu}}</span>g</div>
                 </div>
             </div>
-            <div class="button">
+            <div class="button" @click="transtofather" onClick="syalert.syopen('alert1')">
                 Add to cart
             </div>
         </div>
@@ -113,17 +225,23 @@
     <script src="lib/syalert.min.js"></script>
     <script src="js/sideBarFarm.js"></script>
 
+
     <script>
         Vue.component('product',{
             template:"#produitItem",
-            props:['productlist']
+            props:['productlist'],
+            methods:{
+                transtofather(){
+                    this.$emit('fatherreceiveproduct',this.productlist)
+                }
+            }
         })
 
         var vm = new Vue({
             el:'#app',
             data:{
                 products:[
-                    {idProduct:0, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:6000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
+                    {idProduct:0, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:10, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:6000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
                     {idProduct:1, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:4000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
                     {idProduct:2, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'legume', carbonRedu:2000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
                     {idProduct:3, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'fruit', carbonRedu:2000, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
@@ -134,7 +252,17 @@
                     {idProduct:8, productName:'Tomate:XXXXs ssds ds X / kilo',quantity:2500, price:'3.99', url:'./img/1.jpg', category:'autre', carbonRedu:2400, origin:'Barcelone, Spain', carrefourPrice:'4.99'},
                 ],
                 productsCondition:[],
-                state:0
+                state:0,
+                productSelected: {},
+                productAmount:0,
+                productNotification:'',
+                productTotalPrice:"0.00",
+                cart:[],
+                deliveryTime:{day:'Lundi',time:'10:00~12:00'},
+                benevole:{
+                    do:0,
+                    timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                }
             },
             methods:    {
                 getFruit(){
@@ -154,6 +282,49 @@
                 },
                 getHighCarbon(){
                     this.productsCondition = this.products.filter(product => product.carbonRedu >= 5000)
+                },
+                saveProductSelected(arg){
+                    this.productSelected = arg
+                    this.productAmount = 0;
+                    this.productNotification = '';
+                    this.productTotalPrice = 0
+                },
+                addAmount(){
+                    if(this.productAmount < this.productSelected.quantity){
+                        this.productAmount++;
+                        this.productTotalPrice = (this.productAmount * this.productSelected.price).toFixed(2)
+                        this.productNotification = ''
+                    }else{
+                        this.productNotification = "It has already reached the max quantity."
+                    }
+                },
+                minusAmount(){this.productTotalPrice
+                    if(this.productAmount != 0){
+                        this.productAmount--;
+                        this.productTotalPrice = (this.productAmount * this.productSelected.price).toFixed(2)
+                        this.productNotification = ''
+                    }else{
+                        this.productNotification = "You cannot reduce the amount you want to buy anymore"
+                    }
+                },
+                saveToCart(){
+                    var obj = {idProduct:this.productSelected.idProduct,amount:this.productAmount};
+                    this.productAmount=0;
+                    this.productNotification='';
+                    this.cart.push(obj)
+                },
+                upLoadCart(){
+                    var obj = {cart:this.cart,benevole:this.benevole,deliveryTime:this.deliveryTime}
+
+                    //TODO: 发送post请求上传订单信息
+                    // console.log(obj)
+
+                    this.cart=[]
+                    this.benevole={
+                        do:0,
+                        timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                    }
+                    this.deliveryTime = {day:'Lundi',time:'10:00~12:00'}
                 }
             }
         })

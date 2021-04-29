@@ -4,9 +4,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/css/animate.min.css">
-    <link rel="stylesheet" href="static/css/syalert.min.css">
-    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="/static/css/animate.min.css">
+    <link rel="stylesheet" href="/static/css/syalert.min.css">
+    <link rel="stylesheet" href="/static/css/index.css">
     <title>COLIV</title>
 </head>
 <body>
@@ -42,19 +42,66 @@
             </div>
             <div class="listsContent" v-show="state==0">
                 <farm-order v-for="item in farmOrders" :key="item.farmId" :farmorder="item"></farm-order>
-                <client-order v-for="item in clientOrders" :key="item.userId" :clientorder="item" @receivenewid="stockid"></client-order>
+                <client-order v-for="item in clientOrders" :key="item.userId" :clientorder="item" @receiveuser="stockuser"></client-order>
             </div>
             <transition-group name="Farm" tag="div" class="listsContent" v-show="state==1">
                 <farm-order v-for="item in farmOrders" :key="item.farmId" :farmorder="item" v-show="state==1"></farm-order>
             </transition-group>
             <transition-group name="Client" tag="div" class="listsContent" v-show="state==2">
-                <client-order v-for="item in clientOrders" :key="item.userId" :clientorder="item" v-show="state==2" @receivenewid="stockid"></client-order>
+                <client-order v-for="item in clientOrders" :key="item.userId" :clientorder="item" v-show="state==2" @receiveuser="stockuser"></client-order>
             </transition-group>
             <transition-group name="Farm" tag="div" class="listsContent" v-show="state==3">
                 <farm-all v-for="item in farms" :key="item.farmId" :farm="item" v-show="state==3"></farm-all>
             </transition-group>
         </section>
-    <modal :user="getUserById(selectedUser)"></modal>
+
+        <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
+            <div class="sy-title">Contact {{selectedUser.userName}}</div>
+            <div class="sy-content">Description of the task: <span class="longDescription">{{selectedUser.description}}</span></div>
+            <div class="sy-content commentaire">
+                Commentaire(optionelle):
+                <br>
+                <textarea v-model="aide.msg" placeholder="Entrée vos situations et vos raison pour joindre cette aide"></textarea>
+            </div>
+
+            <div class="sy-content aide">
+                <div class="aideOption" v-for="(item,index) in aide.timelist">
+                    <span>Chosir ci-desous le jour sur la livrason. Option {{index + 1}}</span>
+                    <div class="btn-group">
+                        <input type="button" :class="['btn',item.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="item.day='Lundi'">
+                        <input type="button" :class="['btn',item.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="item.day='Mardi'">
+                        <input type="button" :class="['btn',item.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="item.day='Mercredi'">
+                        <input type="button" :class="['btn',item.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="item.day='Jeudi'">
+                        <input type="button" :class="['btn',item.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="item.day='Vendredi'">
+                        <input type="button" :class="['btn',item.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="item.day='Samedi'">
+                        <input type="button" :class="['btn',item.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="item.day='Dimanche'">
+                    </div>
+                    <span>Choisir ci-desous le temps pour la livraison</span>
+                    <div>
+                        <input type="radio" :id="'morning1b'+index"
+                               value="8:00~10:00" v-model="item.time">
+                        <label :for="'morning1b'+index">8:00~10:00</label>
+
+                        <input type="radio" :id="'morning2b'+index"
+                               value="10:00~12:00" v-model="item.time">
+                        <label :for="'morning1b'+index">10:00~12:00</label>
+
+                        <input type="radio" :id="'afternoon1b'+index"
+                               value="14:00~16:00" v-model="item.time">
+                        <label :for="'morning1b'+index">14:00~16:00</label>
+
+                        <input type="radio" :id="'afternoon2b'+index"
+                               value="16:00~18:00" v-model="item.time">
+                        <label :for="'morning1b'+index">16:00~18:00</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sy-content">For more information, please contact <span>&nbsp;{{selectedUser.userName}}&nbsp;</span> at <span>&nbsp;{{selectedUser.tel}}&nbsp;</span></div>
+            <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('alert2')" @click="updateAide()">Join in!</div>
+            </div>
+        </div>
 
     </div>
     <template id="farmOrder">
@@ -64,7 +111,7 @@
                 <div class="infoLeft">
                     <div class="participantNbr">Participant: <span>{{farmorder.totalVolunteers}}</span></div>
                     <div class="benevoleNbr">Bénévole requis: <span>{{farmorder.totalMembers}}</span></div>
-                    <div class="Adress">Adress: <span class="twoLineEllipsis">{{farmorder.farmLocation}}</span> </div>
+                    <div class="Adress">Adress: <span class="twoLineEllipsis">{{farmorder.farmAddress}}</span> </div>
                 </div>
                 <div class="photo">
                     <img :src="farmorder.url" alt="">
@@ -93,7 +140,7 @@
                 <div class="etat valide" v-if="clientorder.state==1">Validé!</div>
                 <div class="type typeClient" v-if="clientorder.userId!=undefined">Aide Client</div>
             </div>
-            <div class="button" @click="getId" onClick="syalert.syopen('alert2')">Contact</div>
+            <div class="button" @click="getUser" onClick="syalert.syopen('alert2')">Participate!</div>
         </div>
     </template>
     <template id="farm">
@@ -112,23 +159,15 @@
             <div class="button">Shopping!</div>
         </div>
     </template>
-    <template id="modal">
-        <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
-            <div class="sy-title">Contact {{user.userName}}</div>
-            <div class="sy-content">Description of the task: <span class="longDescription">{{user.description}}</span></div>
-            <div class="sy-content">For more information, please contact <span>&nbsp;{{user.userName}}&nbsp;</span> at <span>&nbsp;{{user.tel}}&nbsp;</span></div>
-            <div class="sy-btn">
-                <div class="button" onClick="syalert.syhide('alert2')">Confirm</div>
-            </div>
-        </div>
-    </template>
 
 
-    <script src="static/lib/vue-2.5.9.js"></script>
-    <script src="static/lib/vue-router-v3.0.1.js"></script>
-    <script src="static/lib/jquery-1.12.4.min.js"></script>
-    <script src="static/lib/syalert.min.js"></script>
-    <script src="static/js/sideBar.js"></script>
+
+    <script src="/static/lib/vue-2.5.9.js"></script>
+    <script src="/static/lib/vue-router-v3.0.1.js"></script>
+    <script src="/static/lib/jquery-1.12.4.min.js"></script>
+    <script src="/static/lib/syalert.min.js"></script>
+    <script src="/static/lib/axios-v0.17.1.js"></script>
+    <script src="/static/js/sideBar.js"></script>
     <script>
         Vue.component('farm-order',{
             template:'#farmOrder',
@@ -138,8 +177,8 @@
         Vue.component('client-order',{
             template:'#clientOrder',
             methods:{
-                getId(){
-                    this.$emit("receivenewid",this.clientorder.userId)
+                getUser(){
+                    this.$emit("receiveuser",this.clientorder)
                 }
             },
             props:['clientorder']
@@ -150,71 +189,59 @@
             props:['farm']
         })
 
-        Vue.component('modal',{
-            template:'#modal',
-            methods:{
-            },
-            props:['user']
-        })
 
         var vm = new Vue({
             el:"#app",
             data:{
                 farmOrders:[
-                    {farmId:0,farmName:'XX Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'static/img/1.jpg'},
-                    {farmId:1,farmName:'X2 Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'static/img/1.jpg'},
-                    {farmId:2,farmName:'X3X Farm',totalMembers:39,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:0,url:'static/img/1.jpg'},
-                    {farmId:3,farmName:'X4X Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'static/img/1.jpg'},
-                    {farmId:4,farmName:'X5 Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:0,url:'static/img/1.jpg'},
-                    {farmId:5,farmName:'9X Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'static/img/1.jpg'},
-                    {farmId:6,farmName:'7X Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:0,url:'static/img/1.jpg'},
-                    {farmId:7,farmName:'XX7 Farm',totalMembers:30,totalVolunteers:25,farmLocation:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',state:1,url:'static/img/1.jpg'},
+                    // {"farmAddress":"71 Rue Jean Jaur\u00e8s, 69740 Genas","farmId":0,"farmName":"Earl la Seigliere","totalMembers":24,"totalVolunteers":9,"url":null},{"farmAddress":"14 Ter Rue Jean Collet, 69330 Meyzieu","farmId":1,"farmName":"Girard Yvonne","totalMembers":10,"totalVolunteers":5,"url":null},{"farmAddress":"69330 Lyon","farmId":2,"farmName":"Ferme de la Foresti\u00e8re","totalMembers":3,"totalVolunteers":1,"url":null}
                 ],
                 clientOrders:[
-                    {userId:0,userName:'Shihang',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:1,userName:'Yuxuan',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:2,userName:'Xinyu',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:3,userName:'Gong',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:4,userName:'Jiadong',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:5,userName:'Muye',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:1, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:6,userName:'Shi',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:0, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:7,userName:'Sh',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:0, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
-                    {userId:8,userName:'Shiha',date:'14/05/2021 8:00~12:00',totalCandidate:2,state:0, description:'The target of this dilivery is to help the environment and make the world greater again.',depart:'Lyon',destination:'Paris',url:'static/img/1.jpg',tel:"0623232325"},
+                    // {"date":"Monday 8-10;Friday 16-18","depart":"45.7661,4.89998","description":"I can help you carry something during my journey ! ","destination":"44.8366,-0.5781","state":0,"tel":"0651675710","totalCandidate":4,"url":"","userId":56,"userName":"user56"},{"date":"Thursday 12-18","depart":"45.7858,4.86306","description":"I can help you carry something during my journey ! ","destination":"43.6178,1.4349","state":0,"tel":"0609171878","totalCandidate":2,"url":"","userId":40,"userName":"user40"},{"date":"Wednesday 10-12","depart":"45.7588,4.88781","description":"I can help you carry something during my journey ! ","destination":"43.6178,1.4349","state":0,"tel":"0666622792","totalCandidate":0,"url":"","userId":89,"userName":"user89"},{"date":"Saturday 8-10;Sunday 10-18","depart":"45.7886,4.87511","description":"Can someone help me to carry something ? ","destination":"43.6241,3.8669","state":0,"tel":"0690760481","totalCandidate":3,"url":"","userId":53,"userName":"user53"},{"date":"Monday 14-16","depart":"45.7577,4.82703","description":"I can help you carry something during my journey ! ","destination":"48.8302,2.359","state":0,"tel":"0602519699","totalCandidate":1,"url":"","userId":17,"userName":"user17"}
                 ],
                 farms:[
-                    {farmId:0,farmName:'XX Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'},
-                    {farmId:0,farmName:'X1 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'},
-                    {farmId:0,farmName:'X2 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'},
-                    {farmId:0,farmName:'X3 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'},
-                    {farmId:0,farmName:'X4 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'},
-                    {farmId:0,farmName:'22 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'},
-                    {farmId:0,farmName:'66 Farm',location:'20 Avenue Albert Einstein, 69100, Villeurbanne long long long long kong kong kong',productList:'Tomate, Pomme de Terre, fraise, Citron, Pomme, Poire, Cérise.',url:'static/img/1.jpg'}
+                    // {"farmId":0,"farmName":"Earl la Seigliere","location":{"latitude":45.7524,"longitude":5.01988},"productList":"Haricots verts extra-fins CASSEGRAIN ( la boite de,Potimarron ( la pi\u00e8ce ) ,Choux-fleurs en fleurettes  EXTRA ( le sachet d'1K,Oignons jaunes bio  BIO ( le filet de 1 kg ) ,","url":null},{"farmId":1,"farmName":"Girard Yvonne","location":{"latitude":45.7771,"longitude":5.00056},"productList":"Choux-fleurs en fleurettes  EXTRA ( le sachet d'1K,Haricots verts extra fins  BIO ( le bocal de 180g ,Pommes de terre vari\u00e9t\u00e9 marabel FILIERE QUALITE  (,Mandarines \u00e0 jus ( le filet de 2 kg ) ,","url":null},{"farmId":2,"farmName":"Ferme de la Foresti\u00e8re","location":{"latitude":45.8049,"longitude":5.00227},"productList":"Carottes agro\u00e9cologie FILIERE QUALITE  ( le sachet,Oignons jaunes PETIT PRIX ( le filet de 2 kg ) ,Haricots verts tr\u00e8s fins  ( la boite de 440g net \u00e9,Tomates rondes en grappe ( le kilo ) ,","url":null},{"farmId":3,"farmName":"Earl la Ferme de Lena","location":{"latitude":45.7211,"longitude":4.7523},"productList":"Haricots verts tr\u00e8s fins D'AUCY ( la boite de 440g,Oignons jaunes PETIT PRIX ( le filet de 2 kg ) ,Aubergines Bio ( la barquette de 2 ) ,Concombre ( la pi\u00e8ce ) ,","url":null},{"farmId":4,"farmName":"Marchetto Marin Cecile Brune","location":{"latitude":45.6547,"longitude":4.90114},"productList":"Tomates allong\u00e9es coeur ( le kilo ) ,Choux-fleurs en fleurettes  CLASSIC' ( le sachet d,Oignons jaunes ( le filet de 5 kg ) ,Radis roses ( la botte ) ,","url":null}
                 ],
                 //0 === allOrders, 1 === farmOrder, 2 === clientOrder, 3 === farm
                 state:0,
-                selectedUser:0,
+                selectedUser: {},
+                aide:{
+                    msg:'',
+                    timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                },
+                host:''
             },
             methods:{
                 getUserById(id){
                     return this.clientOrders.find(element => element.userId == id)
                 },
-                stockid(data){
+                stockuser(data){
                     this.selectedUser = data;
+                },
+                updateAide(){
+                    //TODO:发送post请求提交aide
+                    this.aide.targetUserId = this.selectedUser.userId
+                    console.log(this.aide)
+                    this.aide={
+                        msg:'',
+                        timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                    }
+                    this.selectedUser={}
                 }
             },
             created(){
-                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarmOrders')
-                    .then(function(data){
-                        this.farmOrders = data;
+                axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarmOrders')
+                    .then((res) => {
+                        this.farmOrders = res.data;
                     })
-                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllUserOrders')
-                    .then(function(data){
-                        this.clientOrders = data;
+                axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllUserOrders')
+                    .then((res) => {
+                        this.clientOrders = res.data;
                     })
 
-                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarms')
-                    .then(function(data){
-                        this.clientOrders = data;
+                axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarms')
+                    .then((res) => {
+                        this.farms = res.data;
                     })
             }
         })
