@@ -22,16 +22,6 @@
             </nav>
         </header>
 
-        <button id="En-cours" @click="EnCours = true">Show Modal</button>
-        <!-- use the modal component, pass in the prop -->
-        <modal v-if="En-cours" @close="EnCours = false">
-            <!--
-          you can use custom content here to overwrite
-          default content
-        -->
-            <h3 slot="header">custom header</h3>
-        </modal>
-
         <section class="section">
             <div id="menu">
                 <div id="open">
