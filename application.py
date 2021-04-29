@@ -34,7 +34,7 @@ application.config['GOOGLEMAPS_KEY'] = "AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48"
 GoogleMaps(application)
 
 application.config.from_object(config)
-pymysql.connect(host=config.HOST, port=int(config.PORT), user=config.USERNAME, passwd=config.PASSWORD, db=config.DATABASE)
+# pymysql.connect(host=config.HOST, port=int(config.PORT), user=config.USERNAME, passwd=config.PASSWORD, db=config.DATABASE)
 db.init_app(application)
 migrate.init_app(application, db)
 # add a rule for the index page.
