@@ -119,6 +119,8 @@ def assignCandidate():
         db.session.query(Order).filter(
                                     Order.id == request.form.get('orderId', type=int)
                                 ).update({"selectedperson" : oldorder.selectedperson + request.form.get('candidateId') + ","})
+        db.session.commit()
+        db.session.close()
         return jsonify(request.form), 200
 
 
@@ -131,6 +133,8 @@ def validateDelivery():
         db.session.query(Order).filter(
                                     Order.id == request.form.get('orderId', type=int)
                                 ).update({"state": int(oldorder.state) + 1})
+        db.session.commit()
+        db.session.close()
         return jsonify(request.form), 200
 
 
