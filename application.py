@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from exts import db, migrate
+from flask_cors import CORS
 from model import User, Request, Farm, Order, Coupon, Product
 import config
 import pymysql
@@ -29,6 +30,8 @@ footer_text = '</body>\n</html>'
 
 # EB looks for an 'application' callable by default.
 application = Flask(__name__)
+cors = CORS()
+cors.init_app(app=application, resources={r"/*": {"origins": "*"}})
 
 application.config['GOOGLEMAPS_KEY'] = "AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48" 
 GoogleMaps(application)

@@ -259,7 +259,7 @@ section #menu #open .navBox ul li .secondary .seconFocus {
     font-size: 30px;
 }
 
-.button{
+.product .button{
     height: 30px;
     text-align: center;
     line-height: 30px;
@@ -269,6 +269,19 @@ section #menu #open .navBox ul li .secondary .seconFocus {
     background-color: #527242;
     color: #fff;
 }
+
+button.validate{
+    width: 300px;
+    margin:30px auto;
+    background-color: #527242;
+    height: 40px;
+    line-height: 40px;
+    font-size: 26px;
+    color: #fff;
+    border-radius: 10px;
+    display:block;
+}
+
 
 /* Vue animation */
 .v-enter,
@@ -280,4 +293,137 @@ section #menu #open .navBox ul li .secondary .seconFocus {
 .v-enter-active,
 .v-leave-active {
     transition: all 0.4s ease;
+}
+
+/* modal */
+.sy-alert-model.reglage{
+    width: 600px;
+    /*height: 1000px;*/
+    background-color: #e2fade;
+}
+
+.sy-alert-model.cart{
+    width: 400px;
+    /*height: 600px;*/
+    background-color: #e2fade;
+}
+
+
+
+.sy-title{
+    text-align: center;
+}
+
+.sy-content.main{
+    display: flex;
+    height: 250px;
+}
+
+.sy-content.main .photoDetail{
+    flex: 0 0 50%;
+}
+
+.sy-content.main .pricecalculate{
+    flex: 0 0 50%;
+}
+
+.sy-content.main .pricecalculate .counter{
+    height: 30px;
+    width: 100px;
+    border: 1px solid #008c8c;
+    border-radius: 5px;
+    margin: 20px auto;
+    display: flex;
+}
+
+.sy-content.main .pricecalculate .counter span{
+    flex: 0 0 33%;
+    text-align: center;
+    line-height: 30px;
+}
+
+.sy-content.main .pricecalculate .counter .minus{
+    border-right: 1px solid #008c8c;
+    cursor: pointer;
+}
+
+.sy-content.main .pricecalculate .counter .add{
+    border-left: 1px solid #008c8c;
+    cursor: pointer;
+}
+
+.sy-content.main .pricecalculate .priceTotal{
+    margin-top: 40px;
+    text-align: center;
+}
+
+.sy-content.main .pricecalculate .priceTotal span{
+    font-size: 30px;
+}
+
+.sy-content.main .pricecalculate span.notif{
+    font-size: 12px;
+}
+
+.sy-content.main img{
+    width: 160px;
+    height: 160px;
+}
+
+.sy-content.deliveryTime{
+    text-align: center;
+}
+
+.sy-content.benevole{
+    height: 200px;
+}
+
+
+.btn{
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.btn-selected{
+    background-color: #cccccc;
+}
+
+.sy-content span.longDescription{
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    color: #2a3827;
+}
+
+.sy-content span{
+    color: rgb(234, 153, 153);
+}
+
+.sy-btn .button{
+    text-align: center;
+    height: 45px;
+    line-height: 45px;
+    cursor:pointer;
+    color: #333;
+    padding: 0 12px;
+    font-size: 15px;
 }

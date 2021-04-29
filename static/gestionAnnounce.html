@@ -54,6 +54,15 @@
         <client-demand v-for="item in clientDemands" :key="item.demandId" :demand="item"></client-demand>
         <farm-offer v-for="item in farmOffers" :key="item.offerId" :offer="item"></farm-offer>
 
+        <!-- Example clientDemand  -->
+        <transition-group tag="div" class="clientDemands" v-show="state==1">
+            <client-demand v-for="item in clientDemandsCondition" :key="item.demandId" :demand="item"></client-demand>
+        </transition-group>
+        <!-- Example farmOffer  -->
+        <transition-group tag="div" class="farmOffers" v-show="state==1">
+            <farm-offer v-for="item in farmOffersCondition" :key="item.offerId" :offer="item"></farm-offer>
+        </transition-group>
+
     </section>
 
     </div>
@@ -93,6 +102,7 @@
     <script src="lib/jquery-1.12.4.min.js"></script>
     <script src="lib/syalert.min.js"></script>
     <script src="js/sideBar.js"></script>
+
     <script>
         Vue.component('farm-offer',{
             template:'#farmoffer',
@@ -120,17 +130,19 @@
             el:"#app",
             data:{
                 farmOffers:[
-                    {name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
-                    {name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
-                    {name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
-                    {name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
-                    {name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {offerId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {offerId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {offerId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {offerId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
+                    {offerId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
                 ],
+                farmOffersCondition:[],
                 clientDemands: [
                     {demandId:0, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai trois kilo de pates à transporter à Paris", tel:"0623232325"},
                     {demandId:1, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai trois kilo de pates à transporter à Paris", tel:"0623232325"},
                     {demandId:2, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai trois kilo de pates à transporter à Paris", tel:"0623232325"},
                 ],
+                clientDemandsCondition:[],
                 state:11,
                 selectedCandidate:0,
             },

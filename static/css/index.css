@@ -311,8 +311,12 @@ section .listsContent{
 
 /*Modal*/
 .sy-alert-model{
-  width: 400px;
+  width: 600px;
   background-color: #e2fade;
+}
+
+.sy-alert-model .sy-content{
+  padding: 5px 20px;
 }
 
 .sy-title{
@@ -328,6 +332,19 @@ section .listsContent{
   color: #2a3827;
 }
 
+.sy-content.commentaire textarea{
+  display: block;
+  width: 100%;
+  height: 100px;
+  font-size: 14px;
+  color: #527242;
+  margin: 0 auto;
+}
+
+.sy-content.aide{
+  height: 200px;
+}
+
 .sy-content span{
   color: rgb(234, 153, 153);
 }
@@ -340,4 +357,30 @@ section .listsContent{
   color: #333;
   padding: 0 12px;
   font-size: 15px;
+}
+
+.btn{
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn-selected{
+  background-color: #cccccc;
 }
