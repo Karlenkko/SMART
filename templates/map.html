@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style type="text/css">
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+
+      /* Optional: Makes the sample page fill the window. */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script type="text/javascript">
+
+      $.ajax({
+                type:'get',
+                url:'http://localhost:5000/algo/map/?orderid=5',
+                cache:false,
+                dataType:'json',
+                crossDomain: true,
+                success:function(dataset){
+
+                    labels = dataset[2]
+                    dataset[2] = []
+
+                    dataset.forEach(data => {
+                        data.forEach(item => {
+                          item["lat"] = parseFloat(item["lat"])
+                          item["lng"] = parseFloat(item["lng"])
+                        })
+                    })
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                      zoom: 13,
+                      center: { lat: 45.784, lng: 4.8798 },
+                    });
+                    dataset[0].forEach(item => {
+                      addMarker(item, "blue", map)
+                    })
+
+                    dataset[1].forEach(item => {
+                      addMarker(item, "green", map)
+                    })                    
+                }
+            });
+
+      function addMarker(latLng, color, map) {
+        let url = "http://maps.google.com/mapfiles/ms/icons/";
+        url += color + "-dot.png";
+
+        let marker = new google.maps.Marker({
+          map: map,
+          position: latLng,
+          icon: {
+            url: url
+          }
+        });
+      }
+
+    </script>
+  </head>
+  <body>
+    <h1> HELLO</h1>
+    <div id="map"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+  </body>
+</html>

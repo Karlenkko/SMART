@@ -84,3 +84,26 @@ CREATE TABLE `ebdb`.`farmorder` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
+
+CREATE TABLE `ebdb`.`order` (
+  `id` INT NOT NULL,
+  `ownerid` INT NULL,
+  `entrepotlist` VARCHAR(400) NULL,
+  `description` VARCHAR(200) NULL,
+  `selectedperson` VARCHAR(200) NULL,
+  `requestlist` VARCHAR(200) NULL,
+  `state` INT NULL,
+  `time` VARCHAR(50) NULL,
+  `price` FLOAT NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE `ebdb`.`request` (
+  `id` INT NOT NULL,
+  `orderid` INT NULL,
+  `userid` INT NULL,
+  `userlocation` VARCHAR(50) NULL,
+  `timeproposed` VARCHAR(100) NULL,
+  `volunteertime` VARCHAR(100) NULL,
+  `description` VARCHAR(200) NULL,
+  `price` FLOAT NULL,
+  PRIMARY KEY (`id`));

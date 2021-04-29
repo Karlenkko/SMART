@@ -1,11 +1,16 @@
-from flask import Flask
+from flask import Flask, render_template, request
 from exts import db, migrate
+from model import User, Request, Farm, Order, Coupon, Product
 import config
 
 from blueprints.index.index import index_bp
 from blueprints.farm.farm import farm_bp
 from blueprints.publish.publish import publish_bp
+from blueprints.algo.algo import algo_bp
 from datainit import init
+
+from flask_googlemaps import GoogleMaps
+from flask_googlemaps import Map
 
 # print a nice greeting.
 def say_hello(username="World"):
@@ -24,6 +29,10 @@ footer_text = '</body>\n</html>'
 
 # EB looks for an 'application' callable by default.
 application = Flask(__name__)
+
+application.config['GOOGLEMAPS_KEY'] = "AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48" 
+GoogleMaps(application)
+
 application.config.from_object(config)
 db.init_app(application)
 migrate.init_app(application, db)
@@ -39,15 +48,21 @@ application.add_url_rule('/<username>', 'hello', (lambda username:
 application.register_blueprint(index_bp)
 application.register_blueprint(farm_bp)
 application.register_blueprint(publish_bp)
+application.register_blueprint(algo_bp)
 # @application.before_first_request
 # def setup():
 #     init()
+
+@application.route("/map", methods=['GET'])
+def map():
+    return render_template("map.html")
+
 
 # run the app.
 if __name__ == "__main__":
     # Setting debug to True enables debug output. This line should be
     # removed before deploying a production app.
-    application.debug = True
+    # application.debug = True
 
     application.run()
 
