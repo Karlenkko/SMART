@@ -43,17 +43,19 @@
                       zoom: 13,
                       center: { lat: 45.784, lng: 4.8798 },
                     });
+                    index = 0;
                     dataset[0].forEach(item => {
-                      addMarker(item, "blue", map)
-                    })
+                      addMarker(item, "blue", map, labels[index++])
 
+                    })
+                    index = 0
                     dataset[1].forEach(item => {
-                      addMarker(item, "green", map)
+                      addMarker(item, "green", map, index++)
                     })                    
                 }
             });
 
-      function addMarker(latLng, color, map) {
+      function addMarker(latLng, color, map, label) {
         let url = "http://maps.google.com/mapfiles/ms/icons/";
         url += color + "-dot.png";
 
@@ -62,7 +64,15 @@
           position: latLng,
           icon: {
             url: url
+          },
+          label: {
+            text: label.toString(),
+            color: 'red',
+            fontSize: "18px",
+            fontWeight: "bold"
           }
+
+          
         });
       }
 
@@ -74,7 +84,7 @@
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48&callback=initMap&libraries=&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4s7PqqEZbx-YbRV7Muqtmdi5DqzWdSTQ&callback=initMap&libraries=&v=weekly"
       async
     ></script>
   </body>

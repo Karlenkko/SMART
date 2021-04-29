@@ -107,3 +107,11 @@ CREATE TABLE `ebdb`.`request` (
   `description` VARCHAR(200) NULL,
   `price` FLOAT NULL,
   PRIMARY KEY (`id`));
+
+CREATE TABLE `ebdb`.`volunteer` (
+  `id` INT NOT NULL,
+  `userid` INT NULL,
+  `entrepotlist` VARCHAR(400) NULL,
+  `requestlist` VARCHAR(200) NULL,
+  `date` VARCHAR(50) NULL,
+  PRIMARY KEY (`id`));
