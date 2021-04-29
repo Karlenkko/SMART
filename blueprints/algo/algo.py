@@ -1,6 +1,7 @@
 from flask import Blueprint
 from model import Farm, Product, Order, Request, User
 from flask import abort, request, jsonify
+from exts import db
 import json
 from sklearn.cluster import KMeans
 import pandas as pd
@@ -14,6 +15,40 @@ parking = {
     "lng" : 4.84839
 }
 
+@algo_bp.route('/algo/updatePath/', methods=['POST'])
+def updatePath():
+
+    data = request.form.to_dict()
+
+    print("---------------post---------------")
+    print(data)
+    print("---------------post---------------")
+
+
+    id = int(data["id"])
+    order = Order.query.filter(Order.id == id)
+
+    entrepot = order[0].entrepotlist.split(";")[0] + ";"
+    index = 0
+    for i in data:
+        if index == 0:
+            index = index + 1
+            continue
+        if index%2 == 1:
+            entrepot = entrepot + data[i] + ","
+        else:
+            entrepot = entrepot + data[i] + ";"
+        index = index + 1
+
+
+    db.session.query(Order).filter(
+                                    Order.id == id
+                                ).update({"entrepotlist" : entrepot})
+    db.session.commit()
+    db.session.close()
+
+    return jsonify(""), 200
+
 
 @algo_bp.route('/algo/map/', methods=['GET'])
 def map():
@@ -26,8 +61,24 @@ def map():
         return "No ID"
 
     order = Order.query.filter(Order.id == id)
+    users = User.query.all()
     requestList = order[0].requestlist
     requests = Request.query.all()
+    depart = {
+        "lat" : order[0].entrepotlist.split(";")[0].split(",")[0],
+        "lng" : order[0].entrepotlist.split(";")[0].split(",")[1]
+    }
+
+    waypointsTmp = order[0].entrepotlist.strip(";").split(";")
+    waypoints = []
+    for i in range(len(waypointsTmp)):
+        if i == 0:
+            continue
+        waypoint = {}
+        waypoint["lat"] = waypointsTmp[i].split(",")[0]
+        waypoint["lng"] = waypointsTmp[i].split(",")[1]
+        waypoints.append(waypoint)
+
 
 
 
@@ -55,12 +106,15 @@ def map():
  
 
     centroids = clustering(locations)
+    res = {}
+    resLocation = []
 
-    res = []
+    resLocation.append(locations)
+    resLocation.append(centroids[0])
+    resLocation.append(centroids[1])
+    res["location"] = resLocation
+    res["parking"] = parking
 
-    res.append(locations)
-    res.append(centroids[0])
-    res.append(centroids[1])
 
     for i in range(len(timeProposed)):
         timeProposed[i]["time"] = timeProposed[i]["time"].strip(";").split(";")
@@ -79,26 +133,57 @@ def map():
     volunteerGroup = countUserByDay(volunteerTime, volunteerDayRes["countList"], deliveryDay)
     selected = volunteerSelected(centroids[1], volunteerGroup, volunteerTime)
 
+    waypointsLabel = []
+    for i in waypoints:
+        index = 0
+        for j in centroids[0]:
+            if j["lat"] == float(i["lat"]) and j["lng"] == float(i["lng"]):
+                waypointsLabel.append(index)
+            index = index + 1
+
+
     finalVolunteer = {}
 
     for key in selected:
-        for id in selected[key]:
-            if centroids[1][id] in finalVolunteer:
+        for index in selected[key]:
+            if (centroids[1][index] in finalVolunteer) or (centroids[1][index] in waypointsLabel):
                 continue
             else:
-                finalVolunteer[centroids[1][id]] = id
+                finalVolunteer[centroids[1][index]] = index
 
     print("----------------------------test-------------------------")
+    print(waypointsLabel)
     print("----------------------------volunteerTime-------------------------")
-    print(volunteerTime)
+    print(centroids[0])
     print("----------------------------volunteerGroup-------------------------")
-    print(volunteerGroup)
+    print(waypoints)
     print("----------------------------getStartTime-------------------------")
-    print(selected)
+    print(finalVolunteer)
     print("----------------------------getStartTime-------------------------")
     print(finalVolunteer)
     print("----------------------------test-------------------------")
 
+    selectedperson = ""
+    voluteerName = ""
+
+    for i in finalVolunteer:
+        userid = requests[int(requestList[finalVolunteer[i]])].userid
+        selectedperson = selectedperson + str(userid) + ";"
+        voluteerName = voluteerName + users[userid].name + "_" + str(i) + ";"
+
+
+    db.session.query(Order).filter(
+                                    Order.id == id
+                                ).update({"selectedperson" : selectedperson})
+    db.session.commit()
+    db.session.close()
+
+
+    res["volunteer"] = voluteerName
+    res["deliveryDay"] = deliveryDay
+    res["depart"] = depart
+    res["id"] = id
+    res["waypoints"] = waypoints
 
     return jsonify(res), 200
 
