@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/syalert.min.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/gestionAnnounce.css">
+    <link rel="stylesheet" href="/static/css/animate.min.css">
+    <link rel="stylesheet" href="/static/css/syalert.min.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/gestionAnnounce.css">
     <title>COLIV</title>
 </head>
 
@@ -19,9 +19,9 @@
         <a href="" class="logo">COLIV</a>
         <nav>
             <ul class="menu-items">
-                <li><a href="" class="menu-item">Acceuil</a></li>
-                <li><a href="" class="menu-item">Mes Comptes</a></li>
-                <li><a href="" class="menu-item">Mes Annonces</a></li>
+                <li><a href="/" class="menu-item">Acceuil</a></li>
+                <li><a href="/myAccount" class="menu-item">Mes Comptes</a></li>
+                <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
                 <li><a href="" class="menu-item">Log Out</a></li>
             </ul>
         </nav>
@@ -64,11 +64,11 @@
     </div>
 
     <template id="clientCandidate">
-        <div class="candidatesInfo" v-if="!candidate.selected">
-            <h3>{{ candidate.name }} : {{ candidate.mobile }} </h3>
+        <div  class="candidatesInfo" v-if="!candidate.selected">
+            <h3>{{ candidate.name }}, Tel. : {{ candidate.mobile }} </h3>
             <div class="button" > Selectionner </div>
         </div>
-        <div v-else>
+        <div  class="candidatesInfo" v-else>
             <h3>{{ candidate.name }}, Tel. : {{ candidate.mobile }} ✓ </h3>
         </div>
     </template>
@@ -81,7 +81,7 @@
                     <div >Date: <span>{{demand.date}}</span></div>
                     <div >Description: <span class="twoLineEllipsis">{{demand.description}}</span> </div>
                     <div >Livreur:</div>
-                    <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item" v-if="item.selected"></client-candidate>
+                    <span v-for=" item in str">{{ item }}</span>
                 </div>
                 <div class="photo">
                     <img src="" alt=""/>
@@ -94,7 +94,7 @@
             <hr>
             <div v-if="!demand.state">
                 <h2>Candidats:</h2>
-                <div class="candidatesInfo">
+                <div>
                         <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item"></client-candidate>
                 </div>
                 <div class="button" v-show="demand.state==0">Valider</div>
@@ -138,12 +138,12 @@
         </div>
     </template>
 
-    <script src="lib/vue-2.5.9.js"></script>
-    <script src="lib/vue-router-v3.0.1.js"></script>
-    <script src="lib/jquery-1.12.4.min.js"></script>
-    <script src="lib/syalert.min.js"></script>
-    <script src="js/sideBar.js"></script>
-
+    <script src="/static/lib/vue-2.5.9.js"></script>
+    <script src="/static/lib/vue-router-v3.0.1.js"></script>
+    <script src="/static/lib/jquery-1.12.4.min.js"></script>
+    <script src="/static/lib/syalert.min.js"></script>
+    <script src="/static/js/sideBar.js"></script>
+    <script src="/static/lib/axios-v0.17.1.js"></script>
     <script>
 
         Vue.component('farm-article',{
@@ -159,16 +159,30 @@
         Vue.component('client-candidate',{
             template:'#clientCandidate',
             props:['candidate'],
+            methods:{
+            }
         })
 
         Vue.component('client-demand',{
             template:'#clientDemand',
-            methods:{
-                getDeliverer(){
-                    return "Deliverer info"
+            data:function (){
+                return {
+                    str:[]
                 }
             },
-            props:['demand']
+            props:['demand'],
+            methods:{
+                getDeliverer(){
+                    let str = [];
+                    this.demand.candidates.filter(item => item.selected).forEach(candidate => {
+                        str.push(candidate.name + ': ' + candidate.mobile);
+                    });
+                    return str;
+                },
+            },
+            created(){
+                this.str = this.getDeliverer();
+            }
         })
 
         Vue.component('modal',{
@@ -183,6 +197,39 @@
             data:{
                 farmOffers:[
                     {offerId:0,
+                        name:'Produits locaux',
+                        state:0,
+                        sales: 153,
+                        articles:
+                            [
+                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
+                            ]},{offerId:4,
+                        name:'Produits locaux',
+                        state:0,
+                        sales: 153,
+                        articles:
+                            [
+                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
+                            ]},{offerId:3,
+                        name:'Produits locaux',
+                        state:0,
+                        sales: 153,
+                        articles:
+                            [
+                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
+                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
+                            ]},{offerId:2,
                         name:'Produits locaux',
                         state:0,
                         sales: 153,
@@ -224,6 +271,9 @@
                 stockid(data){
                     this.selectedCandidate = data;
                 }
+            },
+            created() {
+
             }
         })
     </script>

@@ -60,8 +60,6 @@ application.register_blueprint(algo_bp)
 @application.route("/map/", methods=['GET'])
 def map():
     return render_template("map.html")
-
-
 @application.route("/", methods=['GET'])
 def index():
     return application.send_static_file('index.html')
@@ -72,6 +70,12 @@ def login():
 @application.route("/farm/", methods=["GET"])
 def farm():
     return application.send_static_file('farm.html')
+@application.route("/myAccount/", methods=["GET"])
+def myAccount():
+    return application.send_static_file('gestionAccount.html')
+@application.route("/myAnnounce/", methods=["GET"])
+def myAnnounce():
+    return application.send_static_file('gestionAnnounce.html')
 
 # run the app.
 if __name__ == "__main__":

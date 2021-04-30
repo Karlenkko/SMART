@@ -11,6 +11,7 @@
     margin-top: 20px;
     flex: 0 0 30%;
     border-radius: 10px;
+    padding-bottom: 15px;
 }
 
 .clientDemandsClass h2{
@@ -45,6 +46,7 @@
     height: 150px;
 }
 
+.clientDemandsClass .DemandContainer span,
 .clientDemandsClass .DemandContainer .infoLeft span{
     color: rgb(234, 153, 153);
 }
@@ -66,17 +68,22 @@
 
 .clientDemandsClass .DemandContainer .etat{
     position: absolute;
-    right: 5px;
-    top: 21px;
+    right: -30px;
+    top: -3px;
     transform: rotate(30deg);
+    /*width: 80px;*/
+    color: #fff;
+    padding: 0 5px;
+    border-radius: 5px;
 }
 
 .clientDemandsClass .DemandContainer .etat.encours{
-    color: #aa8c51;
+    background-color: #aa8c51;
 }
 
 .clientDemandsClass .DemandContainer .etat.valide{
-    color:#527242;
+    background-color: #527242;
+
 }
 
 .clientDemandsClass .DemandContainer .type{
@@ -95,8 +102,9 @@
 }
 
 .candidatesInfo{
+    display: flex;
     text-align: center;
-    width: 380px;
+    width: 100%;
     margin: 20px 10px;
 }
 
