@@ -31,6 +31,51 @@ def getAllProducts():
     return jsonify(res), 200
 
 
+@farm_bp.route('/farm/getRequestStats', methods=['GET'])
+def getRequestStats():
+    if not request.args or not 'farmOwnerId' in request.args:
+        abort(400)
+    else:
+        farmorder = Order.query.filter(Order.ownerid == request.args.get('farmOwnerId')).first()
+        requestidlist = farmorder.requestlist.split(',')
+        dayarray = [0,0,0,0,0,0,0]
+        if len(requestidlist) > 0:
+            requestidlist.pop()
+        for req in requestidlist:
+            onereq = Request.query.filter(Request.id == req).first()
+            times = onereq.timeproposed.split(";")
+            times.pop()
+            onepersonday = [0,0,0,0,0,0,0]
+            for time in times:
+                if "Monday" in time:
+                    onepersonday[0] = 1
+                elif "Tuesday" in time:
+                    onepersonday[1] = 1
+                elif "Wednesday" in time:
+                    onepersonday[2] = 1
+                elif "Thursday" in time:
+                    onepersonday[3] = 1
+                elif "Friday" in time:
+                    onepersonday[4] = 1
+                elif "Saturday" in time:
+                    onepersonday[5] = 1
+                elif "Sunday" in time:
+                    onepersonday[6] = 1
+            for i in range(len(onepersonday)):
+                dayarray[i] = dayarray[i] + onepersonday[i]
+
+        res = {
+            "Monday" : dayarray[0],
+            "Tuesday" : dayarray[1],
+            "Wednesday" : dayarray[2],
+            "Thursday" : dayarray[3],
+            "Friday" : dayarray[4],
+            "Saturday" : dayarray[5],
+            "Sunday" : dayarray[6]
+        }
+        return jsonify(res), 200
+        
+
 @farm_bp.route('/farm/request/', methods=['POST'])
 def addRequest():
     # if not request.form or not 'userid' in request.form:
