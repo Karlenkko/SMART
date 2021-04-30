@@ -41,7 +41,7 @@
                             </div>
                         </li>
                         <li>
-                            <h2 class="obtain">Mes offres fermières</h2>
+                            <h2 class="obtain">Mes offres fermières<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=20">En cours</h3>
                                 <h3 @click="state=21">Validé</h3>
@@ -60,28 +60,33 @@
         <button></button>
 
     </section>
+        <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="detail">
+            <div class="sy-title">Candidate: {{ selectedCandidate }}</div>
+            <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
+            <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
+            <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('detail')" @click="assignCandidate(selectedCandidate.userId)">Valide</div>
+            </div>
+        </div>
 
     </div>
 
-    <template id="clientCandidate">
-        <div  class="candidatesInfo" v-if="!candidate.selected">
-            <h3>{{ candidate.name }}, Tel. : {{ candidate.mobile }} </h3>
-            <div class="button" > Selectionner </div>
-        </div>
-        <div  class="candidatesInfo" v-else>
-            <h3>{{ candidate.name }}, Tel. : {{ candidate.mobile }} ✓ </h3>
+    <template id="clientCandidate" >
+        <div  class="candidatesInfo">
+            <h3>{{ candidate.userName }}: {{ candidate.userDescription }} </h3>
+            <div class="button" onClick="syalert.syopen('detail')" @click="emitUser(candidate)">Détail</div>
         </div>
     </template>
 
+
     <template id="clientDemand">
         <div class="clientDemandsClass">
-            <h2>Titre: <span>{{demand.titre}}</span></h2>
+            <h2>Demande</h2>
             <div class="DemandContainer">
                 <div class="infoLeftClient infoLeft">
-                    <div >Date: <span>{{demand.date}}</span></div>
+                    <div >Date: <span>{{demand.dateString}}</span></div>
                     <div >Description: <span class="twoLineEllipsis">{{demand.description}}</span> </div>
-                    <div >Livreur:</div>
-                    <span v-for=" item in str">{{ item }}</span>
+                    <div v-show="demand.selectedperson">Livreur: <span >{{ str }}</span> </div>
                 </div>
                 <div class="photo">
                     <img src="" alt=""/>
@@ -97,9 +102,8 @@
                 <div>
                         <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item"></client-candidate>
                 </div>
-                <div class="button" v-show="demand.state==0">Valider</div>
             </div>
-            <div v-else>
+            <div class="map" v-else>
                 MAP
             </div>
         </div>
@@ -143,7 +147,7 @@
     <script src="/static/lib/jquery-1.12.4.min.js"></script>
     <script src="/static/lib/syalert.min.js"></script>
     <script src="/static/js/sideBar.js"></script>
-    <script src="/static/lib/axios-v0.17.1.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
 
         Vue.component('farm-article',{
@@ -160,25 +164,27 @@
             template:'#clientCandidate',
             props:['candidate'],
             methods:{
+                emitUser(user){
+                    this.$emit('func', user)
+                },
             }
         })
 
         Vue.component('client-demand',{
             template:'#clientDemand',
             data:function (){
+                var str = '';
                 return {
-                    str:[]
+                    str
                 }
             },
             props:['demand'],
             methods:{
                 getDeliverer(){
-                    let str = [];
-                    this.demand.candidates.filter(item => item.selected).forEach(candidate => {
-                        str.push(candidate.name + ': ' + candidate.mobile);
-                    });
+                    let str ='';
+                    str = this.demand.selectedperson.userName + ': ' + this.demand.selectedperson.userTel;
                     return str;
-                },
+                }
             },
             created(){
                 this.str = this.getDeliverer();
@@ -195,8 +201,9 @@
         var vm = new Vue({
             el:"#app",
             data:{
+                host: "http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com",
                 farmOffers:[
-                    {offerId:0,
+                    /*{offerId:0,
                         name:'Produits locaux',
                         state:0,
                         sales: 153,
@@ -207,73 +214,29 @@
                                 {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
                                 {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
                                 {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
-                            ]},{offerId:4,
-                        name:'Produits locaux',
-                        state:0,
-                        sales: 153,
-                        articles:
-                            [
-                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
-                            ]},{offerId:3,
-                        name:'Produits locaux',
-                        state:0,
-                        sales: 153,
-                        articles:
-                            [
-                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
-                            ]},{offerId:2,
-                        name:'Produits locaux',
-                        state:0,
-                        sales: 153,
-                        articles:
-                            [
-                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
-                            ]},
-                    {offerId:1,
-                        name:'ferme local',
-                        state:1,
-                        sales: 156,
-                        articles:
-                            [
-                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
-                            ]},
+                            ]},*/
                 ],
                 clientDemands: [
-                    {demandId:0, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai transporter à Paris", tel:"0623232325",
+                    /*{demandId:0, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai transporter à Paris", tel:"0623232325",
                         candidates:[{id:0, name:'user1', mobile:'123456789', selected:0 },{id:1, name:'user2', mobile:'123456789', selected:1}]},
-                    {demandId:1, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:1, description:"J'ai trois orteà Paris", tel:"0623232325",
-                        candidates:[{id:0, name:'user1', mobile:'123456789', selected:1 },{id:1, name:'user2', mobile:'123456789', selected:0}]},
-                    {demandId:2, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:2, description:"J'ai nsporter à Paris", tel:"0623232325"},
-                ],
+                )*/],
                 state:10,
-                selectedCandidate:0,
+                selectedCandidate:'not chosen',
             },
             methods:{
-                getUserById(id){
-                    return this.clientOrders.find(element => element.userId == id)
+                assignCandidate(userId){
+                    axios.put(this.host+'/publish/assignCandidate?orderId=0')
                 },
-                stockid(data){
-                    this.selectedCandidate = data;
-                }
+                selectCandidate(user){
+                    this.selectedCandidate = user;
+                },
             },
-            created() {
+            created(){
 
+                axios(this.host+'/publish/getUserOrderContent?ownerId=57')
+                    .then((res)=>{
+                        this.clientDemands = res.data;
+                    })
             }
         })
     </script>
