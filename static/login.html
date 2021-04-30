@@ -5,6 +5,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="./css/reset.css">
     <link rel="stylesheet" href="./css/login.css">
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 
 </head>
 <body>
@@ -12,18 +13,19 @@
     <h2>
         <span>Login</span>
     </h2>
-    <div class="form-area">
-        <div class="form-item haserror">
-            <input type="text" placeholder="Composez vos ID">
+    <div id="app" class="form-area">
+        <div   class="form-item haserror">
+            <input type="text"  v-model="nameIn" placeholder="Composez vos ID">
+
             <div class="error">ID existant! Choisir un autre ID</div>
         </div>
         <div class="form-item">
-            <input type="password" placeholder="Password(Entre 8 et 16 charactère)">
+            <input type="password"  v-model="passwdIn" placeholder="Password(Entre 8 et 16 charactère)">
             <div class="error">Mot de passe insuffisant</div>
         </div>
 
         <div class="form-item">
-            <button disabled class="fill">Login</button>
+            <button v-on:click="login">Login</button>
         </div>
 
         <div class="tip textright">
@@ -35,6 +37,38 @@
         </div>
 
     </div>
+    <script src="/static/lib/vue-2.5.9.js"></script>
+    <script src="/static/lib/vue-router-v3.0.1.js"></script>
+    <script src="/static/lib/jquery-1.12.4.min.js"></script>
+    <script src="/static/lib/syalert.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/static/js/sideBar.js"></script>
+    <script src="vue-resource.js-1.3.4"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                nameIn : '',
+                passwdIn :''
+            },
+
+            methods: {
+                login: function (event) {
+                    if (event) {
+                        if (this.nameIn === '' || this.passwdIn === '') {
+                            alert('Vous devez saisir votre nom et le mot de pass')
+                            axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/user/login='+window.localStorage.userName)
+                        }
+                    }
+                }
+            }
+
+        })
+
+
+
+    </script>
 </div>
 </body>
 </html>
