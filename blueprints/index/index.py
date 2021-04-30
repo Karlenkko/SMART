@@ -123,7 +123,7 @@ def participateUserOrder():
 
         oldRequest = Request.query.filter(and_(Request.orderid == data['orderId'], Request.userid == data['userId'])).first()
         if not oldRequest:
-            newRequest = Request(int(requestid), int(data['orderId']), int(data['userId']), str(user.longitude) + "," + str(user.latitude), times, "", data['description'], order.price)
+            newRequest = Request(int(requestid), int(data['orderId']), int(data['userId']), str(user.latitude) + "," + str(user.longitude), times, "", data['description'], order.price)
             db.session.add(newRequest)
         else:
             db.session.query(Request).filter(and_(Request.orderid == data['orderId'], Request.userid == data['userId'])).update({"timeproposed" : oldRequest.timeproposed + times, "description": oldRequest.description + ";" + data['description']})

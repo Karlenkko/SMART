@@ -8,6 +8,7 @@ from blueprints.index.index import index_bp
 from blueprints.farm.farm import farm_bp
 from blueprints.publish.publish import publish_bp
 from blueprints.algo.algo import algo_bp
+from blueprints.user.user import user_bp
 from datainit import init
 
 from flask_googlemaps import GoogleMaps
@@ -53,6 +54,7 @@ application.register_blueprint(index_bp)
 application.register_blueprint(farm_bp)
 application.register_blueprint(publish_bp)
 application.register_blueprint(algo_bp)
+application.register_blueprint(user_bp)
 # @application.before_first_request
 # def setup():
 #     init()

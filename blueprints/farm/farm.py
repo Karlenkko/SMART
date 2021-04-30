@@ -84,7 +84,7 @@ def addRequest():
     try:
         data = json.loads(request.get_data(as_text=True))
         user = User.query.filter(User.id == data['userId']).first()
-        userlocation = str(user.longitude) + "," + str(user.latitude)
+        userlocation = str(user.latitude) + "," + str(user.longitude)
         requestid = Request.query.count()
         desttime = ''
 
@@ -104,7 +104,7 @@ def addRequest():
             farm = Farm.query.filter(Farm.userid == data['farmOwnerId']).first()
             neworder = Order(int(orderid),
                              int(data['farmOwnerId']),
-                             str(farm.longitude) + "," + str(farm.latitude),
+                             str(farm.latitude) + "," + str(farm.longitude),
                              "",
                              "",
                              "",

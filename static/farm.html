@@ -320,6 +320,7 @@
                     }
                 },
                 upLoadCart(){
+                    this.benevole.timelist = this.benevole.timelist.filter(time=>time.day!='' && time.time!='')
                     var obj = {farmOwnerId:window.localStorage.farmownerid,userId:1,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
 
                     //TODO: 发送post请求上传订单信息

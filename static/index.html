@@ -240,6 +240,8 @@
                 },
                 updateAide(){
                     //TODO:发送post请求提交aide
+                    this.aide.timelist = this.aide.timelist.filter(time=>time.day!='' && time.time!='')
+                    console.log(this.aide)
                     this.aide.orderId = this.selectedUser.orderId
                     axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/participateUserOrder',this.aide)
                     this.aide={
