@@ -47,7 +47,7 @@ CREATE TABLE `ebdb`.`product` (
   `name` VARCHAR(50) NULL,
   `quantity` INT NULL,
   `price` FLOAT NULL,
-  `photourl` VARCHAR(100) NULL,
+  `photourl` VARCHAR(200) NULL,
   `category` VARCHAR(20) NULL,
   `carbonredu` INT NULL,
   PRIMARY KEY (`id`))

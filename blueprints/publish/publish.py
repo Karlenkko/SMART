@@ -8,14 +8,44 @@ from exts import db
 publish_bp = Blueprint('publish', __name__)
 
 
-@publish_bp.route('/publish/getUserPublishContent/', methods=['GET'])
+@publish_bp.route('/publish/getUserOrderContent/', methods=['GET'])
 def getUserPublishContent():
-    return 'get user publish content'
+    if not request.args or not 'ownerId' in request.args:
+        abort(400)
+    else:
+        orders = Order.query.filter(Order.ownerid == request.args.get('ownerId'))
+        res = []
+        for order in orders:
+            requestlist = Request.query.filter(Request.orderid == order.id)
+            reqs = []
+            for onerequest in requestlist:
+                user = User.query.filter(User.id == onerequest.userid).first()
+                reqs.append({
+                    "userId" : onerequest.userid,
+                    "userName" : user.name,
+                    "userTel" : user.mobile,
+                    "userDescription" : onerequest.description,
+                    "userProposeTime" : onerequest.timeproposed,
+                    "volunteerTime" : onerequest.volunteertime
+                })
+            res.append({
+                "dateString": order.time,
+                "price" : order.price,
+                "state" : order.state,
+                "description" : order.description,
+                "entrepotlist" : order.entrepotlist,
+                "selectedperson" : order.selectedperson,
+                "candidates" : reqs
+            })
+        return jsonify(res), 200
 
 
-@publish_bp.route('/publish/getFarmPublishContent/', methods=['GET'])
+@publish_bp.route('/publish/getFarmOrderContent/', methods=['GET'])
 def getFarmPublishContent():
-    return 'get farm publish content'
+    if not request.args or not 'ownerId' in request.args:
+        abort(400)
+    else:
+        return 'get farm publish content'
 
 
 @publish_bp.route('/publish/getFarmDeliveryRoute/', methods=['GET'])

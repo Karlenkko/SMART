@@ -80,7 +80,7 @@ class Product(db.Model, EntityBase):
     name = db.Column(db.String(50))
     quantity = db.Column(db.Integer)
     price = db.Column(db.Float)
-    photourl = db.Column(db.String(100))
+    photourl = db.Column(db.String(200))
     category = db.Column(db.String(20))
     carbonredu = db.Column(db.Integer)
     origincarrefour = db.Column(db.String(100))
