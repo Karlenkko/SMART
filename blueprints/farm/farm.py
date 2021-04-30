@@ -118,7 +118,7 @@ def addRequest():
 
         description = ''
         for item in data['cart']:
-            description = description + item['productName'] + "_" + item['amount'] + ";"
+            description = description + item['productName'] + "_" + str(item['amount']) + ";"
 
         newRequest = Request(int(requestid),
                              int(requestorderid),
