@@ -1,4 +1,6 @@
 from flask import Blueprint
+from sqlalchemy import and_
+
 from model import Farm, Product, Order, Request, User
 from flask import abort, request, jsonify
 from flask_cors import cross_origin
@@ -118,9 +120,13 @@ def participateUserOrder():
         times = ''
         for time in data['timelist']:
             times = times + time['day'] + " " + time['time'] + ";"
-        newRequest = Request(int(requestid), int(data['orderId']), int(data['userId']), str(user.longitude) + "," + str(user.latitude), times, "", data['description'], order.price)
-        db.session.add(newRequest)
-        print("added new request")
+
+        oldRequest = Request.query.filter(and_(Request.orderid == data['orderId'], Request.userid == data['userId'])).first()
+        if not oldRequest:
+            newRequest = Request(int(requestid), int(data['orderId']), int(data['userId']), str(user.longitude) + "," + str(user.latitude), times, "", data['description'], order.price)
+            db.session.add(newRequest)
+        else:
+            db.session.query(Request).filter(and_(Request.orderid == data['orderId'], Request.userid == data['userId'])).update({"timeproposed" : oldRequest.timeproposed + times, "description": oldRequest.description + ";" + data['description']})
         oldorder = Order.query.filter(Order.id == data['orderId']).first()
         db.session.query(Order).filter(Order.id == data['orderId']).update({"requestlist": oldorder.requestlist + str(requestid) + ","})
         db.session.commit()

@@ -66,10 +66,12 @@ def map():
 def index():
     return application.send_static_file('index.html')
     # return render_template("index.html")
-@application.route("/login", methods=["GET"])
+@application.route("/login/", methods=["GET"])
 def login():
     return application.send_static_file('login.html')
-
+@application.route("/farm/", methods=["GET"])
+def farm():
+    return application.send_static_file('farm.html')
 
 # run the app.
 if __name__ == "__main__":
