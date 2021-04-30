@@ -58,7 +58,9 @@
                     if (event) {
                         if (this.nameIn === '' || this.passwdIn === '') {
                             alert('Vous devez saisir votre nom et le mot de pass')
-                            axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/user/login='+window.localStorage.userName)
+
+                        }else{
+                            axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/user/login?=userName' + window.localStorage.name)
                         }
                     }
                 }
