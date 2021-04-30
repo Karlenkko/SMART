@@ -29,6 +29,7 @@ def getUserPublishContent():
                     "volunteerTime" : onerequest.volunteertime
                 })
             res.append({
+                "orderId" : order.id,
                 "dateString": order.time,
                 "price" : order.price,
                 "state" : order.state,

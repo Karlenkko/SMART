@@ -322,7 +322,7 @@
                     var obj = {farmOwnerId:window.localStorage.farmownerid,userid:1,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
 
                     //TODO: 发送post请求上传订单信息
-                    axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/request',this.obj)
+                    axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/request', obj)
                     console.log(obj)
 
                     this.cart=[]
