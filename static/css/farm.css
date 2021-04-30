@@ -270,13 +270,25 @@ section #menu #open .navBox ul li .secondary .seconFocus {
     color: #fff;
 }
 
+#app{
+    position: relative;
+}
+
+.bottomBar{
+    height: 50px;
+    width: 100%;
+    background-color: #82bb68;
+    position: fixed;
+    bottom: 0;
+}
+
 button.validate{
     width: 300px;
-    margin:30px auto;
-    background-color: #527242;
-    height: 40px;
-    line-height: 40px;
-    font-size: 26px;
+    margin:10px auto;
+    background-color: #82bb68;
+    height: 30px;
+    line-height: 30px;
+    font-size: 18px;
     color: #fff;
     border-radius: 10px;
     display:block;

@@ -190,8 +190,9 @@
             </div>
 
         </section>
+        <div class="bottomBar">
         <button class="validate" onClick="syalert.syopen('alert2')">Valider le cart!</button>
-
+        </div>
     </div>
 
     <template id="produitItem">
@@ -319,7 +320,7 @@
                     }
                 },
                 upLoadCart(){
-                    var obj = {farmOwnerId:window.localStorage.farmownerid,userid:1,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
+                    var obj = {farmOwnerId:window.localStorage.farmownerid,userId:1,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
 
                     //TODO: 发送post请求上传订单信息
                     axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/request', obj)
