@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint
 from flask import abort, request, jsonify
 from model import Order, User, Farm, Request
@@ -27,8 +29,8 @@ def getFarmDeliveryRoute():
         for point in points:
             coord = point.split(',')
             res.append({
-                "longitude" : coord[0],
-                "latitude" : coord[1]
+                "longitude": coord[0],
+                "latitude": coord[1]
             })
         return jsonify(res), 200
 
@@ -53,61 +55,62 @@ def getUserPublishCandidates():
         res = []
         for i in range(0, len(users)):
             res.append({
-                "userId" : users[i].id,
-                "candidateName" : users[i].name,
-                "phoneNumber" : users[i].mobile
+                "userId": users[i].id,
+                "candidateName": users[i].name,
+                "phoneNumber": users[i].mobile
             })
         return jsonify(res), 200
 
 
 @publish_bp.route('/publish/postUserOrderContent/', methods=['POST'])
 def postUserPublishContent():
-    if not request.form or not 'userId' in request.form:
-        abort(400)
+    # if not request.form or not 'userId' in request.form:
+    #     abort(400)
+    # else:
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        orderid = Order.query.count()
+        newOrder = Order(orderid,
+                         data['userId'],
+                         data['entrepotlist'],
+                         data['description'],
+                         "",
+                         "",
+                         0,
+                         data['time'])
+        db.session.add(newOrder)
+        db.session.commit()
+    except:
+        abort(500)
     else:
-        try:
-            orderid = Order.query.count()
-            newOrder = Order(orderid,
-                             request.form.get('userId', type=int),
-                             request.form.get('entrepotlist'),
-                             request.form.get('description'),
-                             "",
-                             "",
-                             0,
-                             request.form.get('time')
-                             )
-            db.session.add(newOrder)
-            db.session.commit()
-        except:
-            abort(500)
-        else:
-            return jsonify(request.form), 201
+        return jsonify(request.form), 201
 
 
 @publish_bp.route('/publish/postFarmOrderContent/', methods=['POST'])
 def postFarmPublishContent():
-    if not request.form or not 'userId' in request.form:
-        abort(400)
+    # if not request.form or not 'userId' in request.form:
+    #     abort(400)
+    # else:
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        orderid = Order.query.count()
+        farm = Farm.query.filter(Farm.userid == data['userId'])
+        farmPos = str(farm.longitude) + "," + str(farm.latitude)
+        newOrder = Order(orderid,
+                         data['userId'],
+                         farmPos,
+                         "",
+                         "",
+                         "",
+                         0,
+                         ""
+                         )
+        db.session.add(newOrder)
+        db.session.commit()
+    except:
+        abort(500)
     else:
-        try:
-            orderid = Order.query.count()
-            farm = Farm.query.filter(Farm.userid == request.form.get('userId', type=int))
-            farmPos = str(farm.longitude) + "," + str(farm.latitude)
-            newOrder = Order(orderid,
-                             request.form.get('userId'),
-                             farmPos,
-                             "",
-                             "",
-                             "",
-                             0,
-                             ""
-                             )
-            db.session.add(newOrder)
-            db.session.commit()
-        except:
-            abort(500)
-        else:
-            return jsonify(request.form), 201
+        return jsonify(request.form), 201
 
 
 @publish_bp.route('/publish/assignCandidate/', methods=['PUT'])
@@ -117,8 +120,10 @@ def assignCandidate():
     else:
         oldorder = Order.query.filter(Order.id == request.form.get('orderId', type=int)).first()
         db.session.query(Order).filter(
-                                    Order.id == request.form.get('orderId', type=int)
-                                ).update({"selectedperson" : oldorder.selectedperson + request.form.get('candidateId') + ","})
+            Order.id == request.form.get('orderId', type=int)
+        ).update({"selectedperson": oldorder.selectedperson + request.form.get('candidateId') + ","})
+        db.session.commit()
+        db.session.close()
         return jsonify(request.form), 200
 
 
@@ -129,8 +134,10 @@ def validateDelivery():
     else:
         oldorder = Order.query.filter(Order.id == request.form.get('orderId', type=int)).first()
         db.session.query(Order).filter(
-                                    Order.id == request.form.get('orderId', type=int)
-                                ).update({"state": int(oldorder.state) + 1})
+            Order.id == request.form.get('orderId', type=int)
+        ).update({"state": int(oldorder.state) + 1})
+        db.session.commit()
+        db.session.close()
         return jsonify(request.form), 200
 
 

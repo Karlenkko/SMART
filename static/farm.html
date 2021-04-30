@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Farm</title>
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/syalert.min.css">
-    <link rel="stylesheet" href="css/farm.css">
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_2519039_01p6o84lck5y.css">
+    <link rel="stylesheet" href="/static/css/animate.min.css">
+    <link rel="stylesheet" href="/static/css/syalert.min.css">
+    <link rel="stylesheet" href="/static/css/farm.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_2519039_01p6o84lck5y.css">
 </head>
 <body>
     <div id="app">
@@ -110,30 +110,30 @@
                 <div class="sy-content deliveryTime">
                     <span>Chosir ci-desous le jour sur la livrason.</span>
                     <div class="btn-group">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="deliveryTime.day='Lundi'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="deliveryTime.day='Mardi'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="deliveryTime.day='Mercredi'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="deliveryTime.day='Jeudi'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="deliveryTime.day='Vendredi'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="deliveryTime.day='Samedi'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="deliveryTime.day='Dimanche'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Monday'?'btn-selected':'']" value="Monday" @click="deliveryTime.day='Monday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="deliveryTime.day='Tuesday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Wednesday'?'btn-selected':'']" value="Wednesday" @click="deliveryTime.day='Wednesday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Thursday'?'btn-selected':'']" value="Thursday" @click="deliveryTime.day='Thursday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Friday'?'btn-selected':'']" value="Friday" @click="deliveryTime.day='Friday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="deliveryTime.day='Saturday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="deliveryTime.day='Sunday'">
                     </div>
                     <span>Choisir ci-desous le temps pour la livraison</span>
                     <div>
                         <input type="radio" id="morning1"
-                               value="8:00~10:00" v-model="deliveryTime.time">
+                               value="8-10" v-model="deliveryTime.time">
                         <label for="morning1">8:00~10:00</label>
 
                         <input type="radio" id="morning2"
-                               value="10:00~12:00" v-model="deliveryTime.time">
+                               value="10-12" v-model="deliveryTime.time">
                         <label for="morning2">10:00~12:00</label>
 
                         <input type="radio" id="afternoon1"
-                               value="14:00~16:00" v-model="deliveryTime.time">
+                               value="14-16" v-model="deliveryTime.time">
                         <label for="afternoon1">14:00~16:00</label>
 
                         <input type="radio" id="afternoon2"
-                               value="16:00~18:00" v-model="deliveryTime.time">
+                               value="16-18" v-model="deliveryTime.time">
                         <label for="afternoon2">16:00~18:00</label>
                     </div>
                 </div>
@@ -154,31 +154,31 @@
                         <div class="benevoleOption" v-for="(item,index) in benevole.timelist">
                             <span>Chosir ci-desous le jour sur la livrason. Option {{index + 1}}</span>
                             <div class="btn-group">
-                                <input type="button" :class="['btn',item.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="item.day='Lundi'">
-                                <input type="button" :class="['btn',item.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="item.day='Mardi'">
-                                <input type="button" :class="['btn',item.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="item.day='Mercredi'">
-                                <input type="button" :class="['btn',item.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="item.day='Jeudi'">
-                                <input type="button" :class="['btn',item.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="item.day='Vendredi'">
-                                <input type="button" :class="['btn',item.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="item.day='Samedi'">
-                                <input type="button" :class="['btn',item.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="item.day='Dimanche'">
+                                <input type="button" :class="['btn',item.day == 'Monday'?'btn-selected':'']" value="Monday" @click="item.day='Monday'">
+                                <input type="button" :class="['btn',item.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="item.day='Tuesday'">
+                                <input type="button" :class="['btn',item.day == 'Wednesday'?'btn-selected':'']" value="Wednesday" @click="item.day='Wednesday'">
+                                <input type="button" :class="['btn',item.day == 'Thursday'?'btn-selected':'']" value="Thursday" @click="item.day='Thursday'">
+                                <input type="button" :class="['btn',item.day == 'Friday'?'btn-selected':'']" value="Friday" @click="item.day='Friday'">
+                                <input type="button" :class="['btn',item.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="item.day='Saturday'">
+                                <input type="button" :class="['btn',item.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="item.day='Sunday'">
                             </div>
                             <span>Choisir ci-desous le temps pour la livraison</span>
                             <div>
                                 <input type="radio" :id="'morning1b'+index"
-                                       value="8:00~10:00" v-model="item.time">
+                                       value="8-10" v-model="item.time">
                                 <label :for="'morning1b'+index">8:00~10:00</label>
 
                                 <input type="radio" :id="'morning2b'+index"
-                                       value="10:00~12:00" v-model="item.time">
-                                <label :for="'morning1b'+index">10:00~12:00</label>
+                                       value="10-12" v-model="item.time">
+                                <label :for="'morning2b'+index">10:00~12:00</label>
 
                                 <input type="radio" :id="'afternoon1b'+index"
-                                       value="14:00~16:00" v-model="item.time">
-                                <label :for="'morning1b'+index">14:00~16:00</label>
+                                       value="14-16" v-model="item.time">
+                                <label :for="'afternoon1b'+index">14:00~16:00</label>
 
                                 <input type="radio" :id="'afternoon2b'+index"
-                                       value="16:00~18:00" v-model="item.time">
-                                <label :for="'morning1b'+index">16:00~18:00</label>
+                                       value="16-18" v-model="item.time">
+                                <label :for="'afternoon2b'+index">16:00~18:00</label>
                             </div>
                         </div>
                     </div>
@@ -219,11 +219,12 @@
         </div>
     </template>
 
-    <script src="lib/vue-2.5.9.js"></script>
-    <script src="lib/vue-router-v3.0.1.js"></script>
-    <script src="lib/jquery-1.12.4.min.js"></script>
-    <script src="lib/syalert.min.js"></script>
-    <script src="js/sideBarFarm.js"></script>
+    <script src="/static/lib/vue-2.5.9.js"></script>
+    <script src="/static/lib/vue-router-v3.0.1.js"></script>
+    <script src="/static/lib/jquery-1.12.4.min.js"></script>
+    <script src="/static/lib/syalert.min.js"></script>
+    <script src="/static/lib/axios-v0.17.1.js"></script>
+    <script src="/static/js/sideBarFarm.js"></script>
 
 
     <script>
@@ -258,11 +259,12 @@
                 productNotification:'',
                 productTotalPrice:"0.00",
                 cart:[],
-                deliveryTime:{day:'Lundi',time:'10:00~12:00'},
+                deliveryTime:{day:'Monday',time:'10-12'},
                 benevole:{
                     do:0,
-                    timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
-                }
+                    timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}]
+                },
+                totalPrice:0
             },
             methods:    {
                 getFruit(){
@@ -308,24 +310,35 @@
                     }
                 },
                 saveToCart(){
-                    var obj = {idProduct:this.productSelected.idProduct,amount:this.productAmount};
-                    this.productAmount=0;
-                    this.productNotification='';
-                    this.cart.push(obj)
+                    if(this.productAmount>0){
+                        var obj = {productName:this.productSelected.productName,amount:this.productAmount};
+                        this.totalPrice += this.productAmount * this.productSelected.price
+                        this.productAmount=0;
+                        this.productNotification='';
+                        this.cart.push(obj)
+                    }
                 },
                 upLoadCart(){
-                    var obj = {cart:this.cart,benevole:this.benevole,deliveryTime:this.deliveryTime}
+                    var obj = {farmOwnerId:window.localStorage.farmownerid,userid:1,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
 
                     //TODO: 发送post请求上传订单信息
-                    // console.log(obj)
+                    axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalkfar.com/farm/request',this.obj)
+                    console.log(obj)
 
                     this.cart=[]
                     this.benevole={
                         do:0,
-                        timelist:[{day:'Lundi',time:'8:00~10:00'},{day:'',time:''},{day:'',time:''}]
+                        timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}]
                     }
-                    this.deliveryTime = {day:'Lundi',time:'10:00~12:00'}
+                    this.deliveryTime = {day:'Monday',time:'10-12'}
+                    this.totalPrice = 0
                 }
+            },
+            created(){
+                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/getAllProducts?farmId='+window.localStorage.farmid)
+                    .then(res=>{
+                        this.products = res.data;
+                    })
             }
         })
     </script>

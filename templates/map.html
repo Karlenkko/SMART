@@ -5,21 +5,59 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <style type="text/css">
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
+      #right-panel {
+        font-family: "Roboto", "sans-serif";
+        line-height: 30px;
+        padding-left: 10px;
       }
 
-      /* Optional: Makes the sample page fill the window. */
+      #right-panel select,
+      #right-panel input {
+        font-size: 15px;
+      }
+
+      #right-panel select {
+        width: 100%;
+      }
+
+      #right-panel i {
+        font-size: 12px;
+      }
+
       html,
       body {
         height: 100%;
         margin: 0;
         padding: 0;
       }
+
+      #map {
+        height: 100%;
+        float: left;
+        width: 70%;
+        height: 100%;
+      }
+
+      #right-panel {
+        margin: 20px;
+        border-width: 2px;
+        width: 20%;
+        height: 400px;
+        float: left;
+        text-align: left;
+        padding-top: 0;
+      }
+
+      #directions-panel {
+        margin-top: 10px;
+        background-color: #ffee77;
+        padding: 10px;
+        overflow: scroll;
+        height: 174px;
+      }
     </style>
     <script type="text/javascript">
+
 
       $.ajax({
                 type:'get',
@@ -27,10 +65,13 @@
                 cache:false,
                 dataType:'json',
                 crossDomain: true,
-                success:function(dataset){
+                success:function(res){
 
+                    dataset = res["location"]
                     labels = dataset[2]
+                    parking = res["parking"]
                     dataset[2] = []
+                    dataset[3] = [] 
 
                     dataset.forEach(data => {
                         data.forEach(item => {
@@ -38,20 +79,127 @@
                           item["lng"] = parseFloat(item["lng"])
                         })
                     })
-
-                    const map = new google.maps.Map(document.getElementById("map"), {
-                      zoom: 13,
-                      center: { lat: 45.784, lng: 4.8798 },
-                    });
-                    index = 0;
-                    dataset[0].forEach(item => {
-                      addMarker(item, "blue", map, labels[index++])
+                    let stopovers = []
+                    res["waypoints"].forEach(item => {
+                          item["lat"] = parseFloat(item["lat"])
+                          item["lng"] = parseFloat(item["lng"])
+                          stopoverItem = {
+                            location : {
+                              "lat" : parseFloat(item["lat"]),
+                              "lng" : parseFloat(item["lng"])
+                            },
+                            stopover : true
+                          }
+                          stopovers.push(stopoverItem)
 
                     })
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                      zoom: 12,
+                      center: { lat: 45.77495, lng: 4.84839 },
+                    });
+                    index = 0;
+
+                    $("#btn").click(function(){
+                        dataset[0].forEach(item => {
+                            addMarker(item, "blue", map, "")
+                        })
+                        index = index + 1
+                    })
+                    $("#btnClear").click(function(){
+                          location.reload()
+                    })
+                    
                     index = 0
+                    var allPoints = dataset[1]
                     dataset[1].forEach(item => {
-                      addMarker(item, "green", map, index++)
-                    })                    
+                      name = "Point Retrait " + index
+                      index = index + 1
+                      let o = new Option(name, "value");
+                      $(o).html(name);
+                      $(o).click(function(){
+                          let checkboxArray = document.getElementById("waypoints");
+
+                          for (let i = 0; i < checkboxArray.length; i++) {
+                            if (checkboxArray.options[i].selected) {
+                              addMarker(allPoints[i], "blue", map, "Point Retrait " + i)
+                            } else {
+                              addMarker(allPoints[i], "green", map, "Point Retrait " + i)
+                            }
+                          }
+                        
+                      })
+                      $("#waypoints").append(o);
+                      addMarker(item, "green", map, name)
+                    })  
+                    addMarker(parking, "yellow", map, "STOCKAGE")
+                    res["waypoints"].forEach(item => {
+                          addMarker(item, "red", map, "")
+                    })
+                    
+                    res["depart"]["lat"] = parseFloat(res["depart"]["lat"])
+                    res["depart"]["lng"] = parseFloat(res["depart"]["lng"])
+
+                    addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
+
+                    // directionsDisplay = new google.maps.DirectionsRenderer();
+
+                    // var directionsService = new google.maps.DirectionsService();
+                    // var request = {
+                    //   origin: res["depart"],
+                    //   destination: parking,
+                    //   waypoints: stopovers,
+                    //   optimizeWaypoints: true,
+                    //   travelMode: google.maps.TravelMode.DRIVING
+                    // };
+
+                    // directionsService.route(request, function(result, status) {
+                    //   if (status == google.maps.DirectionsStatus.OK) {
+                    //     directionsDisplay.setDirections(result);
+                    //   }
+                    // });
+                    // directionsDisplay.setMap(map);
+
+                    console.log(res["volunteer"]) 
+
+                    volunteers = res["volunteer"].split(";")
+
+                    volunteers.forEach(item => {
+                      if(item.length > 0){
+                        let l = "<label>" + item.split("_")[0] + " will help us at Point Retrait " + item.split("_")[1]  + "</label>";
+                         $("#aide").append(l);
+                      }
+                    })
+
+                    
+
+
+                    let waypts = [];
+
+                    $("#submit").click(function(){
+                      console.log("hello")
+                      waypts = []
+                      let checkboxArray = document.getElementById("waypoints");
+
+                      for (let i = 0; i < checkboxArray.length; i++) {
+                        if (checkboxArray.options[i].selected) {
+                          waypts.push(allPoints[i])
+                          addMarker(allPoints[i], "blue", map, "Point Retrait " + i)
+                        }
+                      }
+
+                      $.ajax({
+                        type: "POST",
+                        url: "http://localhost:5000/algo/updatePath",
+                        data: {
+                          "id" : res["id"],
+                          "points" : waypts
+                        },
+                        success: function(){
+                          location.reload()
+                        }
+                      });
+                    });               
                 }
             });
 
@@ -59,32 +207,69 @@
         let url = "http://maps.google.com/mapfiles/ms/icons/";
         url += color + "-dot.png";
 
-        let marker = new google.maps.Marker({
-          map: map,
-          position: latLng,
-          icon: {
-            url: url
-          },
-          label: {
-            text: label.toString(),
-            color: 'red',
-            fontSize: "18px",
-            fontWeight: "bold"
-          }
+        if(label===""){
+          let marker = new google.maps.Marker({
+            map: map,
+            position: latLng,
+            icon: {
+              url: url,
+              labelOrigin: new google.maps.Point(15, -13),
+              size: new google.maps.Size(32,32),
+              anchor: new google.maps.Point(16,32)
+            },    
+          });
+        } else{
+          let marker = new google.maps.Marker({
+            map: map,
+            position: latLng,
+            icon: {
+              url: url,
+              labelOrigin: new google.maps.Point(15, -13),
+              size: new google.maps.Size(32,32),
+              anchor: new google.maps.Point(16,32)
+            },
+            label: {
+              text: label.toString(),
+              color: 'black',
+              fontSize: "12px",
+              fontWeight: "bold"
+            }
 
-          
-        });
+            
+          });
+        }
+
+        
       }
+
+     
 
     </script>
   </head>
   <body>
-    <h1> HELLO</h1>
     <div id="map"></div>
+    <div id="right-panel">
+      <div>
+        <b>Waypoints:</b> <br />
+        <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br />
+        <select multiple id="waypoints">
+        </select>
+        <br />
+        <div style="display: flex; flex-direction: column; justify-content: space-around; align-items: center; height: 120px">
+          <input type="submit" value="submit" id="submit" />
+          <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center; height: 80px; width: 200px">
+            <button id = "btn"> Details</button>
+            <button id = "btnClear"> Clear</button>
+          </div>
+        </div>
+        <div id="aide" style="display: flex; flex-direction: column; justify-content: space-around; align-items: center;">
+        </div>
+      </div>
+    </div>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4s7PqqEZbx-YbRV7Muqtmdi5DqzWdSTQ&callback=initMap&libraries=&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&libraries=&v=weekly"
       async
     ></script>
   </body>
