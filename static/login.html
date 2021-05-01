@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="./css/reset.css">
-    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="/static/css/reset.css">
+    <link rel="stylesheet" href="/static/css/login.css">
     <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 
 </head>
@@ -14,7 +14,7 @@
         <span>Login</span>
     </h2>
     <div id="app" class="form-area">
-        <div   class="form-item haserror">
+        <div   class="form-item">
             <input type="text"  v-model="nameIn" placeholder="Composez vos ID">
 
             <div class="error">ID existant! Choisir un autre ID</div>
@@ -43,7 +43,7 @@
     <script src="/static/lib/syalert.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/js/sideBar.js"></script>
-    <script src="vue-resource.js-1.3.4"></script>
+    <script src="/static/lib/vue-resource.js-1.3.4.js"></script>
 
     <script>
         new Vue({
@@ -60,7 +60,24 @@
                             alert('Vous devez saisir votre nom et le mot de pass')
 
                         }else{
-                            axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/user/login?=userName' + window.localStorage.name)
+                            axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/user/login?userName=' + this.nameIn + "&passwd=" + this.passwdIn)
+                                .then(res=>{
+                                    if (res.data.loggedin == "false"){
+                                        alert(res.data.msg)
+                                    } else if (res.data.loggedin == "true"){
+                                        window.localStorage.userId = res.data.userId
+                                        window.localStorage.userName = res.data.userName
+                                        window.localStorage.userMobiile = res.data.userMobiile
+                                        window.localStorage.userType = res.data.userType
+                                        window.localStorage.userPhotoUrl = res.data.userPhotoUrl
+                                        window.localStorage.balance = res.data.balance
+                                        window.localStorage.carbonTotal = res.data.carbonTotal
+                                        window.localStorage.carbonActual = res.data.carbonActual
+                                        window.localStorage.volunteerTotal = res.data.volunteerTotal
+                                        window.localStorage.volunteerActual = res.data.volunteerActual
+                                        window.location.href = '/'
+                                    }
+                                })
                         }
                     }
                 }

@@ -13,19 +13,20 @@ def login():
         user = User.query.filter(User.name == request.args.get('userName')).first()
         if not user:
             res = {
-                "loggedin" : "true",
+                "loggedin" : "false",
                 "msg" : 'no such user'
             }
             return jsonify(res), 200
         else:
             if not str(user.passwd) == str(request.args.get('passwd')):
                 res = {
-                    "loggedin": "true",
+                    "loggedin": "false",
                     "msg": 'wrong passwd'
                 }
                 return jsonify(res), 200
             else:
                 res = {
+                    "loggedin" : "true",
                     "userId" : user.id,
                     "userName" : user.name,
                     "userMobile" : user.mobile,
