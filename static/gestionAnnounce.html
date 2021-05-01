@@ -232,8 +232,10 @@
                 },
             },
             created(){
-
-                axios(this.host+'/publish/getUserOrderContent?ownerId=57')
+                if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+                }
+                axios(this.host+'/publish/getUserOrderContent?ownerId=' + window.localStorage.userId)
                     .then((res)=>{
                         this.clientDemands = res.data;
                     })
