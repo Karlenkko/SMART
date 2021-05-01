@@ -60,12 +60,13 @@
         <button></button>
 
     </section>
+
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="detail">
-            <div class="sy-title">Candidate: {{ selectedCandidate }}</div>
+            <div class="sy-title">Candidate: {{ selectedCandidate.userName }}</div>
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
             <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
             <div class="sy-btn">
-                <div class="button" onClick="syalert.syhide('detail')" @click="assignCandidate(selectedCandidate.userId)">Valide</div>
+                <div class="button" onClick="syalert.syhide('detail')" @click="assignCandidate(selectedCandidate.userId)">Valider ma commande</div>
             </div>
         </div>
 
@@ -74,7 +75,7 @@
     <template id="clientCandidate" >
         <div  class="candidatesInfo">
             <h3>{{ candidate.userName }}: {{ candidate.userDescription }} </h3>
-            <div class="button" onClick="syalert.syopen('detail')" @click="emitUser(candidate)">Détail</div>
+            <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(candidate)">Détail</div>
         </div>
     </template>
 
@@ -164,8 +165,8 @@
             template:'#clientCandidate',
             props:['candidate'],
             methods:{
-                emitUser(user){
-                    this.$emit('func', user)
+                selectCandidate(user){
+                    vm.selectedCandidate = user;
                 },
             }
         })
@@ -227,16 +228,18 @@
                 assignCandidate(userId){
                     axios.put(this.host+'/publish/assignCandidate?orderId=0')
                 },
-                selectCandidate(user){
-                    this.selectedCandidate = user;
-                },
             },
             created(){
 
-                axios(this.host+'/publish/getUserOrderContent?ownerId=57')
+                axios(this.host+'/publish/getUserOrderContent?ownerId=48')
                     .then((res)=>{
                         this.clientDemands = res.data;
                     })
+                axios(this.host+'/publish/getFarmOrderContent?userId=100')
+                    .then((res)=>{
+                        this.farmOffers = res.data;
+                    })
+                console.log(this)
             }
         })
     </script>

@@ -2,7 +2,7 @@ import json
 
 from flask import Blueprint
 from flask import abort, request, jsonify
-from model import Order, User, Farm, Request
+from model import Order, User, Farm, Request, Product
 from exts import db
 
 publish_bp = Blueprint('publish', __name__)
@@ -43,10 +43,27 @@ def getUserPublishContent():
 
 @publish_bp.route('/publish/getFarmOrderContent/', methods=['GET'])
 def getFarmPublishContent():
-    if not request.args or not 'ownerId' in request.args:
+    if not request.args or not 'userId' in request.args:
         abort(400)
     else:
-        return 'get farm publish content'
+        farm = Farm.query.filter(Order.userid == request.args.get('userId'))
+        products = Product.query.filter(Product.farmid == farm.id)
+        res = []
+        articles = []
+        for product in products:
+            articles.append({
+                "articleId": product.id,
+                "name": product.name,
+                "price": product.price,
+                "remainedQuantity": product.quantity
+            })
+        res.append({
+            "offerId":farm.id,
+            "name": farm.name,
+            "state": 0,
+            "articles": articles
+        })
+    return jsonify(res), 200
 
 
 @publish_bp.route('/publish/getFarmDeliveryRoute/', methods=['GET'])
