@@ -90,11 +90,12 @@ function makeSeriesData(year, negative) {
 
 
 // Set dynamic data.
-var currentYear = beginYear;
+var currentYear = beginYear-5;
+var beforebegin = beginYear;
 setInterval(function () {
     currentYear++;
     if (currentYear > endYear+10) {
-        currentYear = beginYear;
+        //currentYear = beginYear;
     }
     if(currentYear<endYear+10){
         myChart.setOption({
@@ -112,6 +113,13 @@ setInterval(function () {
         myChart.setOption({
             xAxis: {
                 name: 'In the future'
+            },
+        });
+    }
+    if(currentYear<beginYear){
+        myChart.setOption({
+            xAxis: {
+                name: 'Before you join'
             },
         });
     }

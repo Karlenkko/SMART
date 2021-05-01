@@ -60,7 +60,6 @@
         <button></button>
 
     </section>
-
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="detail">
             <div class="sy-title">Candidate: {{ selectedCandidate.userName }}</div>
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
@@ -232,6 +231,10 @@
             created(){
 
                 axios(this.host+'/publish/getUserOrderContent?ownerId=48')
+                if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+                }
+                axios(this.host+'/publish/getUserOrderContent?ownerId=' + window.localStorage.userId)
                     .then((res)=>{
                         this.clientDemands = res.data;
                     })

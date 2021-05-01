@@ -20,7 +20,7 @@ class User(db.Model, EntityBase):
     longitude = db.Column(db.Float)
     address = db.Column(db.String(60))
     type = db.Column(db.String(10))
-    photourl = db.Column(db.String(100))
+    photourl = db.Column(db.String(200))
     carbontotal = db.Column(db.Integer)
     carbonactual = db.Column(db.Integer)
     volunteertotal = db.Column(db.Integer)
@@ -175,16 +175,20 @@ class Volunteer(db.Model, EntityBase):
     entrepotlist = db.Column(db.String(400))
     requestlist = db.Column(db.String(200))
     date = db.Column(db.String(50))
+    orderid = db.Column(db.Integer)
+    accept = db.Column(db.Integer)
 
-    def __init__(self, id, userid, entrepotlist, requestlist, date):
+    def __init__(self, id, userid, entrepotlist, requestlist, date, orderid, accept):
         self.id = id
         self.userid = userid
         self.entrepotlist = entrepotlist
         self.requestlist = requestlist
         self.date = date
+        self.orderid = orderid
+        self.accept = accept
 
     def __repr__(self):
-        return '{"id":%s,"userid":%s,"entrepotlist":%s,"requestlist":%s,"date":%s}' % (self.id, self.userid, self.entrepotlist, self.requestlist, self.date)
+        return '{"id":%s,"userid":%s,"entrepotlist":%s,"requestlist":%s,"date":%s,"orderid":%s,"accept":%s}' % (self.id, self.userid, self.entrepotlist, self.requestlist, self.date, self.orderid, self.accept)
 
 
 class Coupon(db.Model, EntityBase):

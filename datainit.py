@@ -50,9 +50,10 @@ farmList = [ {
 legume = pd.read_csv("dataset/legume.csv").to_numpy().tolist()
 fruit = pd.read_csv("dataset/fruit.csv").to_numpy().tolist()
 other = pd.read_csv("dataset/other.csv").to_numpy().tolist()
+peopleurl = pd.read_csv("dataset/peopleURL.csv").to_numpy().tolist()
 
 def isNaN(string):
-    return string != string
+	return string != string
 
 
 def init():
@@ -77,7 +78,7 @@ def initOrder():
 
 
 def userInit():
-    
+	
 	User.query.delete()
 	
 	passwd = "passwd"
@@ -94,7 +95,7 @@ def userInit():
 		carbontotal = randint(0, carbontotalRange)
 		volunteertotal = randint(0, volunteertotalRange)
 		balance = randint(100, balanceRange)
-		photourl = ""
+		photourl = peopleurl[i][0]
 		address = ""
 
 		db.session.add(User(i, name, passwd, mobile, latitude, longitude, address, type, photourl, carbonactual, volunteeractual, carbontotal, volunteertotal, balance))
@@ -230,31 +231,31 @@ def productInit():
 			id = id + 1
 
 orderList = [	   {
-  					"latitude"  : 44.8366,
+					"latitude"  : 44.8366,
 					"longitude" : -0.5781,
 					"requestlist" : [0, 1, 2, 3],
 					"time" : "Monday 8-10;Friday 16-18"
 				   },
 				   {
-				    "latitude"  : 43.6178,
+					"latitude"  : 43.6178,
 					"longitude" : 1.4349,
 					"requestlist" : [4, 5],
 					"time" : "Thursday 12-18"
 				   },
 				   {
-				    "latitude"  : 43.6178,
+					"latitude"  : 43.6178,
 					"longitude" : 1.4349,
 					"requestlist" : [],
 					"time" : "Wednesday 10-12"
 				   },
 				   {
-				    "latitude"  : 43.6241,
+					"latitude"  : 43.6241,
 					"longitude" : 3.8669,
 					"requestlist" : [6, 7, 8],
 					"time" : "Saturday 8-10;Sunday 10-18"
 				   },
 				   {
-				    "latitude"  : 48.8302,
+					"latitude"  : 48.8302,
 					"longitude" : 2.3590,
 					"requestlist" : [9],
 					"time" : "Monday 14-16"

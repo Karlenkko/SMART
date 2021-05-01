@@ -337,6 +337,9 @@
                 }
             },
             created(){
+                if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+                }
                 axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/getAllProducts?farmId='+window.localStorage.farmid)
                     .then(res=>{
                         this.products = res.data;

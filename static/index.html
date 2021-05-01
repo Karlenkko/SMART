@@ -253,6 +253,9 @@
                 }
             },
             created(){
+                if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+                }
                 axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarmOrders')
                     .then((res)=>{
                         this.farmOrders = res.data;
