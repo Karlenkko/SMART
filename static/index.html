@@ -245,7 +245,7 @@
                     description:'',
                     timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}],
                     orderId:'',
-                    userId:1 //在没有做登录系统之前使用1代表当前用户
+                    userId:window.localStorage.userId //在没有做登录系统之前使用1代表当前用户
                 },
                 host:''
             },
@@ -265,7 +265,7 @@
                     this.aide={
                         description:'',
                         timelist:[{day:'Monday',time:'8~10'},{day:'',time:''},{day:'',time:''}],
-                        userId:1
+                        userId:window.localStorage.userId
                     }
                     this.selectedUser={}
                 }

@@ -17,7 +17,7 @@
                     <li><a href="" class="menu-item">Cart at</a></li>
                     <li><a href="/" class="menu-item">Acceuil</a></li>
                     <li><a href="" class="menu-item">Mes Comptes</a></li>
-                    <li><a href="" class="menu-item" onclick="logout()>Log Out</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
                 </ul>
             </nav>
         </header>
@@ -338,7 +338,7 @@
                 },
                 upLoadCart(){
                     this.benevole.timelist = this.benevole.timelist.filter(time=>time.day!='' && time.time!='')
-                    var obj = {farmOwnerId:window.localStorage.farmownerid,userId:1,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
+                    var obj = {farmOwnerId:window.localStorage.farmownerid,userId:window.localStorage.userId,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
 
                     //TODO: 发送post请求上传订单信息
                     axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/request', obj)
