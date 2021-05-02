@@ -119,7 +119,6 @@ class Order(db.Model, EntityBase):
     selectedperson = db.Column(db.String(200))
     # requestId list
     requestlist = db.Column(db.String(200))
-    labellist = db.Column(db.String(200))
     # 0 en cours; 1 validé; 2 annulé
     state = db.Column(db.Integer)
     time = db.Column(db.String(50))
@@ -138,8 +137,8 @@ class Order(db.Model, EntityBase):
         
 
     def __repr__(self):
-        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"labellist"%s,"state":%s,"time":%s,"price":%s}' % (
-            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist, self.labellist, self.state, self.time, self.price)
+        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s}' % (
+            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist,self.state, self.time, self.price)
 
 
 class Request(db.Model, EntityBase):
@@ -152,6 +151,8 @@ class Request(db.Model, EntityBase):
     volunteertime = db.Column(db.String(100))
     description = db.Column(db.String(200))
     price = db.Column(db.Float)
+    destination = db.Column(db.String(100))
+    volunteerid = db.Column(db.Integer)
     
 
     def __init__(self,id ,orderid, userid, userlocation, timeproposed, volunteertime, description, price):
@@ -165,8 +166,8 @@ class Request(db.Model, EntityBase):
         self.price = price
 
     def __repr__(self):
-        return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s}' % (
-            self.id, self.orderid, self.userid, self.userlocation, self.timeproposed, self.volunteertime, self.description, self.price)
+        return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s,"destination":%s,"volunteerid":%s}' % (
+            self.id, self.orderid, self.userid, self.userlocation, self.timeproposed, self.volunteertime, self.description, self.price, self.destination, self.volunteerid)
 
 class Volunteer(db.Model, EntityBase):
     __tablename__ = 'volunteer'
