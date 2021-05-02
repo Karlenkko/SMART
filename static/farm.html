@@ -17,7 +17,7 @@
                     <li><a href="" class="menu-item">Cart at</a></li>
                     <li><a href="/" class="menu-item">Acceuil</a></li>
                     <li><a href="" class="menu-item">Mes Comptes</a></li>
-                    <li><a href="" class="menu-item">Log Out</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()>Log Out</a></li>
                 </ul>
             </nav>
         </header>
@@ -226,7 +226,24 @@
     <script src="/static/lib/syalert.min.js"></script>
     <script src="/static/lib/axios-v0.17.1.js"></script>
     <script src="/static/js/sideBarFarm.js"></script>
-
+    <script>
+        function logout() {
+            window.localStorage.userId = ""
+            window.localStorage.userName = ""
+            window.localStorage.userMobiile = ""
+            window.localStorage.userType = ""
+            window.localStorage.userPhotoUrl = ""
+            window.localStorage.balance = ""
+            window.localStorage.carbonTotal = ""
+            window.localStorage.carbonActual = ""
+            window.localStorage.volunteerTotal = ""
+            window.localStorage.volunteerActual = ""
+            window.location.href = '/login/'
+        }
+        if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+        }
+    </script>
 
     <script>
         Vue.component('product',{

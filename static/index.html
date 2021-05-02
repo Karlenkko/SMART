@@ -18,7 +18,7 @@
                     <li><a href="/" class="menu-item">Acceuil</a></li>
                     <li><a href="/myAccount" class="menu-item">Mes Comptes</a></li>
                     <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
-                    <li><a href="" class="menu-item">Log Out</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
                 </ul>
             </nav>
         </header>
@@ -170,6 +170,24 @@
     <script src="/static/lib/syalert.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/js/sideBar.js"></script>
+    <script>
+        function logout() {
+            window.localStorage.userId = ""
+            window.localStorage.userName = ""
+            window.localStorage.userMobiile = ""
+            window.localStorage.userType = ""
+            window.localStorage.userPhotoUrl = ""
+            window.localStorage.balance = ""
+            window.localStorage.carbonTotal = ""
+            window.localStorage.carbonActual = ""
+            window.localStorage.volunteerTotal = ""
+            window.localStorage.volunteerActual = ""
+            window.location.href = '/login/'
+        }
+        if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+        }
+    </script>
     <script>
         Vue.component('farm-order',{
             template:'#farmOrder',
