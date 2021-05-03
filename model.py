@@ -77,7 +77,7 @@ class Product(db.Model, EntityBase):
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
     farmid = db.Column(db.Integer)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(100))
     quantity = db.Column(db.Integer)
     price = db.Column(db.Float)
     photourl = db.Column(db.String(200))
@@ -149,7 +149,7 @@ class Request(db.Model, EntityBase):
     userlocation = db.Column(db.String(50))
     timeproposed = db.Column(db.String(100))
     volunteertime = db.Column(db.String(100))
-    description = db.Column(db.String(200))
+    description = db.Column(db.String(800))
     price = db.Column(db.Float)
     destination = db.Column(db.String(100))
     volunteerid = db.Column(db.Integer)
