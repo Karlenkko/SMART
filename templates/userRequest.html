@@ -5,6 +5,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <style type="text/css">
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Titillium+Web:wght@400;700&display=swap");
+
       html,
       body {
         height: 100%;
@@ -31,13 +33,50 @@
         flex-direction: column;
       }
 
+      /* header */
+        .header {
+            height : 60px;
+            font-family: Montserrat, sans-serif;
+            line-height: 1.5;
+            background: #527242;
+            position: relative;
+            width:100%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            z-index: 1;
+        }
+        .header a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .header ul {
+            list-style: none;
+        }
+        .logo {
+            font-size: 2rem;
+        }
+        .menu-items {
+            display: flex;
+            align-items: center;
+        }
+        .menu-items li {
+            padding: 0.5rem 1rem;
+            transition: background 0.3s ease-in-out;
+        }
+        .menu-items li:hover {
+            background-color: #2a3827;
+        }
+
     </style>
     <script type="text/javascript">
 
 
       $.ajax({
                 type:'get',
-                url:'http://localhost:5000/algo/user?requestid=' + {{requestid}},
+                url:'http://' + window.location.host + '/algo/user?requestid=' + {{requestid}},
                 cache:false,
                 dataType:'json',
                 crossDomain: true,
@@ -76,7 +115,7 @@
                       center: depart,
                     });
                     
-                    directionsDisplay = new google.maps.DirectionsRenderer();
+                    /*directionsDisplay = new google.maps.DirectionsRenderer();
 
                     var directionsService = new google.maps.DirectionsService();
                     var request = {
@@ -92,7 +131,7 @@
                         directionsDisplay.setDirections(result);
                       }
                     });
-                    directionsDisplay.setMap(map);  
+                    directionsDisplay.setMap(map);*/
 
 
                     res["userLocations"].forEach(item => {
@@ -111,7 +150,7 @@
                   } else {
                     let labelMSG = ""
                     if (res["hasVolunteer"] == "none") {
-                      $("#msg").text("Il n'y a pas de bénévoles pour cette région.")
+                      $("#msg").text("Il n'y a pas de bénévole pour cette région.")
                       labelMSG = "STOCKAGE"
                     } else {
                       $("#msg").text("USER " + res["hasVolunteer"] + " est le bénévole de votre région." )
@@ -125,7 +164,7 @@
                       center: depart,
                     });
                     
-                    directionsDisplay = new google.maps.DirectionsRenderer();
+                    /*directionsDisplay = new google.maps.DirectionsRenderer();
 
                     var directionsService = new google.maps.DirectionsService();
                     var request = {
@@ -140,7 +179,7 @@
                         directionsDisplay.setDirections(result);
                       }
                     });
-                    directionsDisplay.setMap(map);  
+                    directionsDisplay.setMap(map);*/
 
                     addMarker(arrival, "yellow", map, labelMSG)
 
@@ -192,6 +231,17 @@
     </script>
   </head>
   <body>
+        <header class="header">
+            <a href="/" class="logo">CityFarm</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="/" class="menu-item">Acceuil</a></li>
+                    <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
+                    <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
     <div id="map"></div>
     <div id="panel">
       <h3 id="msg"></h3>
@@ -201,7 +251,7 @@
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&libraries=&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn-h2BA-6XrW5ic3DWXs_U4mfpOo05xmo&callback=initMap&libraries=&v=weekly"
       async
     ></script>
   </body>

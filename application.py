@@ -59,9 +59,6 @@ application.register_blueprint(user_bp)
 # def setup():
 #     init()
 
-@application.route("/map/", methods=['GET'])
-def map():
-    return render_template("map.html")
 @application.route("/", methods=['GET'])
 def index():
     return application.send_static_file('index.html')

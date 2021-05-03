@@ -61,7 +61,7 @@
 
       $.ajax({
                 type:'get',
-                url:'http://localhost:5000/algo/test/',
+                url:'http://' + window.location.host + '/algo/test/',
                 cache:false,
                 dataType:'json',
                 crossDomain: true,
@@ -125,7 +125,7 @@
                         directionsDisplay.setDirections(result);
                       }
                     });
-                    directionsDisplay.setMap(map);   
+                    directionsDisplay.setMap(map);
 
                 }
             });
@@ -178,7 +178,7 @@
     <div id="right-panel">
       <div>
         <b>Waypoints:</b> <br />
-        <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br />
+        <i>(Ctrl+Click ou Cmd+Click pour selections multiples)</i> <br />
         <select multiple id="waypoints">
         </select>
         <br />
