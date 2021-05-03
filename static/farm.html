@@ -11,12 +11,12 @@
 <body>
     <div id="app">
         <header class="header">
-            <a href="/" class="logo">COLIV</a>
+            <a href="/" class="logo">CityFarm</a>
             <nav>
                 <ul class="menu-items">
-                    <li><a href="" class="menu-item">Cart at</a></li>
+                    <li><a href="" class="menu-item">Ma carte</a></li>
                     <li><a href="/" class="menu-item">Acceuil</a></li>
-                    <li><a href="" class="menu-item">Mes Comptes</a></li>
+                    <li><a href="" class="menu-item">Mon Compte</a></li>
                     <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
                 </ul>
             </nav>
@@ -138,7 +138,7 @@
                     </div>
                 </div>
                 <div class="sy-content benevole">
-                    <span>Est-ce que vous avez des envies pour faire des bénévole?</span>
+                    <span>Est-ce que vous avez des envies pour faire du bénévolat?</span>
                     <div>
                         <input type="radio" id="acceptBenevole"
                                value="1" v-model="benevole.do">
@@ -152,7 +152,7 @@
                     <div v-show="benevole.do==1">
                         <span>Merci de votre contribution! Maintenant vous devez chosir au moins un temps pour réaliser le bénévole.</span>
                         <div class="benevoleOption" v-for="(item,index) in benevole.timelist">
-                            <span>Chosir ci-desous le jour sur la livrason. Option {{index + 1}}</span>
+                            <span>Choisir ci-dessous le jour de la livrason. Option {{index + 1}}</span>
                             <div class="btn-group">
                                 <input type="button" :class="['btn',item.day == 'Monday'?'btn-selected':'']" value="Monday" @click="item.day='Monday'">
                                 <input type="button" :class="['btn',item.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="item.day='Tuesday'">
@@ -162,7 +162,7 @@
                                 <input type="button" :class="['btn',item.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="item.day='Saturday'">
                                 <input type="button" :class="['btn',item.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="item.day='Sunday'">
                             </div>
-                            <span>Choisir ci-desous le temps pour la livraison</span>
+                            <span>Choisir ci-dessous le temps pour la livraison</span>
                             <div>
                                 <input type="radio" :id="'morning1b'+index"
                                        value="8-10" v-model="item.time">
@@ -205,17 +205,17 @@
                     <div class="name"><span>{{productlist.productName}}</span></div>
                     <div class="price"><span>{{productlist.price}}</span>&nbsp;€</div>
                     <div class="quantity">Quantité disponible pour la semaine prochaine: <span>{{productlist.quantity}}</span> unité(s)</div>
-                    <div class="category">Catégory:&nbsp;<span>{{productlist.category}}</span></div>
+                    <div class="category">Catégorie:&nbsp;<span>{{productlist.category}}</span></div>
                 </div>
                 <div class="InfoComparation">
                     <div>Comparing with <i class="iconfont icon-bianzu"></i>&nbsp;:</div>
                     <div><i class="iconfont icon-bianzu"></i>&nbsp; price: <span>{{productlist.carrefourPrice}}</span>€</div>
                     <div>Origin:&nbsp;<span>{{productlist.origin}}</span></div>
-                    <div class="contribution">Donc si vous achetez nos produit, votre contribution sur la réduction de &nbsp;<i class="iconfont icon-eryanghuatan"></i>&nbsp;: <span class="contributionValue">{{productlist.carbonRedu}}</span>g</div>
+                    <div class="contribution">Donc si vous achetez nos produits, votre contribution sur la réduction de &nbsp;<i class="iconfont icon-eryanghuatan"></i>&nbsp;: <span class="contributionValue">{{productlist.carbonRedu}}</span>g</div>
                 </div>
             </div>
             <div class="button" @click="transtofather" onClick="syalert.syopen('alert1')">
-                Add to cart
+                Ajouter à la carte
             </div>
         </div>
     </template>

@@ -10,17 +10,17 @@
     <link rel="stylesheet" href="/static/css/syalert.min.css">
     <link rel="stylesheet" href="/static/css/index.css">
     <link rel="stylesheet" href="/static/css/gestionAnnounce.css">
-    <title>COLIV</title>
+    <title>CityFarm</title>
 </head>
 
 <body>
     <div id="app">
         <header class="header">
-        <a href="" class="logo">COLIV</a>
+        <a href="" class="logo">CityFarm</a>
         <nav>
             <ul class="menu-items">
                 <li><a href="/" class="menu-item">Acceuil</a></li>
-                <li><a href="/myAccount" class="menu-item">Mes Comptes</a></li>
+                <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
                 <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
                 <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
             </ul>
@@ -61,7 +61,7 @@
 
     </section>
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="detail">
-            <div class="sy-title">Candidate: {{ selectedCandidate.userName }}</div>
+            <div class="sy-title">Candidat: {{ selectedCandidate.userName }}</div>
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
             <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
             <div class="sy-btn">
@@ -94,7 +94,7 @@
 
                 <div class="etat encours" v-show="demand.state==0">En cours</div>
                 <div class="etat valide" v-show="demand.state==1">Validé</div>
-                <div class="etat valide" v-show="demand.state==2">Achevé</div>
+                <div class="etat valide" v-show="demand.state==2">Fini</div>
             </div>
             <hr>
             <div v-if="!demand.state">
