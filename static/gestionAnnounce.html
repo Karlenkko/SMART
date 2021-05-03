@@ -15,7 +15,7 @@
 
 <body>
     <div id="app">
-        <header class="header">
+    <header class="header">
         <a href="" class="logo">COLIV</a>
         <nav>
             <ul class="menu-items">
@@ -34,17 +34,17 @@
                 <div class="navBox">
                     <ul>
                         <li>
-                            <h2 class="obtain">Mes demandes<i></i></h2>
+                            <h2 class="obtain">Mes offres<i></i></h2>
                             <div class="secondary">
-                                <h3 @click="state=10">En cours</h3>
-                                <h3 @click="state=11">Validé</h3>
+                                <h3 @click="state=10">Particulier</h3>
+                                <h3 @click="state=11">Ferme</h3>
                             </div>
                         </li>
                         <li>
-                            <h2 class="obtain">Mes offres fermières<i></i></h2>
+                            <h2 class="obtain">Mes participations<i></i></h2>
                             <div class="secondary">
-                                <h3 @click="state=20">En cours</h3>
-                                <h3 @click="state=21">Validé</h3>
+                                <h3 @click="state=20">Particulier</h3>
+                                <h3 @click="state=21">Ferme</h3>
                             </div>
                         </li>
                     </ul>
@@ -52,12 +52,20 @@
             </div>
         </div>
 
-        <div class="listsContent">
-            <client-demand v-for="item in clientDemands" :key="item.demandId" :demand="item" v-show="state-state%10===10 && state%10===item.state"></client-demand>
-            <farm-offer v-for="item in farmOffers" :key="item.offerId" :offer="item" v-show="state-state%10===20 && state%10===item.state"></farm-offer>
+        <div class="listsContent" v-show="state===10">
+            <client-demand v-for="item in clientDemands" :key="item.demandId" :demand="item"></client-demand>
+        </div>
+        <div class="listsContent" v-show="state===11">
+            <farm-offer v-for="item in farmOffers" :key="item.offerId" :offer="item"></farm-offer>
         </div>
 
-        <button></button>
+        <div class="listsContent" v-show="state===20">
+            <client-request v-for="item in clientRequests" :key="item.requestId" :request="item"></client-request>
+        </div>
+
+        <div class="listsContent" v-show="state===21">
+            <farm-request v-for="item in farmRequests" :key="item.requestId" :request="item"></farm-request>
+        </div>
 
     </section>
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="detail">
@@ -69,15 +77,36 @@
             </div>
         </div>
 
+        <div class="bottomBar" v-show="state == 10">
+        <button class="create" onClick="syalert.syopen('createDemand')">Créer une demande</button>
+        </div>
+
+        <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createDemand">
+            <div class="sy-title">Réglage</div>
+            <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('alert2')" @click="createClientDemand">Créer</div>
+            </div>
+        </div>
+
+        <div class="bottomBar" v-show="state == 11">
+        <button class="create" onClick="syalert.syopen('createOffer')">Créer une offre</button>
+        </div>
+
+        <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createOffer">
+            <div class="sy-title">Réglage</div>
+            <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('alert2')" @click="createFarmOffer">Créer</div>
+            </div>
+        </div>
+
     </div>
 
     <template id="clientCandidate" >
         <div  class="candidatesInfo">
-            <h3>{{ candidate.userName }}: {{ candidate.userDescription }} </h3>
+            <h3>{{ candidate.userName }}: {{ candidate.userTel }} </h3>
             <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(candidate)">Détail</div>
         </div>
     </template>
-
 
     <template id="clientDemand">
         <div class="clientDemandsClass">
@@ -97,34 +126,36 @@
                 <div class="etat valide" v-show="demand.state==2">Achevé</div>
             </div>
             <hr>
-            <div v-if="!demand.state">
+            <div v-show="!demand.state">
                 <h2>Candidats:</h2>
                 <div>
                         <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item"></client-candidate>
                 </div>
             </div>
-            <div class="map" v-else>
-                MAP
+            <div v-show="demand.state">
+                <h2>Personne selectionnée:</h2>
+                <div>
+                        <client-candidate v-for="item in demand.selectedPersons" :key="item.id" :candidate="item"></client-candidate>
+                </div>
             </div>
         </div>
     </template>
 
     <template id="farmArticle">
-        <div class="DemandContainer">
-            <div class="infoArticle">
+        <div class="DemandContainer" style="width: 550px">
+            <div class="infoArticle" style="width: 350px">
                     <div>Nom: <span>{{article.name}}</span></div>
-                    <div>Prix: <span>{{article.price}}</span></div>
             </div>
             <div class="infoArticle">
-                <div>Quantité max: <span>{{article.quantityMax}}</span></div>
-                <div>Quantité demandée: <span>{{article.quantityOrdered}}</span></div>
+                <div v-if="article.price">Prix: <span>{{article.price}}</span></div>
+                <div v-if="article.remainedQuantity">Quantité restante: <span>{{article.remainedQuantity}}</span></div>
+                <div v-if="article.orderedQuantity">Quantité: <span>{{article.orderedQuantity}}</span></div>
             </div>
         </div>
-        <br/>
     </template>
 
     <template id="farmOffer">
-        <div class="clientDemandsClass">
+        <div class="clientDemandsClass" style="width: 550px">
             <h2><span>{{offer.name}}</span></h2>
                 <farm-article v-for="item in offer.articles" :key="item.articleId" :article="item"></farm-article>
             <div class="DemandContainer">
@@ -133,7 +164,7 @@
                 <div class="etat valide" v-show="offer.state==1">Validé</div>
                 <div class="etat valide" v-show="offer.state==2">Achevé</div>
             </div>
-            <div v-if="offer.state">
+            <div v-show="offer.state">
                 <hr>
                 MAP
             </div>
@@ -141,6 +172,41 @@
 
         </div>
     </template>
+
+    <template id="clientRequest">
+        <div class="clientDemandsClass">
+            <h2>Ma commande</h2>
+            <div class="DemandContainer">
+                <div class="infoLeftClient infoLeft">
+                    <div >Temps de retrait: <span>{{request.pickUpTime[0]}}, {{request.pickUpTime[1]}}</span></div>
+                    <div >Articles: <farm-article v-for="item in request.articles" :key="item" :article="item"></farm-article> </div>
+                </div>
+                <div class="photo">
+                    <img src="" alt=""/>
+                </div>
+
+                <div class="etat encours" v-show="request.state==0">En cours</div>
+                <div class="etat valide" v-show="request.state==1">Validé</div>
+                <div class="etat valide" v-show="request.state==2">Achevé</div>
+            </div>
+        </div>
+    </template>
+
+    <template id="farmRequest">
+        <div class="clientDemandsClass" style="width: 550px">
+            <h2><span>Ma commande</span></h2>
+                <farm-article v-for="item in request.articles" :key="item.articleId" :article="item"></farm-article>
+            <div class="DemandContainer">
+                <div class="infoArticle">Temps de volontaire: <span>{{request.volunteerTime}}</span></div>
+                <div class="etat encours" v-show="request.state==0">En cours</div>
+                <div class="etat valide" v-show="request.state==1">Validé</div>
+                <div class="etat valide" v-show="request.state==2">Achevé</div>
+            </div>
+            <div class="button" v-show="request.state==0">Valider</div>
+
+        </div>
+    </template>
+
 
     <script src="/static/lib/vue-2.5.9.js"></script>
     <script src="/static/lib/vue-router-v3.0.1.js"></script>
@@ -199,14 +265,26 @@
             props:['demand'],
             methods:{
                 getDeliverer(){
-                    let str ='';
-                    str = this.demand.selectedperson.userName + ': ' + this.demand.selectedperson.userTel;
-                    return str;
+                    /*let str ='';
+                    for (person in demand.selectedpersons)
+                        str += this.demand.selectedpersons.userName + ': ' + this.demand.selectedpersons.userTel;
+                    return str;*/
+                    return "not used"
                 }
             },
             created(){
                 this.str = this.getDeliverer();
             }
+        })
+
+        Vue.component('farm-request',{
+            template:"#farmRequest",
+            props:['request']
+        })
+
+        Vue.component('client-request',{
+            template:"#clientRequest",
+            props:['request']
         })
 
         Vue.component('modal',{
@@ -219,48 +297,96 @@
         var vm = new Vue({
             el:"#app",
             data:{
-                host: "http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com",
                 farmOffers:[
-                    /*{offerId:0,
+                    {offerId:0,
                         name:'Produits locaux',
                         state:0,
                         sales: 153,
                         articles:
                             [
-                                {articleId:0, name: 'Carrots', price: 3.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:1, name: 'Pommes', price: 5.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:2, name: 'Oranges', price: 6.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:3, name: 'Patates', price: 1.45, quantityMax:50, quantityOrdered:30, state:0},
-                                {articleId:4, name: 'Poivron', price: 4.45, quantityMax:50, quantityOrdered:30, state:0},
-                            ]},*/
+                                {articleId:0, name: 'Carrots', price: 3.45, remainedQuantity:50},
+                                {articleId:1, name: 'Pommes', price: 5.45, remainedQuantity:50},
+                                {articleId:2, name: 'Oranges', price: 6.45, remainedQuantity:50},
+                                {articleId:3, name: 'Patates', price: 1.45, remainedQuantity:50},
+                                {articleId:4, name: 'Poivron', price: 4.45, remainedQuantity:50},
+                            ]},
+                    {offerId:1,
+                        name:'Produits locaux',
+                        state:0,
+                        sales: 153,
+                        articles:
+                            [
+                                {articleId:0, name: 'Carrots', price: 3.45, remainedQuantity:50},
+                                {articleId:1, name: 'Pommes', price: 5.45, remainedQuantity:50},
+                                {articleId:2, name: 'Oranges', price: 6.45, remainedQuantity:50},
+                                {articleId:3, name: 'Patates', price: 1.45, remainedQuantity:50},
+                                {articleId:4, name: 'Poivron', price: 4.45, remainedQuantity:50},
+                            ]},
                 ],
                 clientDemands: [
-                    /*{demandId:0, titre:'Transport des patates', date:'14/05/2021 8:00~12:00',route: 'From Lyon to Paris',state:0, description:"J'ai transporter à Paris", tel:"0623232325",
-                        candidates:[{id:0, name:'user1', mobile:'123456789', selected:0 },{id:1, name:'user2', mobile:'123456789', selected:1}]},
-                )*/],
+                    {orderId:0, dateString:'14/05/2021 8:00~12:00',state:0, description:"J'ai transporter à Paris", selectedPerson: 74,
+                        candidates:[{userId:0, userName:'user1', userTel:'123456789'},{userId:1, userName:'user1', userTel:'123456789'}]},
+                ],
+                farmRequests:[{
+                    requestId:0,
+                    state:0,
+                    timeProposed:[{"Tuesday":"10-14"}],
+                    articles:[{"carrot": 5},{"patates": 6}]
+                }],
+                clientRequests:[{
+                    requestId:0,
+                    state:0,
+                    pickUpTime:[{"Tuesday":"10-14"}],
+                    volunteerTime:[{"Tuesday":"10-14"}],
+                    description:"description d'offre"
+                }],
                 state:10,
                 selectedCandidate:'not chosen',
+                //host: "http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com",
+                host: "http://127.0.0.1:5000"
             },
             methods:{
                 assignCandidate(userId){
-                    axios.put(this.host+'/publish/assignCandidate?orderId=0')
+                    //axios.put(this.host+'/publish/assignCandidate?userId=' + userId)
+                    console.log("assignCandidate clicked")
                 },
+                createClientDemand(){
+                    //axios.post(this.host+'/publish/')
+                    console.log("creatClientDemand clicked")
+                },
+                createFarmOffer(){
+                    //axios.post(this.host+'/publish/')
+                    console.log("creatFarmOffer clicked")
+                },
+
             },
             created(){
 
-                axios(this.host+'/publish/getUserOrderContent?ownerId=48')
                 if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
                     window.location.href = "/login/"
                 }
+
                 axios(this.host+'/publish/getUserOrderContent?ownerId=' + window.localStorage.userId)
                     .then((res)=>{
                         this.clientDemands = res.data;
                     })
-                axios(this.host+'/publish/getFarmOrderContent?userId=100')
+                axios(this.host+'/publish/getFarmOrderContent?userId=' + window.localStorage.userId)
                     .then((res)=>{
                         this.farmOffers = res.data;
                     })
-                console.log(this)
+                axios(this.host+'/publish/getRequests?userId='+ window.localStorage.userId)
+                    .then((res)=>{
+                        this.farmRequests = res.data.farmRequests;
+                        this.clientRequests = res.data.clientRequests;
+                        console.log("here it is ")
+                        console.log(this.farmRequests)
+                        console.log(this.clientRequests)
+                })
+            },
+            computed: {
+              orderedClientDemands: function () {
+                //return _.orderBy(this.clientDemands, 'state')
+              }
             }
         })
     </script>

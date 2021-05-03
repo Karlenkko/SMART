@@ -8,6 +8,71 @@ from exts import db
 publish_bp = Blueprint('publish', __name__)
 
 
+@publish_bp.route('/publish/getRequests/', methods=['GET'])
+def getRequests():
+    def dictifyDate(str):
+        res = []
+        dateList = str.split(';').pop()
+        print("dateList")
+        print(dateList)
+        for date in dateList:
+            pair = date.split(' ');
+            res.append({
+                "day": pair[0],
+                "time": pair[1]
+            })
+            print("pair")
+            print(pair)
+        print("res")
+        print(res)
+        return res
+
+    def dictifyArticles(str):
+        res = []
+        articleList = str.split(';').pop()
+        for article in articleList:
+            pair = article.split('_');
+            res.append({
+                "name": pair[0],
+                "orderedQuantity": pair[1]})
+        print("res")
+        print(res)
+        return res
+
+    if not request.args or not 'userId' in request.args:
+        abort(400)
+    else:
+        requestList = Request.query.filter(Request.userid == request.args.get('userId'))
+        clientRequests = []
+        farmRequests = []
+        for req in requestList:
+            orderList = Order.query.filter(Order.id == req.orderid)
+            order = orderList[0]
+            print('req')
+            print(req)
+            print('order')
+            print(order)
+            if order.description == "":
+                farmRequests.append({
+                    "resquestId": req.id,
+                    "state": order.state,
+                    "pickUpTime": dictifyDate(req.timeproposed),
+                    "volunteerTime": dictifyDate(req.volunteertime),
+                    "description": order.description
+                })
+            else:
+                clientRequests.append({
+                    "resquestId": req.id,
+                    "state": order.state,
+                    "pickUpTime": dictifyDate(req.timeproposed),
+                    "articles": dictifyArticles(req.description)
+                })
+            res = {
+                "clientRequests": clientRequests,
+                "farmRequests": farmRequests
+            }
+        return jsonify(res), 200
+
 @publish_bp.route('/publish/getUserOrderContent/', methods=['GET'])
 def getUserPublishContent():
     if not request.args or not 'ownerId' in request.args:
@@ -17,6 +82,17 @@ def getUserPublishContent():
         res = []
         for order in orders:
             requestlist = Request.query.filter(Request.orderid == order.id)
+            selectedIdList = order.selectedperson.split(';').pop()
+            selectedPersons = []
+            for selectedId in selectedIdList:
+                selectedUser = User.query.filter(User.id == selectedId)
+                if(selectedUser):
+                    selectedUserInfo = {
+                        "userId" : selectedUser.id,
+                        "userName": selectedUser.name,
+                        "userMobile": selectedUser.mobile
+                    }
+                    selectedPersons.append(selectedUserInfo)
             reqs = []
             for onerequest in requestlist:
                 user = User.query.filter(User.id == onerequest.userid).first()
@@ -35,9 +111,11 @@ def getUserPublishContent():
                 "state" : order.state,
                 "description" : order.description,
                 "entrepotlist" : order.entrepotlist,
-                "selectedperson" : order.selectedperson,
+                "selectedpersons" : selectedPersons,
                 "candidates" : reqs
             })
+            print("res")
+            print(selectedIdList)
         return jsonify(res), 200
 
 
@@ -46,7 +124,8 @@ def getFarmPublishContent():
     if not request.args or not 'userId' in request.args:
         abort(400)
     else:
-        farm = Farm.query.filter(Order.userid == request.args.get('userId'))
+        farmList = Farm.query.filter(Farm.userid == request.args.get('userId'))
+        farm = farmList[0];
         products = Product.query.filter(Product.farmid == farm.id)
         res = []
         articles = []
@@ -58,7 +137,7 @@ def getFarmPublishContent():
                 "remainedQuantity": product.quantity
             })
         res.append({
-            "offerId":farm.id,
+            "offerId": farm.id,
             "name": farm.name,
             "state": 0,
             "articles": articles
