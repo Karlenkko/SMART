@@ -368,8 +368,9 @@ def deleteAllRelatedVolunteer(orderid):
 def addVolunteer(orderid, userid, userEntrepot, volunteerRequestList, date):
 
 	volunteerItem = db.session.query(Volunteer).filter(Volunteer.orderid == orderid)
-
-	voluteerid = Volunteer.query.count()
+	volunteers = Volunteer.query.all()
+	length = Volunteer.query.count()
+	voluteerid = int(volunteers[length-1].id) + 1
 	db.session.add(Volunteer(voluteerid, userid, userEntrepot, volunteerRequestList, date, orderid,1))
 	db.session.commit() 
 
@@ -547,14 +548,51 @@ def test():
 
 
 def show(orderid):
-	order = Order.query.filter(Order.id == orderid)
-
-
-
 	res = {}
-	res["state"] = 3
-	res["waypoints"]
+	order = Order.query.filter(Order.id == orderid)[0]
+	requestlist = order.requestlist.strip(",").split(",")
+	requests = Request.query.all()
 
+	res["deliveryDay"] = order.time
+	locations = []
+	for i in requestlist:
+		location = {
+			"lat":  float(requests[int(i)].userlocation.split(",")[0]),
+			"lng":  float(requests[int(i)].userlocation.split(",")[1])
+		}
+		locations.append(location)
+
+	res["waypoints"] = []
+
+	first = 0
+	centroids = []
+	for i in order.entrepotlist.strip(";").split(";"):
+		if first==0:
+			res["depart"] = {
+				"lat": float(i.split(",")[0]),
+				"lng": float(i.split(",")[1])
+			}
+			first = 1
+			continue
+		location = {
+			"lat": float(i.split(",")[0]),
+			"lng": float(i.split(",")[1])
+		}
+		if float(i.split(",")[0])==parking["lat"] and float(i.split(",")[1])==parking["lng"]:
+			res["parking"] = location
+			res["waypoints"].append(location)
+			continue
+		res["waypoints"].append(location)
+		centroids.append(location)
+
+
+	res["state"] = 3
+	res["location"] = []
+	res["location"].append(locations) 
+	res["location"].append(centroids)
+
+
+	return res
 
 
 
