@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/animate.min.css">
+  <link rel="stylesheet" href="css/syalert.min.css">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/gestionAnnounce.css">
+  <link rel="stylesheet" href="css/userCount.css">
+  <title>CityFarm</title>
+</head>
+
+<body>
+
+    <div id="app">
+      <!-- 顶部菜单栏 -->
+      <header class="header">
+        <a href="" class="logo">COLIV</a>
+        <nav>
+          <ul class="menu-items">
+            <li><a href="" class="menu-item">Acceuil</a></li>
+            <li><a href="" class="menu-item">Mes Comptes</a></li>
+            <li><a href="" class="menu-item">Mes Annonces</a></li>
+            <li><a href="" class="menu-item">Log Out</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <!-- 左菜单栏 -->
+      <section class="section">
+        <div id="menu">
+          <div id="open">
+            <div class="navBox">
+              <ul>
+                <li>
+                  <h2 @click="changeState"  class="obtain">Travaille Bénévole</h2>
+                </li>
+                <li>
+                  <h2 @click="changeState" class="obtain">Émissions Carbone</h2>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 内容栏 -->
+        <div class="listsContent">
+
+          <!-- data compositions -->
+          <voluntary-work  class="userCountsClass" :vinfo="voluntaryWorks"  v-show="state%2===1 && state!==0"></voluntary-work>
+          <carbon-emission class="userCountsClass" :cinfo="carbonEmissions" v-show="state%2===0 && state!==0"></carbon-emission>
+
+          <!-- builtin animation -->
+          <iframe
+                  src="progress.html" height="300" width="500"
+                  style="position: relative;border:none;"
+                  title="Voluntary Work Contribution"
+                  v-show="state%2===1 && state!==0">
+          </iframe>
+          <iframe
+                  src="TreeAnime.html" height="1000" width="1200"
+                  style="position: relative;border:none;"
+                  title="Carbon Emission Contribution"
+                  v-show="state%2===0 && state!==0">
+          </iframe>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- templates-->
+    <template id="voluntaryWork">
+      <div class="userCountsClass">
+        <h2>Titre: <span> {{"Travaille Bénévole"}}</span></h2>
+        <div class="userDemandContainer">
+          <div class="userinfoLeftClient userinfoLeft">
+            <div> ID: <span class="twoLineEllipsis">{{vinfo.Id}}</span></div>
+            <div>Numéro de Téléphone: <span class="twoLineEllipsis">{{vinfo.mobile}}</span></div>
+            <div>Address: <span class="twoLineEllipsis">{{vinfo.address}}</span></div>
+            <div>Total: <span class="twoLineEllipsis">{{vinfo.volunteertotal}}</span></div>
+            <div>Actual: <span class="twoLineEllipsis">{{vinfo.volunteeractual}}</span></div>
+          </div>
+          <div class="userphoto">
+            <img src="" alt=""/>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="carbonEmission">
+      <div class="userCountsClass">
+        <h2>Titre: <span>{{"Émissions de carbone"}}</span></h2>
+        <div class="userDemandContainer">
+          <div class="userinfoLeftClient userinfoLeft">
+            <div> ID: <span class="twoLineEllipsis">{{cinfo.Id}}</span></div>
+            <div>Numéro de Téléphone: <span class="twoLineEllipsis">{{cinfo.mobile}}</span></div>
+            <div>Address: <span class="twoLineEllipsis">{{cinfo.address}}</span></div>
+            <div>Total: <span class="twoLineEllipsis">{{cinfo.carbontotal}}</span></div>
+            <div>Actual: <span class="twoLineEllipsis">{{cinfo.carbonactual}}</span></div>
+          </div>
+          <div class="userphoto">
+            <img src="" alt=""/>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <script src="lib/vue-2.5.9.js"></script>
+    <script src="lib/vue-router-v3.0.1.js"></script>
+    <script src="lib/jquery-1.12.4.min.js"></script>
+    <script src="lib/syalert.min.js"></script>
+    <script src="js/sideBar.js"></script>
+
+    <!-- Render List -->
+    <script>
+
+      Vue.component(
+              'voluntary-work', {
+                template:'#voluntaryWork',
+                props:['vinfo'],
+              }
+      )
+      Vue.component(
+              'carbon-emission',
+              {
+                template:'#carbonEmission',
+                props:['cinfo'],
+              }
+      )
+      var vm = new Vue({
+        el: '#app',
+        data: {
+          voluntaryWorks:
+                  {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', volunteertotal:'297',volunteeractual:'26'},
+          carbonEmissions:
+                  {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', carbontotal:'297',carbonactual:'26'},
+          state:0,
+        },
+        methods: {
+          changeState: function (event){
+            if(event){
+              this.state=this.state+1;
+            }
+          }
+        }
+      })
+    </script>
+
+</body>
+</html>

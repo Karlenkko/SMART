@@ -333,7 +333,9 @@ def requestInit():
 	users = User.query.all()
 
 	for i in range(len(orderList)):
+		index = 0
 		for j in range(len(orderList[i]["requestlist"])):
+
 			id = orderList[i]["requestlist"][j]
 			orderid = i
 			userindex = randint(0, len(users)-1)
@@ -357,6 +359,12 @@ def requestInit():
 			description = "xxxxxxxxxxx"
 			price = randint(100, 1000)/100
 
+			if index==0:
+				db.session.add(Request(id, orderid, 100, userlocation, timeproposed, volunteertime, description, price))
+				index = index + 1
+				continue
+
+
 			db.session.add(Request(id, orderid, userid, userlocation, timeproposed, volunteertime, description, price))
 
 	id = 10
@@ -367,6 +375,7 @@ def requestInit():
 		nb = nb + len(request)
 
 	for i in range(len(farmRequests)):
+		index = 0
 		products = Product.query.filter(Product.farmid == i)
 		productsTotalNb = Product.query.filter(Product.farmid == i).count()
 		for j in range(len(farmRequests[i])):
@@ -405,6 +414,12 @@ def requestInit():
 
 
 			price = randint(100, 1000)/100
+
+			if index==0:
+				db.session.add(Request(id, orderid, 100, userlocation, timeproposed, volunteertime, description, price))
+				index = index + 1
+				id = id + 1
+				continue
 
 			db.session.add(Request(id, orderid, userid, userlocation, timeproposed, volunteertime, description, price))
 			id = id + 1

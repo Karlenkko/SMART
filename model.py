@@ -77,7 +77,7 @@ class Product(db.Model, EntityBase):
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
     farmid = db.Column(db.Integer)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(100))
     quantity = db.Column(db.Integer)
     price = db.Column(db.Float)
     photourl = db.Column(db.String(200))
@@ -123,8 +123,10 @@ class Order(db.Model, EntityBase):
     state = db.Column(db.Integer)
     time = db.Column(db.String(50))
     price = db.Column(db.Float)
+    distancetotal = db.Column(db.Float)
+    clusters = db.Column(db.String(200))
 
-    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price):
+    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price, distancetotal, clusters):
         self.id = id
         self.ownerid = ownerid
         self.entrepotlist = entrepotlist
@@ -134,11 +136,13 @@ class Order(db.Model, EntityBase):
         self.state = state
         self.time = time
         self.price = price
+        self.distancetotal = distancetotal
+        self.clusters = clusters
         
 
     def __repr__(self):
-        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s}' % (
-            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist,self.state, self.time, self.price)
+        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s, "distancetotal":%s, "clusters":%s}' % (
+            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist,self.state, self.time, self.price, self.distancetotal, self.clusters)
 
 
 class Request(db.Model, EntityBase):
@@ -149,13 +153,14 @@ class Request(db.Model, EntityBase):
     userlocation = db.Column(db.String(50))
     timeproposed = db.Column(db.String(100))
     volunteertime = db.Column(db.String(100))
-    description = db.Column(db.String(200))
+    description = db.Column(db.String(800))
     price = db.Column(db.Float)
     destination = db.Column(db.String(100))
     volunteerid = db.Column(db.Integer)
+    cluster = db.Column(db.String(50))
     
 
-    def __init__(self,id ,orderid, userid, userlocation, timeproposed, volunteertime, description, price):
+    def __init__(self,id ,orderid, userid, userlocation, timeproposed, volunteertime, description, price, cluster):
         self.id = id
         self.orderid = orderid
         self.userid = userid
@@ -164,10 +169,11 @@ class Request(db.Model, EntityBase):
         self.volunteertime = volunteertime
         self.description = description
         self.price = price
+        self.cluster = cluster
 
     def __repr__(self):
-        return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s,"destination":%s,"volunteerid":%s}' % (
-            self.id, self.orderid, self.userid, self.userlocation, self.timeproposed, self.volunteertime, self.description, self.price, self.destination, self.volunteerid)
+        return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s,"destination":%s,"volunteerid":%s, "cluster":%s}' % (
+            self.id, self.orderid, self.userid, self.userlocation, self.timeproposed, self.volunteertime, self.description, self.price, self.destination, self.volunteerid, self.cluster)
 
 class Volunteer(db.Model, EntityBase):
     __tablename__ = 'volunteer'

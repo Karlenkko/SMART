@@ -18,13 +18,135 @@ parking = {
 	"lng" : 4.84839
 }
 
-@algo_bp.route('/algo/test/', methods=['GET'])
-def test():
-	res = init()
-	print("------------------RESULT---------------")
-	print(res)
-	print("------------------RESULT---------------")
+@algo_bp.route('/algo/user/', methods=['GET'])
+def user():
+
+	requestID = -1
+	if request.args.get("requestid") != None:
+		requestID = request.args.get("requestid")
+
+	requestID = int(requestID)
+	
+	if requestID == -1 :
+		return "No USERID OR ORDERID"
+
+	requestQuery = db.session.query(Request).filter(Request.id == requestID)
+	resquestRES = requestQuery[0]
+	userid = int(resquestRES.userid)
+	orderid = int(resquestRES.orderid)
+	orderQuery = db.session.query(Order).filter(Order.id == orderid)[0]
+
+
+
+	query = db.session.query(Volunteer).filter(Volunteer.userid == userid, Volunteer.orderid == orderid)
+	
+	res = {}
+
+	if query.count() != 0:
+		
+		volunteer = query[0]
+		
+		res["isVolunteer"] = 1
+		depart = volunteer.entrepotlist.split(";")[0]
+		arrival = volunteer.entrepotlist.split(";")[1]
+		res["locations"] = [{
+			"lat" : float(depart.split(",")[0]),
+			"lng" : float(depart.split(",")[1])
+		}, {
+			"lat" : float(arrival.split(",")[0]),
+			"lng" : float(arrival.split(",")[1])
+		}]
+		userLocations = []
+
+		descriptions = ""
+
+
+		print("---------------------Volunteer--------------------")
+		for id in volunteer.requestlist.strip(",").split(","):
+			requestid = int(id)
+			requestItem = db.session.query(Request).filter(Request.id == requestid)[0]
+			userLocations.append({
+					"userid" : requestItem.userid,
+					"userlocation" : {
+						"lat" : float(requestItem.userlocation.split(",")[0]),
+						"lng" : float(requestItem.userlocation.split(",")[1])
+					}
+				})
+			description = requestItem.description.replace("_", " : ").replace(";","\n")
+			descriptions = descriptions + "\nFor USER" + str(requestItem.userid) + " :\n" + description
+			
+		print("---------------------Volunteer--------------------")
+
+		res["date"] = volunteer.date
+		res["userLocations"] = userLocations
+		res["descriptions"] = descriptions
+
+	else:
+
+		query = db.session.query(Volunteer).filter(Volunteer.orderid == orderid, Volunteer.accept == 1)
+		res = {
+			"isVolunteer" : 0
+		}
+
+
+		for volunteer in query:
+			if str(requestID) in volunteer.requestlist.strip(",").split(","):
+				requestQuery.update({"destination" : volunteer.entrepotlist.split(";")[1], "volunteerid": volunteer.userid})
+				db.session.commit()
+
+				
+				res["hasVolunteer"] = volunteer.userid
+				res["locations"] = [{
+					"lat" : float(resquestRES.userlocation.split(",")[0]),
+					"lng" : float(resquestRES.userlocation.split(",")[1])
+				}, {
+					"lat" : float(volunteer.entrepotlist.split(";")[1].split(",")[0]),
+					"lng" : float(volunteer.entrepotlist.split(";")[1].split(",")[1])
+				}]
+
+				res["description"] = resquestRES.description.replace("_", " : ").replace(";","\n")
+				res["date"] = volunteer.date
+
+				return jsonify(res), 200
+		
+		print("----------------TEST-------------")
+		print(orderQuery)
+		print("----------------TEST-------------")
+
+		res["hasVolunteer"] = "none"
+		res["locations"] = [{
+			"lat" : float(resquestRES.userlocation.split(",")[0]),
+			"lng" : float(resquestRES.userlocation.split(",")[1])
+		}, {
+			"lat" : parking["lat"],
+			"lng" : parking["lng"]
+		}]
+
+		res["descriptions"] = resquestRES.description.replace("_", " : ").replace(";","\n")
+		res["date"] = orderQuery.time
+
+		requestQuery.update({"destination" : str(parking["lat"])+","+str(parking["lng"]), "volunteerid": -1})
+		db.session.commit()
+
+
+
 	return jsonify(res), 200
+
+
+@algo_bp.route('/algo/validate/', methods=['GET'])
+def validate():
+	id = -1
+	if request.args.get("orderid") != None:
+		id = request.args.get("orderid")
+
+	db.session.query(Order).filter(Order.id == id).update({"state" : 1})
+	db.session.commit()
+	db.session.close()
+
+	return jsonify(""), 200
+
+
+
 
 @algo_bp.route('/algo/updatePath/', methods=['POST'])
 def updatePath():
@@ -72,6 +194,15 @@ def map():
 		return "No ID"
 
 	order = Order.query.filter(Order.id == id)
+
+
+	if order[0].state == 3:
+		res = show(id)
+		return jsonify(res), 200
+
+
+
+
 	users = User.query.all()
 	requestList = order[0].requestlist
 	requests = Request.query.all()
@@ -190,7 +321,7 @@ def map():
 
 	db.session.query(Order).filter(
 									Order.id == id
-								).update({"selectedperson" : selectedperson})
+								).update({"selectedperson" : selectedperson, "time" : bestday})
 	db.session.commit()
 	db.session.close()
 
@@ -200,6 +331,7 @@ def map():
 	res["depart"] = depart
 	res["id"] = id
 	res["waypoints"] = waypoints
+	res["state"] = order[0].state
 
 	return jsonify(res), 200
 
@@ -236,10 +368,11 @@ def deleteAllRelatedVolunteer(orderid):
 def addVolunteer(orderid, userid, userEntrepot, volunteerRequestList, date):
 
 	volunteerItem = db.session.query(Volunteer).filter(Volunteer.orderid == orderid)
-
-	voluteerid = Volunteer.query.count()
+	volunteers = Volunteer.query.all()
+	length = Volunteer.query.count()
+	voluteerid = int(volunteers[length-1].id) + 1
 	db.session.add(Volunteer(voluteerid, userid, userEntrepot, volunteerRequestList, date, orderid,1))
-	db.session.commit()
+	db.session.commit() 
 
 
 
@@ -384,13 +517,89 @@ def clustering(locations):
 	return res
 
 
+@algo_bp.route('/algo/test/', methods=['GET'])
+def test():
+	
+	id = -1
+	if request.args.get("orderid") != None:
+		id = request.args.get("orderid")
+
+	id = int(id)
+	order = Order.query.filter(Order.id == id)[0]
+
+	if int(order.state) == 3:
+		print("-----------------HERE ! ------------------")
+	else:
+		print("-----------------TSP PROB-----------------")
+		res = init(id)
+		entrepotlist = ""
+		for location in res["location"]:
+			entrepotlist = entrepotlist + str(location["lat"]) + "," + str(location["lng"])+";"
+
+		db.session.query(Order).filter(Order.id == id).update({"entrepotlist": entrepotlist, "state":3})
+		db.session.commit()
+		print("------------------RESULT---------------")
+		print(res)
+		print("------------------RESULT---------------")
+
+
+
+	return jsonify(""), 200
+
+
+def show(orderid):
+	res = {}
+	order = Order.query.filter(Order.id == orderid)[0]
+	requestlist = order.requestlist.strip(",").split(",")
+	requests = Request.query.all()
+
+	res["deliveryDay"] = order.time
+	locations = []
+	for i in requestlist:
+		location = {
+			"lat":  float(requests[int(i)].userlocation.split(",")[0]),
+			"lng":  float(requests[int(i)].userlocation.split(",")[1])
+		}
+		locations.append(location)
+
+	res["waypoints"] = []
+
+	first = 0
+	centroids = []
+	for i in order.entrepotlist.strip(";").split(";"):
+		if first==0:
+			res["depart"] = {
+				"lat": float(i.split(",")[0]),
+				"lng": float(i.split(",")[1])
+			}
+			first = 1
+			continue
+		location = {
+			"lat": float(i.split(",")[0]),
+			"lng": float(i.split(",")[1])
+		}
+		if float(i.split(",")[0])==parking["lat"] and float(i.split(",")[1])==parking["lng"]:
+			res["parking"] = location
+			res["waypoints"].append(location)
+			continue
+		res["waypoints"].append(location)
+		centroids.append(location)
+
+
+	res["state"] = 3
+	res["location"] = []
+	res["location"].append(locations) 
+	res["location"].append(centroids)
+
+
+	return res
 
 
 
 
-def init():
+def init(orderid):
 
-	order = Order.query.filter(Order.id == 5)
+	order = Order.query.filter(Order.id == orderid)
 	requestList = order[0].requestlist
 	requests = Request.query.all()
 	depart = {

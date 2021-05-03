@@ -61,12 +61,102 @@
 
       $.ajax({
                 type:'get',
-                url:'http://localhost:5000/algo/map/?orderid=5',
+                url:'http://localhost:5000/algo/map/?orderid='+{{orderid}},
                 cache:false,
                 dataType:'json',
                 crossDomain: true,
                 success:function(res){
 
+                    if (parseInt(res["state"]) == 1 || parseInt(res["state"]) == 3)
+                    {
+                      $("#validatePanel").hide()
+                    }
+
+                    if (parseInt(res["state"]) == 3)
+                    {
+
+                    dataset = res["location"]
+                    parking = res["parking"]
+
+                    dataset.forEach(data => {
+                        data.forEach(item => {
+                          item["lat"] = parseFloat(item["lat"])
+                          item["lng"] = parseFloat(item["lng"])
+                        })
+                    })
+                    let stopovers = []
+                    for (let i=0; i<res["waypoints"].length-1; ++i)
+                    {
+                          let item = res["waypoints"][i]
+                          item["lat"] = parseFloat(item["lat"])
+                          item["lng"] = parseFloat(item["lng"])
+                          stopoverItem = {
+                            location : {
+                              "lat" : parseFloat(item["lat"]),
+                              "lng" : parseFloat(item["lng"])
+                            },
+                            stopover : true
+                          }
+                          stopovers.push(stopoverItem)
+                    }
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                      zoom: 12,
+                      center: { lat: 45.77495, lng: 4.84839 },
+                    });
+                    index = 0;
+
+                    $("#btn").click(function(){
+                        dataset[0].forEach(item => {
+                            addMarker(item, "blue", map, "")
+                        })
+                        index = index + 1
+                    })
+                    $("#btnClear").click(function(){
+                          location.reload()
+                    })
+                    
+                    index = 0
+                    var allPoints = dataset[1]
+                    dataset[1].forEach(item => {
+                      name = "Point Retrait " + index
+                      index = index + 1
+                      addMarker(item, "green", map, name)
+                    })  
+                    addMarker(parking, "yellow", map, "STOCKAGE")
+                    res["waypoints"].forEach(item => {
+                          addMarker(item, "red", map, "")
+                    })
+                    
+                    res["depart"]["lat"] = parseFloat(res["depart"]["lat"])
+                    res["depart"]["lng"] = parseFloat(res["depart"]["lng"])
+                    let arrival = {
+                      "lat" : parseFloat(res["waypoints"][res["waypoints"].length-1]["lat"]),
+                      "lng" : parseFloat(res["waypoints"][res["waypoints"].length-1]["lng"])
+                    }
+
+                    addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
+
+                    directionsDisplay = new google.maps.DirectionsRenderer();
+
+                    var directionsService = new google.maps.DirectionsService();
+                    var request = {
+                      origin: res["depart"],
+                      destination: arrival,
+                      waypoints: stopovers,
+                      optimizeWaypoints: true,
+                      travelMode: google.maps.TravelMode.DRIVING
+                    };
+
+                    directionsService.route(request, function(result, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
+                      }
+                    });
+                    directionsDisplay.setMap(map);
+
+                    } else {
+                    
                     dataset = res["location"]
                     labels = dataset[2]
                     parking = res["parking"]
@@ -109,6 +199,15 @@
                     $("#btnClear").click(function(){
                           location.reload()
                     })
+                    $("#validate").click(function(){
+                      $.ajax({
+                        type: "GET",
+                        url: "http://localhost:5000/algo/validate?orderid="+{{orderid}},
+                        success: function(){
+                          location.reload()
+                        }
+                      });
+                    })
                     
                     index = 0
                     var allPoints = dataset[1]
@@ -142,23 +241,23 @@
 
                     addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
 
-                    // directionsDisplay = new google.maps.DirectionsRenderer();
+                    directionsDisplay = new google.maps.DirectionsRenderer();
 
-                    // var directionsService = new google.maps.DirectionsService();
-                    // var request = {
-                    //   origin: res["depart"],
-                    //   destination: parking,
-                    //   waypoints: stopovers,
-                    //   optimizeWaypoints: true,
-                    //   travelMode: google.maps.TravelMode.DRIVING
-                    // };
+                    var directionsService = new google.maps.DirectionsService();
+                    var request = {
+                      origin: res["depart"],
+                      destination: parking,
+                      waypoints: stopovers,
+                      optimizeWaypoints: true,
+                      travelMode: google.maps.TravelMode.DRIVING
+                    };
 
-                    // directionsService.route(request, function(result, status) {
-                    //   if (status == google.maps.DirectionsStatus.OK) {
-                    //     directionsDisplay.setDirections(result);
-                    //   }
-                    // });
-                    // directionsDisplay.setMap(map);
+                    directionsService.route(request, function(result, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
+                      }
+                    });
+                    directionsDisplay.setMap(map);
 
                     console.log(res["volunteer"]) 
 
@@ -199,7 +298,10 @@
                           location.reload()
                         }
                       });
-                    });               
+                    });
+                  }
+
+                                   
                 }
             });
 
@@ -249,27 +351,28 @@
   <body>
     <div id="map"></div>
     <div id="right-panel">
-      <div>
-        <b>Waypoints:</b> <br />
-        <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br />
-        <select multiple id="waypoints">
-        </select>
-        <br />
+      <div id="validatePanel">
+          <b>Waypoints:</b> <br />
+          <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br />
+          <select multiple id="waypoints">
+          </select>
+          <br />
         <div style="display: flex; flex-direction: column; justify-content: space-around; align-items: center; height: 120px">
           <input type="submit" value="submit" id="submit" />
           <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center; height: 80px; width: 200px">
             <button id = "btn"> Details</button>
             <button id = "btnClear"> Clear</button>
           </div>
-        </div>
-        <div id="aide" style="display: flex; flex-direction: column; justify-content: space-around; align-items: center;">
+          <button id = "validate">Valider</button>
         </div>
       </div>
+      <div id="aide" style="display: flex; flex-direction: column; justify-content: space-around; align-items: center;">
+        </div>
     </div>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&libraries=&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn-h2BA-6XrW5ic3DWXs_U4mfpOo05xmo&callback=initMap&libraries=&v=weekly"
       async
     ></script>
   </body>

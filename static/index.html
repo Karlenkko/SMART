@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="/static/css/animate.min.css">
     <link rel="stylesheet" href="/static/css/syalert.min.css">
     <link rel="stylesheet" href="/static/css/index.css">
-    <title>COLIV</title>
+    <title>CityFarm</title>
 </head>
 <body>
     <div id="app">
         <header class="header">
-            <a href="/" class="logo">COLIV</a>
+            <a href="/" class="logo">CityFarm</a>
             <nav>
                 <ul class="menu-items">
                     <li><a href="/" class="menu-item">Acceuil</a></li>
-                    <li><a href="/myAccount" class="menu-item">Mes Comptes</a></li>
+                    <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
                     <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
                     <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
                 </ul>
@@ -58,17 +58,17 @@
 
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
             <div class="sy-title">Contact {{selectedUser.userName}}</div>
-            <div class="sy-content">Description of the task: <span class="longDescription">{{selectedUser.description}}</span></div>
-            <div class="sy-content">Price: <span>{{selectedUser.price}}</span></div>
+            <div class="sy-content">Description: <span class="longDescription">{{selectedUser.description}}</span></div>
+            <div class="sy-content">Prix: <span>{{selectedUser.price}}</span></div>
             <div class="sy-content commentaire">
-                Commentaire(optionelle):
+                Commentaire(optionel):
                 <br>
                 <textarea v-model="aide.description" placeholder="Entrée vos situations et vos raison pour joindre cette aide"></textarea>
             </div>
 
             <div class="sy-content aide">
                 <div class="aideOption" v-for="(item,index) in aide.timelist">
-                    <span>Chosir ci-desous le jour sur la livrason. Option {{index + 1}}</span>
+                    <span>Choisir ci-dessous le jour de la livrason. Option {{index + 1}}</span>
                     <div class="btn-group">
                         <input type="button" :class="['btn',item.day == 'Monday'?'btn-selected':'']" value="Monday" @click="item.day='Monday'">
                         <input type="button" :class="['btn',item.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="item.day='Tuesday'">
@@ -78,7 +78,7 @@
                         <input type="button" :class="['btn',item.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="item.day='Saturday'">
                         <input type="button" :class="['btn',item.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="item.day='Sunday'">
                     </div>
-                    <span>Choisir ci-desous le temps pour la livraison</span>
+                    <span>Choisir ci-dessous le temps pour la livraison</span>
                     <div>
                         <input type="radio" :id="'morning1b'+index"
                                value="8-10" v-model="item.time">
@@ -99,7 +99,7 @@
                 </div>
             </div>
 
-            <div class="sy-content">For more information, please contact <span>&nbsp;{{selectedUser.userName}}&nbsp;</span> at <span>&nbsp;{{selectedUser.tel}}&nbsp;</span></div>
+            <div class="sy-content">Pour plus d'information, contactez <span>&nbsp;{{selectedUser.userName}}&nbsp;</span> à <span>&nbsp;{{selectedUser.tel}}&nbsp;</span></div>
             <div class="sy-btn">
                 <div class="button" onClick="syalert.syhide('alert2')" @click="updateAide()">Join in!</div>
             </div>
@@ -113,7 +113,7 @@
                 <div class="infoLeft">
                     <div class="participantNbr">Participant: <span>{{farmorder.totalVolunteers}}</span></div>
                     <div class="benevoleNbr">Bénévole requis: <span>{{farmorder.totalMembers}}</span></div>
-                    <div class="Adress">Adress: <span class="twoLineEllipsis">{{farmorder.farmAddress}}</span> </div>
+                    <div class="Adress">Adresse: <span class="twoLineEllipsis">{{farmorder.farmAddress}}</span> </div>
                 </div>
                 <div class="photo">
                     <img :src="farmorder.url" alt="">
@@ -132,7 +132,7 @@
                 <div class="infoLeftClient infoLeft">
                     <div class="dateDuration">Date: <span>{{clientorder.date}}</span></div>
                     <div class="benevoleNbr">Candidats en total: <span>{{clientorder.totalCandidate}}</span></div>
-                    <div class="trajet">From&nbsp;<span>{{clientorder.depart}}&nbsp;</span>to&nbsp;<span>{{clientorder.destination}}</span></div>
+                    <div class="trajet">De&nbsp;<span>{{clientorder.depart}}&nbsp;</span>à&nbsp;<span>{{clientorder.destination}}</span></div>
                     <div class="Description">Description: <span class="twoLineEllipsis">{{clientorder.description}}</span> </div>
                 </div>
                 <div class="photo">
@@ -142,7 +142,7 @@
                 <div class="etat valide" v-if="clientorder.state==1">Validé!</div>
                 <div class="type typeClient" v-if="clientorder.userId!=undefined">Aide Client</div>
             </div>
-            <div class="button" @click="getUser" onClick="syalert.syopen('alert2')">Participate!</div>
+            <div class="button" @click="getUser" onClick="syalert.syopen('alert2')">Participew!</div>
         </div>
     </template>
     <template id="farm">
@@ -151,7 +151,7 @@
             <div class="farmContainer">
                 <div class="infoLeft">
                     <div class="Products">Nos Produits: <span class="twoLineEllipsis">{{farm.productList}}</span></div>
-                    <div class="Adress">Adress: <span class="twoLineEllipsis">{{farm.location}}</span> </div>
+                    <div class="Adress">Adresse: <span class="twoLineEllipsis">{{farm.location}}</span> </div>
                 </div>
                 <div class="photo">
                     <img :src="farm.url" alt="">

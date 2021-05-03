@@ -34,7 +34,7 @@ application = Flask(__name__)
 cors = CORS()
 cors.init_app(app=application, resources={r"/*": {"origins": "*"}})
 
-application.config['GOOGLEMAPS_KEY'] = "AIzaSyA3mWjEnNcNoGtTWDYvNzZFPzuhjGv1H48" 
+application.config['GOOGLEMAPS_KEY'] = ""
 GoogleMaps(application)
 
 application.config.from_object(config)
@@ -59,9 +59,6 @@ application.register_blueprint(user_bp)
 # def setup():
 #     init()
 
-@application.route("/map/", methods=['GET'])
-def map():
-    return render_template("map.html")
 @application.route("/", methods=['GET'])
 def index():
     return application.send_static_file('index.html')
@@ -78,6 +75,27 @@ def myAccount():
 @application.route("/myAnnounce/", methods=["GET"])
 def myAnnounce():
     return application.send_static_file('gestionAnnounce.html')
+
+
+
+@application.route("/map", methods=['GET'])
+def map():
+    orderid = 0
+    if request.args.get("orderid") != None:
+        orderid = request.args.get("orderid")
+
+    return render_template("map.html", orderid=orderid)
+@application.route("/usermap", methods=['GET'])
+def usermap():
+    return render_template("usermap.html")
+@application.route("/userRequest", methods=['GET'])
+def userRequest():
+
+    requestid = 0
+    if request.args.get("requestid") != None:
+        requestid = request.args.get("requestid")
+
+    return render_template("userRequest.html", requestid=requestid)
 
 # run the app.
 if __name__ == "__main__":

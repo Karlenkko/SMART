@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style type="text/css">
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Titillium+Web:wght@400;700&display=swap");
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        height: 100%;
+        float: left;
+        width: 70%;
+        height: 100%;
+      }
+
+      #panel {
+        margin: 20px;
+        border-width: 2px;
+        width: 25%;
+        height: 400px;
+        float: left;
+        text-align: left;
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* header */
+        .header {
+            height : 60px;
+            font-family: Montserrat, sans-serif;
+            line-height: 1.5;
+            background: #527242;
+            position: relative;
+            width:100%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            z-index: 1;
+        }
+        .header a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .header ul {
+            list-style: none;
+        }
+        .logo {
+            font-size: 2rem;
+        }
+        .menu-items {
+            display: flex;
+            align-items: center;
+        }
+        .menu-items li {
+            padding: 0.5rem 1rem;
+            transition: background 0.3s ease-in-out;
+        }
+        .menu-items li:hover {
+            background-color: #2a3827;
+        }
+
+    </style>
+    <script type="text/javascript">
+
+
+      $.ajax({
+                type:'get',
+                url:'http://' + window.location.host + '/algo/user?requestid=' + {{requestid}},
+                cache:false,
+                dataType:'json',
+                crossDomain: true,
+                success:function(res){
+
+                  let isVolunteer = parseInt(res["isVolunteer"])
+
+
+                  let depart = {
+                      "lat" : parseFloat(res["locations"][0]["lat"]),
+                      "lng" : parseFloat(res["locations"][0]["lng"])
+                  }
+                  let arrival = {
+                      "lat" : parseFloat(res["locations"][1]["lat"]),
+                      "lng" : parseFloat(res["locations"][1]["lng"])
+                  }
+
+                  if (isVolunteer === 1)
+                  {
+                    $("#msg").text("Vous êtes le bénévole de cette région")
+                    $("#date").text("La date est : " + res["date"])
+                    $("#detail").text(res["descriptions"])
+
+
+
+                    let stopovers = [{
+                      location : {
+                              "lat" : 45.77495,
+                              "lng" : 4.84839
+                            },
+                      stopover : true
+                    }]
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                      zoom: 15,
+                      center: depart,
+                    });
+                    
+                    /*directionsDisplay = new google.maps.DirectionsRenderer();
+
+                    var directionsService = new google.maps.DirectionsService();
+                    var request = {
+                      origin: depart,
+                      destination: arrival,
+                      waypoints: stopovers,
+                      optimizeWaypoints: true,
+                      travelMode: google.maps.TravelMode.DRIVING
+                    };
+
+                    directionsService.route(request, function(result, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
+                      }
+                    });
+                    directionsDisplay.setMap(map);*/
+
+
+                    res["userLocations"].forEach(item => {
+                      let location = {
+                        "lat" : item["userlocation"]["lat"],
+                        "lng" : item["userlocation"]["lng"]
+                      }
+                      addMarker(location, "green", map, "USER"+item["userid"])
+                    })
+
+                    addMarker({"lat": 45.77495, "lng":4.84839}, "yellow", map, "STOCKAGE")
+
+                    addMarker(arrival, "yellow", map, "Point Retrait")
+
+
+                  } else {
+                    let labelMSG = ""
+                    if (res["hasVolunteer"] == "none") {
+                      $("#msg").text("Il n'y a pas de bénévole pour cette région.")
+                      labelMSG = "STOCKAGE"
+                    } else {
+                      $("#msg").text("USER " + res["hasVolunteer"] + " est le bénévole de votre région." )
+                      labelMSG = "Point Retrait"
+                    }
+                    $("#date").text("Vous pouvez les récupérer dès : " + res["date"])
+                    $("#detail").text(res["descriptions"])
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                      zoom: 15,
+                      center: depart,
+                    });
+                    
+                    /*directionsDisplay = new google.maps.DirectionsRenderer();
+
+                    var directionsService = new google.maps.DirectionsService();
+                    var request = {
+                      origin: depart,
+                      destination: arrival,
+                      optimizeWaypoints: true,
+                      travelMode: google.maps.TravelMode.DRIVING
+                    };
+
+                    directionsService.route(request, function(result, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
+                      }
+                    });
+                    directionsDisplay.setMap(map);*/
+
+                    addMarker(arrival, "yellow", map, labelMSG)
+
+                  }
+                }
+            });
+
+      function addMarker(latLng, color, map, label) {
+        let url = "http://maps.google.com/mapfiles/ms/icons/";
+        url += color + "-dot.png";
+
+        if(label===""){
+          let marker = new google.maps.Marker({
+            map: map,
+            position: latLng,
+            icon: {
+              url: url,
+              labelOrigin: new google.maps.Point(15, -13),
+              size: new google.maps.Size(32,32),
+              anchor: new google.maps.Point(16,32)
+            },    
+          });
+        } else{
+          let marker = new google.maps.Marker({
+            map: map,
+            position: latLng,
+            icon: {
+              url: url,
+              labelOrigin: new google.maps.Point(15, -13),
+              size: new google.maps.Size(32,32),
+              anchor: new google.maps.Point(16,32)
+            },
+            label: {
+              text: label.toString(),
+              color: 'black',
+              fontSize: "12px",
+              fontWeight: "bold"
+            }
+
+            
+          });
+        }
+
+        
+      }
+
+     
+
+    </script>
+  </head>
+  <body>
+        <header class="header">
+            <a href="/" class="logo">CityFarm</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="/" class="menu-item">Acceuil</a></li>
+                    <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
+                    <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
+    <div id="map"></div>
+    <div id="panel">
+      <h3 id="msg"></h3>
+      <h4 id="date"></h4>
+      <pre id="detail"></pre>
+    </div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn-h2BA-6XrW5ic3DWXs_U4mfpOo05xmo&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
