@@ -4,7 +4,11 @@
     <title>Simple Map</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <style type="text/css">
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Titillium+Web:wght@400;700&display=swap");
+
       #right-panel {
         font-family: "Roboto", "sans-serif";
         line-height: 30px;
@@ -55,6 +59,43 @@
         overflow: scroll;
         height: 174px;
       }
+
+            /* header */
+        .header {
+            height : 60px;
+            font-family: Montserrat, sans-serif;
+            line-height: 1.5;
+            background: #527242;
+            position: relative;
+            width:100%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            z-index: 1;
+        }
+        .header a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .header ul {
+            list-style: none;
+        }
+        .logo {
+            font-size: 2rem;
+        }
+        .menu-items {
+            display: flex;
+            align-items: center;
+        }
+        .menu-items li {
+            padding: 0.5rem 1rem;
+            transition: background 0.3s ease-in-out;
+        }
+        .menu-items li:hover {
+            background-color: #2a3827;
+        }
     </style>
     <script type="text/javascript">
 
@@ -67,8 +108,10 @@
                 crossDomain: true,
                 success:function(res){
 
-                    let l = "<label>" + "Distance du trajet ordinaire : " + res["distanceNaive"] + " km" + "</label>"+"<label>" + "Distance du trajet optimisé : " + res["distance"] + " km" + "</label>";
+                    let l = "<label>" + "Distance du trajet ordinaire : " + res["distanceNaive"] + " km" + "</label>"
+                    let l2 = "<label>" + "Distance du trajet optimisé : " + res["distance"] + " km" + "</label>";
                     $("#distance").append(l);
+                    $("#distance").append(l2);
 
                     if (parseInt(res["state"]) == 1 || parseInt(res["state"]) == 3)
                     {
@@ -364,28 +407,40 @@
     </script>
   </head>
   <body>
+    <header class="header">
+            <a href="/" class="logo">CityFarm</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="/" class="menu-item">Acceuil</a></li>
+                    <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
+                    <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
+                </ul>
+            </nav>
+    </header>
     <div id="map"></div>
     <div id="right-panel">
-      <div id="validatePanel">
-          <b>Waypoints:</b> <br />
-          <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br />
+      <div id="validatePanel" style="width: 100%">
+          <b>Arrêt:</b> <br />
+          <i>(Ctrl+Clic ou Cmd+Clic pour sélection multiples)</i> <br />
           <select multiple id="waypoints">
           </select>
           <br />
-        <div style="display: flex; flex-direction: column; justify-content: space-around; align-items: center; height: 120px">
-          <input type="submit" value="submit" id="submit" />
-          <button id = "tsp"> Auto</button>
-
-          <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center; height: 80px; width: 200px">
-            <button id = "btn"> Details</button>
-            <button id = "btnClear"> Clear</button>
+        <div style="display: flex; flex-direction: column; justify-content: space-around; align-items: center;width: 100%; margin-top: 20px">
+          <input type="submit" value="Confrim" id="submit" class="btn btn-primary" />
+          <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;width: 100%;margin-top: 20px">
+            <button id = "tsp" class="btn btn-success"> Auto</button>
+            <button id = "validate" class="btn btn-success">Valider</button>
           </div>
-          <button id = "validate">Valider</button>
         </div>
       </div>
-      <div id="aide" style="display: flex; flex-direction: column; justify-content: space-around; align-items: center;">
+      <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;margin-top: 20px">
+            <button id = "btn" class="btn btn-info"> Détail</button>
+            <button id = "btnClear" class="btn btn-info"> Nettoyer</button>
+      </div>
+      <div id="aide" style="display: flex; flex-direction: column; justify-content: space-around; align-items:flex-start; ;margin-top: 60px">
         </div>
-      <div id="distance">
+      <div id="distance" style="margin-top: 20px">
           
       </div>
     </div>
