@@ -67,6 +67,9 @@
                 crossDomain: true,
                 success:function(res){
 
+                    let l = "<label>" + "Distance du trajet ordinaire : " + res["distanceNaive"] + " km" + "</label>"+"<label>" + "Distance du trajet optimisé : " + res["distance"] + " km" + "</label>";
+                    $("#distance").append(l);
+
                     if (parseInt(res["state"]) == 1 || parseInt(res["state"]) == 3)
                     {
                       $("#validatePanel").hide()
@@ -137,23 +140,23 @@
 
                     addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
 
-                    directionsDisplay = new google.maps.DirectionsRenderer();
+                    // directionsDisplay = new google.maps.DirectionsRenderer();
 
-                    var directionsService = new google.maps.DirectionsService();
-                    var request = {
-                      origin: res["depart"],
-                      destination: arrival,
-                      waypoints: stopovers,
-                      optimizeWaypoints: true,
-                      travelMode: google.maps.TravelMode.DRIVING
-                    };
+                    // var directionsService = new google.maps.DirectionsService();
+                    // var request = {
+                    //   origin: res["depart"],
+                    //   destination: arrival,
+                    //   waypoints: stopovers,
+                    //   optimizeWaypoints: true,
+                    //   travelMode: google.maps.TravelMode.DRIVING
+                    // };
 
-                    directionsService.route(request, function(result, status) {
-                      if (status == google.maps.DirectionsStatus.OK) {
-                        directionsDisplay.setDirections(result);
-                      }
-                    });
-                    directionsDisplay.setMap(map);
+                    // directionsService.route(request, function(result, status) {
+                    //   if (status == google.maps.DirectionsStatus.OK) {
+                    //     directionsDisplay.setDirections(result);
+                    //   }
+                    // });
+                    // directionsDisplay.setMap(map);
 
                     } else {
                     
@@ -241,23 +244,23 @@
 
                     addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
 
-                    directionsDisplay = new google.maps.DirectionsRenderer();
+                    // directionsDisplay = new google.maps.DirectionsRenderer();
 
-                    var directionsService = new google.maps.DirectionsService();
-                    var request = {
-                      origin: res["depart"],
-                      destination: parking,
-                      waypoints: stopovers,
-                      optimizeWaypoints: true,
-                      travelMode: google.maps.TravelMode.DRIVING
-                    };
+                    // var directionsService = new google.maps.DirectionsService();
+                    // var request = {
+                    //   origin: res["depart"],
+                    //   destination: parking,
+                    //   waypoints: stopovers,
+                    //   optimizeWaypoints: true,
+                    //   travelMode: google.maps.TravelMode.DRIVING
+                    // };
 
-                    directionsService.route(request, function(result, status) {
-                      if (status == google.maps.DirectionsStatus.OK) {
-                        directionsDisplay.setDirections(result);
-                      }
-                    });
-                    directionsDisplay.setMap(map);
+                    // directionsService.route(request, function(result, status) {
+                    //   if (status == google.maps.DirectionsStatus.OK) {
+                    //     directionsDisplay.setDirections(result);
+                    //   }
+                    // });
+                    // directionsDisplay.setMap(map);
 
                     console.log(res["volunteer"]) 
 
@@ -294,6 +297,18 @@
                           "id" : res["id"],
                           "points" : waypts
                         },
+                        success: function(){
+                          location.reload()
+                        }
+                      });
+                    });
+
+                    $("#tsp").click(function(){
+                      console.log("hello")
+
+                      $.ajax({
+                        type: "GET",
+                        url: "http://localhost:5000/algo/test?orderid=" + {{orderid}},
                         success: function(){
                           location.reload()
                         }
@@ -359,6 +374,8 @@
           <br />
         <div style="display: flex; flex-direction: column; justify-content: space-around; align-items: center; height: 120px">
           <input type="submit" value="submit" id="submit" />
+          <button id = "tsp"> Auto</button>
+
           <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center; height: 80px; width: 200px">
             <button id = "btn"> Details</button>
             <button id = "btnClear"> Clear</button>
@@ -368,6 +385,9 @@
       </div>
       <div id="aide" style="display: flex; flex-direction: column; justify-content: space-around; align-items: center;">
         </div>
+      <div id="distance">
+          
+      </div>
     </div>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->

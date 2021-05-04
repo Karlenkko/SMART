@@ -248,6 +248,10 @@ def map():
  
 
 	centroids = clustering(locations)
+	departTuple = (float(depart["lat"]), float(depart["lng"]))
+	parkingTuple = (float(parking["lat"]), float(parking["lng"]))
+	distance = 2*(geodesic(departTuple, parkingTuple).km)
+
 	res = {}
 	resLocation = []
 
@@ -308,6 +312,8 @@ def map():
 	selectedperson = ""
 	voluteerName = ""
 
+	updateRequestsClustersTSP(centroids, requestList, id)
+
 	deleteAllRelatedVolunteer(id)
 
 	for i in finalVolunteer:
@@ -319,11 +325,14 @@ def map():
 		addVolunteer(id, userid, userEntrepot, volunteerRequestList, getVolunteerDay(finalVolunteer[i] ,selected))
 
 
+
 	db.session.query(Order).filter(
 									Order.id == id
-								).update({"selectedperson" : selectedperson, "time" : bestday})
+								).update({"selectedperson" : selectedperson, "time" : bestday, "distancetotal": round(distance, 2), "clusters": toStringCentroids(centroids[0])})
 	db.session.commit()
 	db.session.close()
+
+	distance = distance + updateRequestsClusters(centroids, requestList, id)
 
 
 	res["volunteer"] = voluteerName
@@ -332,8 +341,13 @@ def map():
 	res["id"] = id
 	res["waypoints"] = waypoints
 	res["state"] = order[0].state
+	res["distanceNaive"] = calculateDistance(id)
+	res["distance"] = round(distance, 2)
 
 	return jsonify(res), 200
+
+
+
 
 def getVolunteerDay(requestId, selected):
 	for i in selected:
@@ -590,10 +604,110 @@ def show(orderid):
 	res["location"] = []
 	res["location"].append(locations) 
 	res["location"].append(centroids)
-
+	res["distanceNaive"] = calculateDistance(orderid)
+	res["distance"] = order.distancetotal
 
 	return res
 
+
+def updateRequestsClustersTSP(centroids, requestlist, orderid):
+
+	labels = centroids[1]
+	index = 0
+	distance = 0 
+	requests = Request.query.all()
+
+	for requestid in requestlist:
+		
+		centroid = (float(centroids[0][labels[index]]["lat"]), float(centroids[0][labels[index]]["lng"]))
+		location = (float(requests[int(requestid)].userlocation.split(",")[0]), float(requests[int(requestid)].userlocation.split(",")[1]))
+		dis = geodesic(centroid, location).km
+		if dis > 1:
+			distance = distance + dis
+		db.session.query(Request).filter(Request.id == requestid).update({"cluster" : labels[index]})
+		db.session.commit()
+		index = index + 1
+
+	return round(distance*2,2)
+
+def updateRequestsClusters(centroids, requestlist, orderid):
+
+	labels = centroids[1]
+	index = 0
+	distance = 0 
+
+	order = Order.query.filter(Order.id == orderid)[0]
+	requests = Request.query.all()
+
+	parkingTuple = (float(parking["lat"]), float(parking["lng"]))
+
+	selectedperson = order.selectedperson.strip(";").split(";")
+	if len(selectedperson) > 1:
+		for i in range(len(selectedperson)):
+			selectedperson[i] = int(selectedperson[i])
+
+	labelsAide = []
+	requestidVol = []
+
+	for requestid in requestlist:
+		id = int(requestid)
+		if int(requests[id].userid) in selectedperson:
+			print("-----------oneAide---------------")
+			labelsAide.append(int(requests[id].cluster))
+			centroid = (float(centroids[0][int(requests[id].cluster)]["lat"]), float(centroids[0][int(requests[id].cluster)]["lng"]))
+			distance = distance + 2*(geodesic(centroid, parkingTuple).km)
+			requestidVol.append(id)
+
+	pointRetraits = []
+	entrepotlist = order.entrepotlist.strip(";").split(";")
+	i = 1
+	print("-----------entrepotlist----------------")
+	while i < len(entrepotlist):
+		index = 0
+		for centroid in centroids[0]:
+			if float(centroid["lat"]) == float(entrepotlist[i].split(",")[0]) and float(centroid["lng"]) == float(entrepotlist[i].split(",")[1]):
+				labelsAide.append(index)
+				print(index)
+				break
+			index = index + 1
+		i = i + 1
+	print("-----------entrepotlist----------------")
+
+
+	index = 0
+
+	for requestid in requestlist:
+		id = int(requestid)
+
+		if requestid in requestidVol:
+			index = index + 1
+			continue
+
+		if int(labels[index]) in labelsAide:
+			print("-----------Aide---------------")
+			centroid = (float(centroids[0][labels[index]]["lat"]), float(centroids[0][labels[index]]["lng"]))
+			location = (float(requests[id].userlocation.split(",")[0]), float(requests[id].userlocation.split(",")[1]))
+			dis = geodesic(centroid, location).km
+			if dis > 1:
+				distance = distance + dis*2
+			index = index + 1
+			continue
+
+		location = (float(requests[id].userlocation.split(",")[0]), float(requests[id].userlocation.split(",")[1]))
+		dis = geodesic(parkingTuple, location).km
+		if dis > 1:
+			distance = distance + dis*2
+		
+		index = index + 1
+
+	return round(distance,2)
+
+def toStringCentroids(centroids):
+	res = ""
+	for centroid in centroids:
+		res = res + str(centroid["lat"]) + "," +  str(centroid["lng"]) + ";"
+
+	return res
 
 
 
@@ -618,6 +732,10 @@ def init(orderid):
 
 	centroids = clustering(locations)
 
+	print("--------------------CLUSTERING-----------------------")
+	distance = updateRequestsClustersTSP(centroids, requestList, orderid)
+	print("--------------------CLUSTERING-----------------------")
+
 	ptsTmp = changeToTuple(centroids[0])
 
 	pts = []
@@ -626,7 +744,14 @@ def init(orderid):
 		pts.append(i)
 	pts.append((45.77495,4.84839))
 
-	path = solveTSP(pts)
+	tspRES = solveTSP(pts)
+
+	path = tspRES["locations"]
+	distance = distance + tspRES["distance"]
+
+	db.session.query(Order).filter(Order.id == orderid).update({"distancetotal" : distance, "clusters": toStringCentroids(centroids[0])})
+	db.session.commit()
+
 
 	res = {}
 	res["location"] = path
@@ -693,7 +818,53 @@ def solveTSP(locations):
 	print(res)
 	print("---------------res-------------------")
 
-	return res
+	return {"locations":res, "distance": distance}
+
+
+def calculateDistance(orderid):
+	order = Order.query.filter(Order.id == orderid)[0]
+	depart = (float(order.entrepotlist.split(";")[0].split(",")[0]), float(order.entrepotlist.split(";")[0].split(",")[1]))
+	stockage = (parking["lat"], parking["lng"])
+	distance = 0
+	distance = distance + geodesic(depart, stockage).km
+
+	requestlist = order.requestlist.strip(",").split(",")
+	requests = Request.query.all()
+	for requestid in requestlist:
+		request = requests[int(requestid)]
+		location = (float(request.userlocation.split(",")[0]), float(request.userlocation.split(",")[1]))
+		distance = distance + geodesic(location, stockage).km
+
+
+	distance = distance*2
+	distance = round(distance, 2)
+	return distance
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
