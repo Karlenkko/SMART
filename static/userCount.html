@@ -133,8 +133,16 @@
       var vm = new Vue({
         el: '#app',
         data: {
-          voluntaryWorks:
-                  {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', volunteertotal:'297',volunteeractual:'26'},
+          voluntaryWorks:[
+            {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', volunteertotal:'297',volunteeractual:'26'},
+                  Id=window.localStorage.userId,
+                  name=window.localStorage.userName,
+                  mobile=window.localStorage.userMobile,
+                  address="somewhere",
+                  photourl=window.localStorage.userPhotoUrl,
+                  volunteertotal=window.localStorage.volunteerTotal,
+                  volunteeractual=window.localStorage.volunteerActual,
+            ],
           carbonEmissions:
                   {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', carbontotal:'297',carbonactual:'26'},
           state:0,
