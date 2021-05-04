@@ -57,10 +57,10 @@ def getRequests():
                     "volunteerTime": dictifyDate(req.volunteertime),
                     "articles": dictifyArticles(req.description)
                 })
-            res = {
-                "clientRequests": clientRequests,
-                "farmRequests": farmRequests
-            }
+        res = {
+            "clientRequests": clientRequests,
+            "farmRequests": farmRequests
+        }
         return jsonify(res), 200
 
 @publish_bp.route('/publish/getUserOrderContent/', methods=['GET'])
@@ -251,13 +251,13 @@ def postFarmPublishContent():
 
 @publish_bp.route('/publish/assignCandidate/', methods=['PUT'])
 def assignCandidate():
-    if not request.args or not 'orderId' in request.form:
+    if not request.args or not 'orderId' in request.args:
         abort(400)
     else:
-        oldorder = Order.query.filter(Order.id == request.form.get('orderId', type=int)).first()
+        oldorder = Order.query.filter(Order.id == request.args.get('orderId', type=int)).first()
         db.session.query(Order).filter(
-            Order.id == request.form.get('orderId', type=int)
-        ).update({"selectedperson": oldorder.selectedperson + request.form.get('candidateId') + ","})
+            Order.id == request.args.get('orderId', type=int)
+        ).update({"selectedperson": oldorder.selectedperson + request.args.get('candidateId') + ";"})
         db.session.commit()
         db.session.close()
         return jsonify(request.form), 200
