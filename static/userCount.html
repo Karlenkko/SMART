@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/index.css">
   <link rel="stylesheet" href="css/gestionAnnounce.css">
   <link rel="stylesheet" href="css/userCount.css">
-  <title>CityFarm</title>
+  <title>COLIV</title>
 </head>
 
 <body>
@@ -36,10 +36,10 @@
             <div class="navBox">
               <ul>
                 <li>
-                  <h2 @click="changeState"  class="obtain">Travaille Bénévole</h2>
+                  <h2 @click="changeStateVW"  class="obtain">Travaille Bénévole</h2>
                 </li>
                 <li>
-                  <h2 @click="changeState" class="obtain">Émissions Carbone</h2>
+                  <h2 @click="changeStateCE" class="obtain">Émissions de carbone</h2>
                 </li>
               </ul>
             </div>
@@ -50,21 +50,21 @@
         <div class="listsContent">
 
           <!-- data compositions -->
-          <voluntary-work  class="userCountsClass" :vinfo="voluntaryWorks"  v-show="state%2===1 && state!==0"></voluntary-work>
-          <carbon-emission class="userCountsClass" :cinfo="carbonEmissions" v-show="state%2===0 && state!==0"></carbon-emission>
+          <voluntary-work  class="userCountsClass" :vinfo="voluntaryWorks"  v-show="state===0"></voluntary-work>
+          <carbon-emission class="userCountsClass" :cinfo="carbonEmissions" v-show="state===1"></carbon-emission>
 
           <!-- builtin animation -->
           <iframe
-                  src="progress.html" height="300" width="500"
+                  src="progress.html" height="1000" width="1200"
                   style="position: relative;border:none;"
                   title="Voluntary Work Contribution"
-                  v-show="state%2===1 && state!==0">
+                  v-show="state===0">
           </iframe>
           <iframe
                   src="TreeAnime.html" height="1000" width="1200"
                   style="position: relative;border:none;"
                   title="Carbon Emission Contribution"
-                  v-show="state%2===0 && state!==0">
+                  v-show="state===1">
           </iframe>
         </div>
       </section>
@@ -78,7 +78,7 @@
         <div class="userDemandContainer">
           <div class="userinfoLeftClient userinfoLeft">
             <div> ID: <span class="twoLineEllipsis">{{vinfo.Id}}</span></div>
-            <div>Numéro de Téléphone: <span class="twoLineEllipsis">{{vinfo.mobile}}</span></div>
+            <div>Phone: <span class="twoLineEllipsis">{{vinfo.mobile}}</span></div>
             <div>Address: <span class="twoLineEllipsis">{{vinfo.address}}</span></div>
             <div>Total: <span class="twoLineEllipsis">{{vinfo.volunteertotal}}</span></div>
             <div>Actual: <span class="twoLineEllipsis">{{vinfo.volunteeractual}}</span></div>
@@ -96,7 +96,7 @@
         <div class="userDemandContainer">
           <div class="userinfoLeftClient userinfoLeft">
             <div> ID: <span class="twoLineEllipsis">{{cinfo.Id}}</span></div>
-            <div>Numéro de Téléphone: <span class="twoLineEllipsis">{{cinfo.mobile}}</span></div>
+            <div>Phone: <span class="twoLineEllipsis">{{cinfo.mobile}}</span></div>
             <div>Address: <span class="twoLineEllipsis">{{cinfo.address}}</span></div>
             <div>Total: <span class="twoLineEllipsis">{{cinfo.carbontotal}}</span></div>
             <div>Actual: <span class="twoLineEllipsis">{{cinfo.carbonactual}}</span></div>
@@ -140,9 +140,14 @@
           state:0,
         },
         methods: {
-          changeState: function (event){
+          changeStateVW: function (event){
             if(event){
-              this.state=this.state+1;
+              this.state=0;
+            }
+          },
+          changeStateCE: function (event) {
+            if(event){
+              this.state=1;
             }
           }
         }
