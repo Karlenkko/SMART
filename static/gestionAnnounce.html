@@ -73,8 +73,9 @@
             <div class="sy-title">Candidat: {{ selectedCandidate.userName }}</div>
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
             <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
-            <div class="sy-btn">
-                <div class="button" onClick="syalert.syhide('detail')" @click="assignCandidate(selectedCandidate.userId)">Valider ma commande</div>
+            <div class="sy-btn" style="display: inline-flex; width: 100%">
+                <div class="button" onClick="syalert.syhide('detail')" style="background-color: red; width: 50%"> Annuler </div>
+                <div class="button" onClick="syalert.syhide('detail')" style="width: 50%" @click="assignCandidate">Valider mon candidat</div>
             </div>
         </div>
 
@@ -83,20 +84,32 @@
         </div>
 
         <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createDemand">
-            <div class="sy-title">Réglage</div>
-            <div class="sy-btn">
-                <div class="button" onClick="syalert.syhide('alert2')" @click="createClientDemand">Créer</div>
-            </div>
+            <div class="sy-title">Création de demande</div>
+                <div class="sy-content">
+                    <label for="name">Description: </label> <input id="description" v-model="demandPost.description" type="text" name="description"><br>
+                    <label for="name">Temps proposé: </label> <input id="timeProposed" v-model="demandPost.timeProposed" type="text" name="timeProposed"><br>
+                    <label for="name">Prix: </label> <input id="price1" v-model="demandPost.price" type="text" name="price"><br>
+                </div>
+                <div class="sy-btn">
+                    <div class="button" onClick="syalert.syhide('createDemand')" @click="createClientDemand">Créer</div>
+                </div>
         </div>
-
         <div class="bottomBar" v-show="state == 11">
         <button class="create" onClick="syalert.syopen('createOffer')">Créer une offre</button>
         </div>
 
-        <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createOffer">
-            <div class="sy-title">Réglage</div>
-            <div class="sy-btn">
-                <div class="button" onClick="syalert.syhide('alert2')" @click="createFarmOffer">Créer</div>
+        <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createOffer" style="width: 550px">
+            <div class="sy-title">Création d'offre</div>
+                <div class="sy-content">
+                    <label for="name">Nom: </label> <input id="name" v-model="article.name" type="text" name="name" placeholder="Description de l'article"  size="60px">
+                    <br>
+                    <label for="name">Prix: </label> <input id="price2" v-model="article.price" type="text" name="price">
+                    <label for="name">Quantité: </label> <input id="quantity" v-model="article.quantity" type="text" name="quantity">
+                    <button @click="addArticle">Ajouter</button>
+                </div>
+                <textarea class="articlesInfo" v-model="articlesInfo" readonly></textarea>
+                <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('createOffer')" @click="createFarmOffer">Créer</div>
             </div>
         </div>
 
@@ -105,7 +118,7 @@
     <template id="clientCandidate" >
         <div  class="candidatesInfo">
             <h3>{{ candidate.userName }}: {{ candidate.userTel }} </h3>
-            <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(candidate)">Détail</div>
+            <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(orderid, candidate)">Détail</div>
         </div>
     </template>
 
@@ -130,7 +143,7 @@
             <div v-show="!demand.state">
                 <h2>Candidats:</h2>
                 <div>
-                        <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item"></client-candidate>
+                        <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item" :orderid="demand.orderId"></client-candidate>
                 </div>
             </div>
             <div v-show="demand.state">
@@ -139,6 +152,7 @@
                         <client-candidate v-for="item in demand.selectedPersons" :key="item.id" :candidate="item"></client-candidate>
                 </div>
             </div>
+            <div class="button" style="width: 180px">Détail de livraison</div>
         </div>
     </template>
 
@@ -160,7 +174,6 @@
             <h2><span>{{offer.name}}</span></h2>
                 <farm-article v-for="item in offer.articles" :key="item.articleId" :article="item"></farm-article>
             <div class="DemandContainer">
-                <div class="infoArticle">Chiffres des ventes: <span>{{offer.sales}}</span></div>
                 <div class="etat encours" v-show="offer.state==0">En cours</div>
                 <div class="etat valide" v-show="offer.state==1">Validé</div>
                 <div class="etat valide" v-show="offer.state==2">Achevé</div>
@@ -169,8 +182,7 @@
                 <hr>
                 MAP
             </div>
-            <div class="button" v-show="offer.state==0">Valider</div>
-
+            <div class="button" style="width: 180px">Détail de livraison</div>
         </div>
     </template>
 
@@ -179,8 +191,7 @@
             <h2>Ma commande</h2>
             <div class="DemandContainer">
                 <div class="infoLeftClient infoLeft">
-                    <div >Temps de retrait: <span>{{request.pickUpTime[0]}}, {{request.pickUpTime[1]}}</span></div>
-                    <div >Articles: <farm-article v-for="item in request.articles" :key="item" :article="item"></farm-article> </div>
+                    <div>Temps de retrait: <br><span v-for="item in request.pickUpTime">{{item.day}}, {{item.time}} <br></span></div>
                 </div>
                 <div class="photo">
                     <img src="" alt=""/>
@@ -190,21 +201,22 @@
                 <div class="etat valide" v-show="request.state==1">Validé</div>
                 <div class="etat valide" v-show="request.state==2">Achevé</div>
             </div>
+            <div class="button" style="width: 180px">Détail de livraison</div>
         </div>
     </template>
 
     <template id="farmRequest">
         <div class="clientDemandsClass" style="width: 550px">
             <h2><span>Ma commande</span></h2>
-                <farm-article v-for="item in request.articles" :key="item.articleId" :article="item"></farm-article>
+                <div >Articles: <farm-article v-for="item in request.articles" :key="item.name" :article="item"></farm-article> </div>
             <div class="DemandContainer">
-                <div class="infoArticle">Temps de volontaire: <span>{{request.volunteerTime}}</span></div>
+                <div>Temps de retrait: <br><span v-for="item in request.pickUpTime">{{item.day}}, {{item.time}} <br></span></div>
+                <div>Temps de volontaire: <br><span v-for="item in request.pickUpTime">{{item.day}}, {{item.time}} <br></span></div>
                 <div class="etat encours" v-show="request.state==0">En cours</div>
                 <div class="etat valide" v-show="request.state==1">Validé</div>
                 <div class="etat valide" v-show="request.state==2">Achevé</div>
             </div>
-            <div class="button" v-show="request.state==0">Valider</div>
-
+            <div class="button" style="width: 180px">Détail de livraison</div>
         </div>
     </template>
 
@@ -247,10 +259,13 @@
 
         Vue.component('client-candidate',{
             template:'#clientCandidate',
-            props:['candidate'],
+            props:['candidate','orderid'],
             methods:{
-                selectCandidate(user){
-                    vm.selectedCandidate = user;
+                selectCandidate(orderId, candidate){
+                    vm.selectedCandidate = candidate;
+                    console.log("orderId")
+                    console.log(orderId)
+                    vm.selectedOrderId = orderId;
                 },
             }
         })
@@ -270,7 +285,7 @@
                     for (person in demand.selectedpersons)
                         str += this.demand.selectedpersons.userName + ': ' + this.demand.selectedpersons.userTel;
                     return str;*/
-                    return "not used"
+                    return "this function is not used"
                 }
             },
             created(){
@@ -285,17 +300,10 @@
 
         Vue.component('client-request',{
             template:"#clientRequest",
-            props:['request']
+            props:['request'],
         })
 
-        Vue.component('modal',{
-            template:'#modal',
-            methods:{
-            },
-            props:['user']
-        })
-
-        var vm = new Vue({
+        const vm = new Vue({
             el:"#app",
             data:{
                 farmOffers:[
@@ -343,26 +351,40 @@
                 }],
                 state:10,
                 selectedCandidate:'not chosen',
+                selectedOrderId: '-1',
                 //host: "http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com",
-                host: "http://127.0.0.1:5000"
+                host: "http://127.0.0.1:5000",
+                loginId: window.localStorage.userId,
+                demandPost: {
+                    description:'',
+                    timeProposed: '',
+                    price:0
+                },
+                offerPost: {
+                    articles:[]
+                },
+                articlesInfo: '',
+                article: {name: '', price: 0, quantity: 0}
             },
             methods:{
-                assignCandidate(userId){
-                    //axios.put(this.host+'/publish/assignCandidate?userId=' + userId)
+                addArticle(){
+                    this.articlesInfo += '\nNom: ' + this.article.name + '\nPrix: ' + this.article.price + ', Quantity: ' + this.article.quantity + '\n';
+                    this.offerPost.articles.push(this.article);
+                },
+                assignCandidate(){
+                    axios.put(this.host+'/publish/assignCandidate?orderId=' + this.selectedOrderId + '&candidateId=' + this.selectedCandidate.userId)
                     console.log("assignCandidate clicked")
                 },
                 createClientDemand(){
-                    //axios.post(this.host+'/publish/')
-                    console.log("creatClientDemand clicked")
+                    axios.post(this.host+'/publish/postUserOrderContent?userId=' + vm.userId, this.demandPost)
                 },
                 createFarmOffer(){
-                    //axios.post(this.host+'/publish/')
-                    console.log("creatFarmOffer clicked")
+                    axios.post(this.host+'/publish/postFarmOrderContent?userId=' + vm.userId, this.offerPost)
                 },
 
             },
             created(){
-
+                this.userId = window.localStorage.userId;
                 if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
                     window.location.href = "/login/"
                 }
@@ -370,6 +392,9 @@
                 axios(this.host+'/publish/getUserOrderContent?ownerId=' + window.localStorage.userId)
                     .then((res)=>{
                         this.clientDemands = res.data;
+                        if(res.data.selectedpersons){
+                            this.selectedCandidate = res.data.selectedpersons[0];
+                        }
                     })
                 axios(this.host+'/publish/getFarmOrderContent?userId=' + window.localStorage.userId)
                     .then((res)=>{
@@ -379,9 +404,6 @@
                     .then((res)=>{
                         this.farmRequests = res.data.farmRequests;
                         this.clientRequests = res.data.clientRequests;
-                        console.log("here it is ")
-                        console.log(this.farmRequests)
-                        console.log(this.clientRequests)
                 })
             },
             computed: {

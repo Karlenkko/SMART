@@ -11,33 +11,27 @@ publish_bp = Blueprint('publish', __name__)
 @publish_bp.route('/publish/getRequests/', methods=['GET'])
 def getRequests():
     def dictifyDate(str):
-        res = []
-        dateList = str.split(';').pop()
-        print("dateList")
-        print(dateList)
+        resDate = []
+        dateList = str.split(';')
+        dateList.pop()
         for date in dateList:
             pair = date.split(' ');
-            res.append({
+            resDate.append({
                 "day": pair[0],
                 "time": pair[1]
             })
-            print("pair")
-            print(pair)
-        print("res")
-        print(res)
-        return res
+        return resDate
 
     def dictifyArticles(str):
-        res = []
-        articleList = str.split(';').pop()
+        resAticles = []
+        articleList = str.split(';')
+        articleList.pop()
         for article in articleList:
             pair = article.split('_');
-            res.append({
+            resAticles.append({
                 "name": pair[0],
                 "orderedQuantity": pair[1]})
-        print("res")
-        print(res)
-        return res
+        return resAticles
 
     if not request.args or not 'userId' in request.args:
         abort(400)
@@ -48,23 +42,19 @@ def getRequests():
         for req in requestList:
             orderList = Order.query.filter(Order.id == req.orderid)
             order = orderList[0]
-            print('req')
-            print(req)
-            print('order')
-            print(order)
-            if order.description == "":
+            if order.description:
+                clientRequests.append({
+                    "resquestId": req.id,
+                    "state": order.state,
+                    "pickUpTime": dictifyDate(req.timeproposed),
+                    "description": order.description
+                })
+            else:
                 farmRequests.append({
                     "resquestId": req.id,
                     "state": order.state,
                     "pickUpTime": dictifyDate(req.timeproposed),
                     "volunteerTime": dictifyDate(req.volunteertime),
-                    "description": order.description
-                })
-            else:
-                clientRequests.append({
-                    "resquestId": req.id,
-                    "state": order.state,
-                    "pickUpTime": dictifyDate(req.timeproposed),
                     "articles": dictifyArticles(req.description)
                 })
             res = {
@@ -81,41 +71,42 @@ def getUserPublishContent():
         orders = Order.query.filter(Order.ownerid == request.args.get('ownerId'))
         res = []
         for order in orders:
-            requestlist = Request.query.filter(Request.orderid == order.id)
-            selectedIdList = order.selectedperson.split(';').pop()
-            selectedPersons = []
-            for selectedId in selectedIdList:
-                selectedUser = User.query.filter(User.id == selectedId)
-                if(selectedUser):
-                    selectedUserInfo = {
-                        "userId" : selectedUser.id,
-                        "userName": selectedUser.name,
-                        "userMobile": selectedUser.mobile
-                    }
-                    selectedPersons.append(selectedUserInfo)
-            reqs = []
-            for onerequest in requestlist:
-                user = User.query.filter(User.id == onerequest.userid).first()
-                reqs.append({
-                    "userId" : onerequest.userid,
-                    "userName" : user.name,
-                    "userTel" : user.mobile,
-                    "userDescription" : onerequest.description,
-                    "userProposeTime" : onerequest.timeproposed,
-                    "volunteerTime" : onerequest.volunteertime
+            if order.description != "":
+                requestlist = Request.query.filter(Request.orderid == order.id)
+                selectedPersons = []
+                if selectedPersons:
+                    selectedIdList = order.selectedperson.split(';')
+                    selectedIdList.pop()
+                    for selectedId in selectedIdList:
+                        selectedUser = User.query.filter(User.id == selectedId)
+                        if(selectedUser):
+                            selectedUserInfo = {
+                                "userId" : selectedUser.id,
+                                "userName": selectedUser.name,
+                                "userMobile": selectedUser.mobile
+                            }
+                            selectedPersons.append(selectedUserInfo)
+                reqs = []
+                for onerequest in requestlist:
+                    user = User.query.filter(User.id == onerequest.userid).first()
+                    reqs.append({
+                        "userId" : onerequest.userid,
+                        "userName" : user.name,
+                        "userTel" : user.mobile,
+                        "userDescription" : onerequest.description,
+                        "userProposeTime" : onerequest.timeproposed,
+                        "volunteerTime" : onerequest.volunteertime
+                    })
+                res.append({
+                    "orderId" : order.id,
+                    "dateString": order.time,
+                    "price" : order.price,
+                    "state" : order.state,
+                    "description" : order.description,
+                    "entrepotlist" : order.entrepotlist,
+                    "selectedpersons" : selectedPersons,
+                    "candidates" : reqs
                 })
-            res.append({
-                "orderId" : order.id,
-                "dateString": order.time,
-                "price" : order.price,
-                "state" : order.state,
-                "description" : order.description,
-                "entrepotlist" : order.entrepotlist,
-                "selectedpersons" : selectedPersons,
-                "candidates" : reqs
-            })
-            print("res")
-            print(selectedIdList)
         return jsonify(res), 200
 
 
@@ -191,20 +182,23 @@ def getUserPublishCandidates():
 
 @publish_bp.route('/publish/postUserOrderContent/', methods=['POST'])
 def postUserPublishContent():
-    # if not request.form or not 'userId' in request.form:
-    #     abort(400)
-    # else:
+    #if not request.args or not 'userId' in request.args:
+    #    abort(400)
+    #else:
     try:
         data = json.loads(request.get_data(as_text=True))
         orderid = Order.query.count()
         newOrder = Order(orderid,
-                         data['userId'],
-                         data['entrepotlist'],
+                         request.args.get('userId'),
+                         "",
                          data['description'],
                          "",
                          "",
                          0,
-                         data['time'])
+                         data['timeProposed'],
+                         data['price'],
+                         "",
+                         "")
         db.session.add(newOrder)
         db.session.commit()
     except:
@@ -220,20 +214,35 @@ def postFarmPublishContent():
     # else:
     try:
         data = json.loads(request.get_data(as_text=True))
-        orderid = Order.query.count()
-        farm = Farm.query.filter(Farm.userid == data['userId'])
-        farmPos = str(farm.longitude) + "," + str(farm.latitude)
-        newOrder = Order(orderid,
-                         data['userId'],
-                         farmPos,
-                         "",
-                         "",
-                         "",
-                         0,
-                         ""
-                         )
-        db.session.add(newOrder)
+        articleList = data["articles"]
+        farmId = Farm.query.filter(Farm.userid == request.args.get('userId'))[0].id
+        productsDelete = Product.query.filter(Product.farmid == farmId).all()
+        print("productsDelete")
+        print(productsDelete)
+        print("fin du produit")
+        for product in productsDelete:
+            db.session.delete(product)
+        productList = Product.query.all()
+        productLength = Product.query.count()
+        lastProductId = productList[productLength-1].id
+        print("lastProductId")
+        print(lastProductId)
+        for article in articleList:
+            lastProductId += 1
+            newProduct = Product(
+                lastProductId,
+                farmId,
+                article["name"],
+                article["price"],
+                article["quantity"],
+                "",
+                "",
+                "",
+                0
+            )
+            db.session.add(newProduct)
         db.session.commit()
+        print("done")
     except:
         abort(500)
     else:
