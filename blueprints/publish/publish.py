@@ -39,7 +39,6 @@ def getRequests():
         requestList = Request.query.filter(Request.userid == request.args.get('userId'))
         clientRequests = []
         farmRequests = []
-        res = {}
         for req in requestList:
             orderList = Order.query.filter(Order.id == req.orderid)
             order = orderList[0]
@@ -75,16 +74,16 @@ def getUserPublishContent():
             if order.description != "":
                 requestlist = Request.query.filter(Request.orderid == order.id)
                 selectedPersons = []
-                if order.selectedperson:
+                if selectedPersons:
                     selectedIdList = order.selectedperson.split(';')
                     selectedIdList.pop()
                     for selectedId in selectedIdList:
-                        selectedUser = User.query.filter(User.id == int(selectedId)).first()
+                        selectedUser = User.query.filter(User.id == selectedId)
                         if(selectedUser):
                             selectedUserInfo = {
-                                "userId" : selectedId,
+                                "userId" : selectedUser.id,
                                 "userName": selectedUser.name,
-                                "userTel": selectedUser.mobile
+                                "userMobile": selectedUser.mobile
                             }
                             selectedPersons.append(selectedUserInfo)
                 reqs = []
@@ -252,12 +251,13 @@ def postFarmPublishContent():
 
 @publish_bp.route('/publish/assignCandidate/', methods=['PUT'])
 def assignCandidate():
-    if not request.args or not 'orderId' in request.args:
+    if not request.args or not 'orderId' in request.form:
         abort(400)
     else:
-        oldorder = Order.query.filter(Order.id == request.args.get('orderId', type=int)).first()
-        db.session.query(Order).filter(Order.id == request.args.get('orderId', type=int))\
-            .update({"selectedperson": request.args.get('candidateId') + ";", "state": 1})
+        oldorder = Order.query.filter(Order.id == request.form.get('orderId', type=int)).first()
+        db.session.query(Order).filter(
+            Order.id == request.form.get('orderId', type=int)
+        ).update({"selectedperson": oldorder.selectedperson + request.form.get('candidateId') + ","})
         db.session.commit()
         db.session.close()
         return jsonify(request.form), 200

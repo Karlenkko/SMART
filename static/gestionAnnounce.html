@@ -74,7 +74,7 @@
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
             <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
             <div class="sy-btn" style="display: inline-flex; width: 100%">
-                <div class="button" onClick="syalert.syhide('detail')" style="background-color: gray; width: 50%"> Annuler </div>
+                <div class="button" onClick="syalert.syhide('detail')" style="background-color: red; width: 50%"> Annuler </div>
                 <div class="button" onClick="syalert.syhide('detail')" style="width: 50%" @click="assignCandidate">Valider mon candidat</div>
             </div>
         </div>
@@ -90,10 +90,9 @@
                     <label for="name">Temps proposé: </label> <input id="timeProposed" v-model="demandPost.timeProposed" type="text" name="timeProposed"><br>
                     <label for="name">Prix: </label> <input id="price1" v-model="demandPost.price" type="text" name="price"><br>
                 </div>
-                <div class="sy-btn" style="display: inline-flex; width: 100%">
-                <div class="button" onClick="syalert.syhide('createDemand')" style="background-color: gray; width: 50%"> Annuler </div>
-                <div class="button" onClick="syalert.syhide('createDemand')" style="width: 50%" @click="createClientDemand">Créer</div>
-            </div>
+                <div class="sy-btn">
+                    <div class="button" onClick="syalert.syhide('createDemand')" @click="createClientDemand">Créer</div>
+                </div>
         </div>
         <div class="bottomBar" v-show="state == 11">
         <button class="create" onClick="syalert.syopen('createOffer')">Créer une offre</button>
@@ -108,17 +107,10 @@
                     <label for="name">Quantité: </label> <input id="quantity" v-model="article.quantity" type="text" name="quantity">
                     <button @click="addArticle">Ajouter</button>
                 </div>
-                <textarea class="articlesText" v-model="articlesInfo" readonly style="
-  display: block;
-  width: 100%;
-  height: 100px;
-  font-size: 14px;
-  color: #527242;
-  margin: 20px auto;"></textarea>
-                <div class="sy-btn" style="display: inline-flex; width: 100%">
-                    <div class="button" onClick="syalert.syhide('createOffer')" style="background-color: gray; width: 50%" @click="articlesInfo = ''; offerPost = {}"> Annuler </div>
-                    <div class="button" onClick="syalert.syhide('createOffer')" @click="createFarmOffer" style="width: 50%">Créer</div>
-                </div>
+                <textarea class="articlesInfo" v-model="articlesInfo" readonly></textarea>
+                <div class="sy-btn">
+                <div class="button" onClick="syalert.syhide('createOffer')" @click="createFarmOffer">Créer</div>
+            </div>
         </div>
 
     </div>
@@ -126,7 +118,7 @@
     <template id="clientCandidate" >
         <div  class="candidatesInfo">
             <h3>{{ candidate.userName }}: {{ candidate.userTel }} </h3>
-            <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(orderid, candidate)" v-show="candidate.selectedpersons == []">Détail</div>
+            <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(orderid, candidate)">Détail</div>
         </div>
     </template>
 
@@ -137,7 +129,7 @@
                 <div class="infoLeftClient infoLeft">
                     <div >Date: <span>{{demand.dateString}}</span></div>
                     <div >Description: <span class="twoLineEllipsis">{{demand.description}}</span> </div>
-                    <div v-show="demand.selectedPersons">Livreur: <span >{{ str }}</span> </div>
+                    <div v-show="demand.selectedperson">Livreur: <span >{{ str }}</span> </div>
                 </div>
                 <div class="photo">
                     <img src="" alt=""/>
@@ -157,7 +149,7 @@
             <div v-show="demand.state">
                 <h2>Personne selectionnée:</h2>
                 <div>
-                        <client-candidate v-for="item in demand.selectedpersons" :key="item.userId" :candidate="item"></client-candidate>
+                        <client-candidate v-for="item in demand.selectedPersons" :key="item.id" :candidate="item"></client-candidate>
                 </div>
             </div>
             <div class="button" style="width: 180px">Détail de livraison</div>
@@ -376,7 +368,7 @@
             },
             methods:{
                 addArticle(){
-                    this.articlesInfo += 'Nom: ' + this.article.name + '\nPrix: ' + this.article.price + ', Quantity: ' + this.article.quantity + '\n\n';
+                    this.articlesInfo += '\nNom: ' + this.article.name + '\nPrix: ' + this.article.price + ', Quantity: ' + this.article.quantity + '\n';
                     this.offerPost.articles.push(this.article);
                 },
                 assignCandidate(){
