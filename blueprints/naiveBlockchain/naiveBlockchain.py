@@ -3,6 +3,7 @@ import json
 from flask import Blueprint
 from flask import abort, request, jsonify
 import hashlib
+from blueprints.naiveBlockchain.format import format
 
 naiveBlockchain_bp = Blueprint('naiveBlockchain', __name__)
 
@@ -69,6 +70,25 @@ def appendBlock(block):
         return False
 
 
+def readAllBlock():
+    blocks = []
+    f = open(filename, 'r', encoding='UTF-8')
+    for line in f.readlines():
+        line = line.strip()
+        params = line.split(";")
+        blocks.append(Block(params[0], params[1], params[2], params[3], params[4]))
+    return blocks
+
+
+def checkOrderVolunteer(orderId, selectedPerson, blocks):
+    for block in blocks:
+        data = block.data.split("|")
+        if str(data[0]) == "1":
+            if str(data[1]) == str(selectedPerson) and str(data[2]) == str(orderId):
+                return True
+
+    return False
+
 @naiveBlockchain_bp.route('/blockchain/getLastBlock/', methods=['GET'])
 def getLastBlock():
     res = {
@@ -100,3 +120,30 @@ def addBlock():
         abort(500)
     else:
         return jsonify(res), 201
+
+@naiveBlockchain_bp.route('/blockchain/checkVolunteer/', methods=['GET'])
+def checkVolunteer():
+    if not request.args or not 'userId' in request.args or not 'orderId' in request.args:
+        abort(400)
+    else:
+        try:
+            blocks = readAllBlock()
+            flag = checkOrderVolunteer(request.args.get('orderId'), request.args.get('userId'), blocks)
+            if flag:
+                res = {
+                    "search" : "completed",
+                    "volunteering" : "full participation"
+                }
+            else:
+                res = {
+                    "search": "completed",
+                    "volunteering": "absence"
+                }
+        except:
+            res = {
+                "search": "aborted",
+                "volunteering": ""
+            }
+            return jsonify(res), 200
+        else:
+            return jsonify(res), 200
