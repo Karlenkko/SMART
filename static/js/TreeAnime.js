@@ -21,7 +21,7 @@ option = {
         axisLabel: {show: false},
         axisTick: {show: false},
         splitLine: {show: false},
-        name: 'Before you join',
+        name: 'Votre contribution sur la réduction de l\'empreinte carbone',
         nameLocation: 'middle',
         nameGap: 40,
         nameTextStyle: {

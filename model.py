@@ -125,8 +125,9 @@ class Order(db.Model, EntityBase):
     price = db.Column(db.Float)
     distancetotal = db.Column(db.Float)
     clusters = db.Column(db.String(200))
+    confirmlist = db.Column(db.String(200))
 
-    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price, distancetotal, clusters):
+    def __init__(self, id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price, distancetotal, clusters, confirmlist):
         self.id = id
         self.ownerid = ownerid
         self.entrepotlist = entrepotlist
@@ -138,11 +139,11 @@ class Order(db.Model, EntityBase):
         self.price = price
         self.distancetotal = distancetotal
         self.clusters = clusters
-        
+        self.confirmlist = confirmlist
 
     def __repr__(self):
-        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s, "distancetotal":%s, "clusters":%s}' % (
-            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist,self.state, self.time, self.price, self.distancetotal, self.clusters)
+        return '{"id":%s,"ownerid":%s,"entrepotlist":%s,"description":%s,"selectedperson":%s,"requestlist":%s,"state":%s,"time":%s,"price":%s, "distancetotal":%s, "clusters":%s,"confirmlist":%s}' % (
+            self.id, self.ownerid, self.entrepotlist, self.description, self.selectedperson, self.requestlist,self.state, self.time, self.price, self.distancetotal, self.clusters, self.confirmlist)
 
 
 class Request(db.Model, EntityBase):
