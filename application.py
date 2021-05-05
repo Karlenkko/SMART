@@ -87,9 +87,8 @@ def map():
         orderid = request.args.get("orderid")
 
     return render_template("map.html", orderid=orderid)
-@application.route("/usermap", methods=['GET'])
-def usermap():
-    return render_template("usermap.html")
+
+
 @application.route("/userRequest", methods=['GET'])
 def userRequest():
 
@@ -98,6 +97,28 @@ def userRequest():
         requestid = request.args.get("requestid")
 
     return render_template("userRequest.html", requestid=requestid)
+
+@application.route("/userOrder", methods=['GET'])
+def userOrder():
+
+    orderid = 0
+    if request.args.get("orderid") != None:
+        orderid = request.args.get("orderid")
+
+    return render_template("userOrder.html", orderid=orderid)
+
+@application.route("/userOrderRequest", methods=['GET'])
+def userOrderRequest():
+
+    requestid = 0
+    if request.args.get("requestid") != None:
+        requestid = request.args.get("requestid")
+
+    requestItem = db.session.query(Request).filter(Request.id == requestid)[0]
+    orderid = int(requestItem.orderid)
+
+    return render_template("userOrder.html", orderid=orderid)
+
 
 # run the app.
 if __name__ == "__main__":

@@ -842,7 +842,38 @@ def calculateDistance(orderid):
 
 
 
+@algo_bp.route('/algo/userOrder/', methods=['GET'])
+def userOrder():
+	id = -1
+	if request.args.get("orderid") != None:
+		id = request.args.get("orderid")
 
+	order = Order.query.filter(Order.id == id)[0]
+	owner = User.query.filter(User.id == order.ownerid)[0]
+	selectedperson = User.query.filter(User.id == int(order.selectedperson))[0]
+	res = {}
+
+	res["depart"] = {
+		"lat": float(order.entrepotlist.split(";")[0].split(",")[0]),
+		"lng": float(order.entrepotlist.split(";")[0].split(",")[1])
+	}
+
+	res["arrival"] = {
+		"lat": float(order.entrepotlist.split(";")[1].split(",")[0]),
+		"lng": float(order.entrepotlist.split(";")[1].split(",")[1])
+	}
+
+	res["description"] = order.description
+
+	res["time"] = order.time
+	res["price"] = order.price
+	
+	res["contact1"] = "USER"+str(order.ownerid)+" : " + str(owner.mobile)
+	res["contact2"] = "USER"+str(selectedperson.id)+" : " + str(selectedperson.mobile)
+
+
+
+	return jsonify(res), 200
 
 
 
