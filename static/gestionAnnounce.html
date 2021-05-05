@@ -38,14 +38,14 @@
                             <h2 class="obtain">Mes offres<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=10">Particulier</h3>
-                                <h3 @click="state=11">Ferme</h3>
+                                <h3 @click="state=11" v-show="userType==='farmer'">Ferme</h3>
                             </div>
                         </li>
                         <li>
                             <h2 class="obtain">Mes participations<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=20">Particulier</h3>
-                                <h3 @click="state=21">Ferme</h3>
+                                <h3 @click="state=21" v-show="userType==='farmer'">Ferme</h3>
                             </div>
                         </li>
                     </ul>
@@ -74,7 +74,7 @@
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
             <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
             <div class="sy-btn" style="display: inline-flex; width: 100%">
-                <div class="button" onClick="syalert.syhide('detail')" style="background-color: gray; width: 50%"> Annuler </div>
+                <div class="button" onClick="syalert.syhide('detail')" style="background-color: gray; width: 50%" @click="clearData"> Annuler </div>
                 <div class="button" onClick="syalert.syhide('detail')" style="width: 50%" @click="assignCandidate">Valider mon candidat</div>
             </div>
         </div>
@@ -88,10 +88,11 @@
                 <div class="sy-content">
                     <label for="name">Description: </label> <input id="description" v-model="demandPost.description" type="text" name="description"><br>
                     <label for="name">Temps proposé: </label> <input id="timeProposed" v-model="demandPost.timeProposed" type="text" name="timeProposed"><br>
+
                     <label for="name">Prix: </label> <input id="price1" v-model="demandPost.price" type="text" name="price"><br>
                 </div>
                 <div class="sy-btn" style="display: flex">
-                    <div class="button" onClick="syalert.syhide('createDemand')" style="background-color: gray; width: 50%"> Annuler </div>
+                    <div class="button" onClick="syalert.syhide('createDemand')" style="background-color: gray; width: 50%" @click="clearData"> Annuler </div>
                     <div class="button" onClick="syalert.syhide('createDemand')" style="width: 50%" @click="createClientDemand">Créer</div>
                 </div>
         </div>
@@ -116,7 +117,7 @@
   color: #527242;
   margin: 0 auto;"></textarea>
                 <div class="sy-btn" style="display: flex">
-                    <div class="button" onClick="syalert.syhide('createOffer')" style="background-color: gray; width: 50%"> Annuler </div>
+                    <div class="button" onClick="syalert.syhide('createOffer')" style="background-color: gray; width: 50%" @click="clearData"> Annuler </div>
                     <div class="button" onClick="syalert.syhide('createOffer')" style="width: 50%" @click="createFarmOffer">Créer</div>
                 </div>
         </div>
@@ -137,7 +138,7 @@
             <div class="DemandContainer">
                 <div class="infoLeftClient infoLeft">
                     <div >Date: <span>{{demand.dateString}}</span></div>
-                    <div >Description: <span class="twoLineEllipsis">{{demand.description}}</span> </div>
+                    <div >Description: <span style="display: flex">{{demand.description}}</span> </div>
                     <div v-show="demand.selectedperson">Livreur: <span >{{ str }}</span> </div>
                 </div>
                 <div class="photo">
@@ -361,10 +362,13 @@
                 //host: "http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com",
                 host: "http://" + window.location.host,
                 loginId: window.localStorage.userId,
+                userType: window.localStorage.userType,
                 demandPost: {
                     description:'',
                     timeProposed: '',
-                    price:0
+                    price:0,
+                    day: '',
+                    hour: ''
                 },
                 offerPost: {
                     articles:[]
@@ -404,12 +408,15 @@
                             axios.post(host + "/blockchain/addBlock", newBlock)
                         }
                     })
+                    location.reload()
                 },
                 createClientDemand(){
                     axios.post(this.host+'/publish/postUserOrderContent?userId=' + vm.userId, this.demandPost)
+                    .then(location.reload)
                 },
                 createFarmOffer(){
                     axios.post(this.host+'/publish/postFarmOrderContent?userId=' + vm.userId, this.offerPost)
+                    .then(location.reload)
                 },
                 clearData(){
                     this.offerPost = {
@@ -420,6 +427,10 @@
                         timeProposed: '',
                         price:0
                     }
+                    this.articlesInfo = ''
+                    this.article = {name: '', price: 0, quantity: 0}
+                    this.selectedFarmRequest = {}
+                    this.selectedClientRequest = {}
                 }
             },
             created(){

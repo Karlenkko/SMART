@@ -78,18 +78,16 @@ def getUserPublishContent():
             if order.description != "":
                 requestlist = Request.query.filter(Request.orderid == order.id)
                 selectedPersons = []
-                if 1:
-                    selectedIdList = order.selectedperson.split(';')
-                    selectedIdList.pop()
-                    for selectedId in selectedIdList:
-                        selectedUser = User.query.filter(User.id == selectedId).first()
-                        if(selectedUser):
-                            selectedUserInfo = {
-                                "userId" : selectedUser.id,
-                                "userName": selectedUser.name,
-                                "userMobile": selectedUser.mobile
-                            }
-                            selectedPersons.append(selectedUserInfo)
+                if order.selectedperson:
+                    selectedId = int(order.selectedperson)
+                    selectedUser = User.query.filter(User.id == selectedId).first()
+                    if(selectedUser):
+                        selectedUserInfo = {
+                            "userId" : selectedUser.id,
+                            "userName": selectedUser.name,
+                            "userMobile": selectedUser.mobile
+                        }
+                        selectedPersons.append(selectedUserInfo)
                 reqs = []
                 for onerequest in requestlist:
                     user = User.query.filter(User.id == onerequest.userid).first()
@@ -204,6 +202,7 @@ def postUserPublishContent():
                          data['timeProposed'],
                          data['price'],
                          "",
+                         "",
                          "")
         db.session.add(newOrder)
         db.session.commit()
@@ -223,16 +222,11 @@ def postFarmPublishContent():
         articleList = data["articles"]
         farmId = Farm.query.filter(Farm.userid == request.args.get('userId'))[0].id
         productsDelete = Product.query.filter(Product.farmid == farmId).all()
-        print("productsDelete")
-        print(productsDelete)
-        print("fin du produit")
         for product in productsDelete:
             db.session.delete(product)
         productList = Product.query.all()
         productLength = Product.query.count()
         lastProductId = productList[productLength-1].id
-        print("lastProductId")
-        print(lastProductId)
         for article in articleList:
             lastProductId += 1
             newProduct = Product(
@@ -248,7 +242,6 @@ def postFarmPublishContent():
             )
             db.session.add(newProduct)
         db.session.commit()
-        print("done")
     except:
         abort(500)
     else:
@@ -263,7 +256,7 @@ def assignCandidate():
         oldorder = Order.query.filter(Order.id == request.args.get('orderId', type=int)).first()
         db.session.query(Order).filter(
             Order.id == request.args.get('orderId', type=int)
-        ).update({"selectedperson": request.args.get('candidateId')+';', "state": 1})
+        ).update({"selectedperson": request.args.get('candidateId'), "state": 1})
         db.session.commit()
         db.session.close()
         return jsonify(request.args), 200
