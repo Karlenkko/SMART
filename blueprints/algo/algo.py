@@ -45,7 +45,7 @@ def user():
 	if query.count() != 0:
 		
 		volunteer = query[0]
-		
+		res["confirmlist"] = orderQuery.confirmlist
 		res["isVolunteer"] = 1
 		depart = volunteer.entrepotlist.split(";")[0]
 		arrival = volunteer.entrepotlist.split(";")[1]
@@ -85,7 +85,8 @@ def user():
 
 		query = db.session.query(Volunteer).filter(Volunteer.orderid == orderid, Volunteer.accept == 1)
 		res = {
-			"isVolunteer" : 0
+			"isVolunteer" : 0,
+			"confirmlist" : orderQuery.confirmlist
 		}
 
 
@@ -94,7 +95,7 @@ def user():
 				requestQuery.update({"destination" : volunteer.entrepotlist.split(";")[1], "volunteerid": volunteer.userid})
 				db.session.commit()
 
-				
+
 				res["hasVolunteer"] = volunteer.userid
 				res["locations"] = [{
 					"lat" : float(resquestRES.userlocation.split(",")[0]),

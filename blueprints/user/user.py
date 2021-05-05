@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import abort, request, jsonify
-from model import User, Order, Request, Volunteer
+from model import User, Order, Request, Volunteer, Coupon
 from exts import db
 from sqlalchemy import and_
 user_bp = Blueprint('user', __name__)
@@ -42,16 +42,44 @@ def login():
 
 @user_bp.route('/user/confirmRequest/', methods=['PUT'])
 def confirmRequest():
-    if not request.args or not 'orderId' in request.args or not 'userId' in request.args:
+    if not request.args or not 'requestId' in request.args:
         abort(400)
     else:
-        order = Order.query.filter(Order.id == request.args.get('orderId')).first()
-        req = Request.query.filter(and_(Request.orderid == request.args.get('orderId'), Request.userid == request.args.get('userId'))).first()
-        db.session.query(Order).filter(Order.id == request.args.get('orderId')).update({
-            "confirmlist": order.confirmlist + str(req.id) + ","
+        req = Request.query.filter(Request.id == request.args.get('requestId')).first()
+        order = Order.query.filter(Order.id == req.orderid).first()
+        print(req)
+        cl = ""
+        if not order.confirmlist == None:
+            cl = str(order.confirmlist)
+        db.session.query(Order).filter(Order.id == req.orderid).update({
+            "confirmlist": cl + str(req.id) + ","
         })
         db.session.commit()
-        return 'confirmed', 201
+        newOrder = Order.query.filter(Order.id == req.orderid).first()
+        if str(newOrder.requestlist) == str(newOrder.confirmlist):
+            db.session.query(Order).filter(Order.id == req.orderid).update({"state" : 10})
+            db.session.query(Volunteer).filter(Volunteer.orderid == req.orderid).update({"accept" : 10})
+            db.session.commit()
+            volunteers = Volunteer.query.filter(Volunteer.orderid == req.orderid).all()
+            for vol in volunteers:
+                user = User.query.filter(User.id == vol.userid).first()
+                actual = 0
+                if user.volunteeractual >= 96:
+                    actual = int(user.volunteeractual) + 4 - 100
+                    count = Coupon.query.count()
+                    coupon = Coupon(int(count), int(user.id), 5)
+                    db.session.add(coupon)
+                else:
+                    actual = int(user.volunteeractual) + 4
+                db.session.query(User).filter(User.id == vol.userid).update({
+                    "volunteertotal" : int(user.volunteertotal) + 4,
+                    "volunteeractual" : actual
+                })
+                db.session.commit()
+        res = {
+            "status" : "ok"
+        }
+        return jsonify(res), 201
 
 @user_bp.route('/user/getMyRequests/', methods=['GET'])
 def getMyRequests():

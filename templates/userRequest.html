@@ -81,7 +81,15 @@
                 dataType:'json',
                 crossDomain: true,
                 success:function(res){
-
+                    if (res["confirmlist"] != null && res["confirmlist"] !== undefined && res["confirmlist"] !== "") {
+                        let confirmed = res["confirmlist"].split(",")
+                        for (let j = 0, len = confirmed.length; j < len; j++) {
+                            if (confirmed[j] == {{requestid}}) {
+                                document.getElementById("confirm").setAttribute("hidden", true)
+                                break
+                            }
+                        }
+                    }
                   let isVolunteer = parseInt(res["isVolunteer"])
 
 
@@ -229,6 +237,20 @@
      
 
     </script>
+    <script type="text/javascript">
+
+        function confirm() {
+            $.ajax({type:'put',
+                url:'http://' + window.location.host + '/user/confirmRequest?requestId=' + {{requestid}},
+                cache:false,
+                dataType:'json',
+                crossDomain: true,
+                success:function(res){
+                    window.location.href = "/userRequest?requestid=" + {{requestid}}
+                }
+            })
+        }
+    </script>
   </head>
   <body>
         <header class="header">
@@ -247,6 +269,7 @@
       <h3 id="msg"></h3>
       <h4 id="date"></h4>
       <pre id="detail"></pre>
+        <button id="confirm" onclick="confirm()">Confirmez la réception</button>
     </div>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
