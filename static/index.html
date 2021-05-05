@@ -261,7 +261,7 @@
                     this.aide.timelist = this.aide.timelist.filter(time=>time.day!='' && time.time!='')
                     console.log(this.aide)
                     this.aide.orderId = this.selectedUser.orderId
-                    axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/participateUserOrder',this.aide)
+                    axios.post('http://' + window.location.host + '/index/participateUserOrder',this.aide)
                     this.aide={
                         description:'',
                         timelist:[{day:'Monday',time:'8~10'},{day:'',time:''},{day:'',time:''}],
@@ -274,16 +274,16 @@
                 if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
                     window.location.href = "/login/"
                 }
-                axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarmOrders')
+                axios('http://' + window.location.host + '/index/getAllFarmOrders')
                     .then((res)=>{
                         this.farmOrders = res.data;
                     })
-                axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllUserOrders')
+                axios('http://' + window.location.host + '/index/getAllUserOrders')
                     .then((res)=>{
                         this.clientOrders = res.data;
                     })
 
-                axios('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/index/getAllFarms')
+                axios('http://' + window.location.host + '/index/getAllFarms')
                     .then((res)=>{
                         this.farms = res.data;
                     })
