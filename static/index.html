@@ -111,8 +111,8 @@
             <h2 class="farmname">{{farmorder.farmName}}</h2>
             <div class="farmContainer">
                 <div class="infoLeft">
-                    <div class="participantNbr">Participant: <span>{{farmorder.totalVolunteers}}</span></div>
-                    <div class="benevoleNbr">Bénévole requis: <span>{{farmorder.totalMembers}}</span></div>
+                    <div class="participantNbr">Participant: <span>{{farmorder.totalMembers}}</span></div>
+                    <div class="benevoleNbr">Bénévole requis: <span>{{farmorder.totalVolunteers}}</span></div>
                     <div class="Adress">Adresse: <span class="twoLineEllipsis">{{farmorder.farmAddress}}</span> </div>
                 </div>
                 <div class="photo">
@@ -142,7 +142,7 @@
                 <div class="etat valide" v-if="clientorder.state==1">Validé!</div>
                 <div class="type typeClient" v-if="clientorder.userId!=undefined">Aide Client</div>
             </div>
-            <div class="button" @click="getUser" onClick="syalert.syopen('alert2')">Participew!</div>
+            <div class="button" @click="getUser" onClick="syalert.syopen('alert2')">Participez!</div>
         </div>
     </template>
     <template id="farm">
