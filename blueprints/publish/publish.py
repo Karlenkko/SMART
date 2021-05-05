@@ -39,15 +39,18 @@ def getRequests():
         requestList = Request.query.filter(Request.userid == request.args.get('userId'))
         clientRequests = []
         farmRequests = []
+        res = {}
         for req in requestList:
             orderList = Order.query.filter(Order.id == req.orderid)
             order = orderList[0]
+            user = User.query.filter(User.id == order.ownerid).first()
             if order.description:
                 clientRequests.append({
                     "resquestId": req.id,
                     "state": order.state,
                     "pickUpTime": dictifyDate(req.timeproposed),
-                    "description": order.description
+                    "description": order.description,
+                    "photourl": user.photourl
                 })
             else:
                 farmRequests.append({
@@ -55,12 +58,12 @@ def getRequests():
                     "state": order.state,
                     "pickUpTime": dictifyDate(req.timeproposed),
                     "volunteerTime": dictifyDate(req.volunteertime),
-                    "articles": dictifyArticles(req.description)
+                    "articles": dictifyArticles(req.description),
                 })
-        res = {
-            "clientRequests": clientRequests,
-            "farmRequests": farmRequests
-        }
+            res = {
+                "clientRequests": clientRequests,
+                "farmRequests": farmRequests
+            }
         return jsonify(res), 200
 
 @publish_bp.route('/publish/getUserOrderContent/', methods=['GET'])
@@ -68,6 +71,7 @@ def getUserPublishContent():
     if not request.args or not 'ownerId' in request.args:
         abort(400)
     else:
+        userLogin = User.query.filter(User.id == request.args.get('ownerId')).first()
         orders = Order.query.filter(Order.ownerid == request.args.get('ownerId'))
         res = []
         for order in orders:
@@ -105,6 +109,7 @@ def getUserPublishContent():
                     "description" : order.description,
                     "entrepotlist" : order.entrepotlist,
                     "selectedpersons" : selectedPersons,
+                    "photourl": userLogin.photourl,
                     "candidates" : reqs
                 })
         return jsonify(res), 200
@@ -116,23 +121,24 @@ def getFarmPublishContent():
         abort(400)
     else:
         farmList = Farm.query.filter(Farm.userid == request.args.get('userId'))
-        farm = farmList[0];
-        products = Product.query.filter(Product.farmid == farm.id)
         res = []
-        articles = []
-        for product in products:
-            articles.append({
-                "articleId": product.id,
-                "name": product.name,
-                "price": product.price,
-                "remainedQuantity": product.quantity
+        if(farmList):
+            farm = farmList[0]
+            products = Product.query.filter(Product.farmid == farm.id)
+            articles = []
+            for product in products:
+                articles.append({
+                    "articleId": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "remainedQuantity": product.quantity
+                })
+            res.append({
+                "offerId": farm.id,
+                "name": farm.name,
+                "state": 0,
+                "articles": articles
             })
-        res.append({
-            "offerId": farm.id,
-            "name": farm.name,
-            "state": 0,
-            "articles": articles
-        })
     return jsonify(res), 200
 
 
@@ -251,13 +257,13 @@ def postFarmPublishContent():
 
 @publish_bp.route('/publish/assignCandidate/', methods=['PUT'])
 def assignCandidate():
-    if not request.args or not 'orderId' in request.args:
+    if not request.args or not 'orderId' in request.form:
         abort(400)
     else:
-        oldorder = Order.query.filter(Order.id == request.args.get('orderId', type=int)).first()
+        oldorder = Order.query.filter(Order.id == request.form.get('orderId', type=int)).first()
         db.session.query(Order).filter(
-            Order.id == request.args.get('orderId', type=int)
-        ).update({"selectedperson": oldorder.selectedperson + request.args.get('candidateId') + ";"})
+            Order.id == request.form.get('orderId', type=int)
+        ).update({"selectedperson": request.form.get('candidateId')})
         db.session.commit()
         db.session.close()
         return jsonify(request.form), 200
