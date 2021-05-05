@@ -69,6 +69,7 @@ section #menu{
 section #menu #open {
   /*显示菜单样式*/
   width: 200px;
+  min-width: 200px;
   height: 100%;
   background-color: #363a45;
   padding-bottom: 10px;
