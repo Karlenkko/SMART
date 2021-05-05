@@ -12,7 +12,7 @@ from python_tsp.exact import solve_tsp_dynamic_programming
 
 algo_bp = Blueprint('algo', __name__)
 
-dayList = ["Monday","Tuesday","Wednesday","Thursday","Friday", "Saturday", "Sunday"]
+dayList = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi", "Samedi", "Dimanche"]
 parking = {
 	"lat" : 45.77495,
 	"lng" : 4.84839
