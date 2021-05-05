@@ -2,6 +2,8 @@ import json
 
 from flask import Blueprint
 from flask import abort, request, jsonify
+from sqlalchemy import and_
+
 from model import Product, Request, User, Order, Farm
 from exts import db
 
@@ -97,7 +99,7 @@ def addRequest():
                 volunteertime = volunteertime + time['day'] + " " + time['time'] + ";"
         requestorderid = 0
 
-        existingorder = Order.query.filter(Order.ownerid == data['farmOwnerId']).first()
+        existingorder = Order.query.filter(and_(Order.ownerid == data['farmOwnerId'], Order.description == "")).first()
 
         if not existingorder:
             orderid = Order.query.count()
