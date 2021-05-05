@@ -125,8 +125,9 @@
 
     <template id="clientCandidate" >
         <div  class="candidatesInfo">
-            <h3>{{ candidate.userName }}: {{ candidate.userTel }} </h3>
-            <div class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(orderid, candidate)">Détail</div>
+            <h3 v-show="candidate.userMobile">{{ candidate.userName }}: {{ candidate.userMobile }} </h3>
+            <h3 v-show="candidate.userTel">{{ candidate.userName }}: {{ candidate.userTel }} </h3>
+            <div v-show="candidate.userTel" class="button" onClick="syalert.syopen('detail')" @click="selectCandidate(orderid, candidate)">Détail</div>
         </div>
     </template>
 
@@ -151,15 +152,15 @@
             <div v-show="!demand.state">
                 <h2>Candidats:</h2>
                 <div>
-                        <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item" :orderid="demand.orderId"></client-candidate>
+                        <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item" :orderId="demand.orderId"></client-candidate>
                 </div>
             </div>
             <div v-show="demand.state">
                 <h2>Personne selectionnée:</h2>
                 <div>
-                        <client-candidate v-for="item in demand.selectedPersons" :key="item.id" :candidate="item"></client-candidate>
+                        <client-candidate v-for="item in demand.selectedpersons" :key="item.id" :candidate="item" :orderId="demand.orderId"></client-candidate>
                 </div>
-                <div class="button" style="width: 180px"><a href="/userOrderRequest?requestid=0"  style="text-decoration: none; color: white">Détail de livraison</a> </div>
+                <div class="button" style="width: 180px"><a :href='"/userOrder?requestid=" + demand.orderId'  style="text-decoration: none; color: white">Détail de livraison</a> </div>
             </div>
         </div>
     </template>
@@ -186,7 +187,7 @@
                 <div class="etat valide" v-show="offer.state==1">Validé</div>
                 <div class="etat valide" v-show="offer.state==2">Achevé</div>
             </div>
-            <div class="button" style="width: 180px"><a href="/map?orderid=0" style="text-decoration: none; color: white">Détail de livraison</a> </div>
+            <div class="button" style="width: 180px"><a :href='"/map?orderid="+offer.orderId' style="text-decoration: none; color: white">Détail de livraison</a> </div>
         </div>
     </template>
 
@@ -205,7 +206,7 @@
                 <div class="etat valide" v-show="request.state==1">Validé</div>
                 <div class="etat valide" v-show="request.state==2">Achevé</div>
             </div>
-            <div class="button" style="width: 180px; vertical-align: bottom"><a href="/userOrderRequest?requestid=6" style="text-decoration: none; color: white">Détail de livraison  </a></div>
+            <div class="button" style="width: 180px; vertical-align: bottom"><a :href="'/userOrderRequest?requestid='+request.requestId" style="text-decoration: none; color: white">Détail de livraison  </a></div>
         </div>
     </template>
 
@@ -220,7 +221,7 @@
                 <div class="etat valide" v-show="request.state==1">Validé</div>
                 <div class="etat valide" v-show="request.state==2">Achevé</div>
             </div>
-            <div class="button" style="width: 180px"><a href="/userRequest?requestid=10" style="text-decoration: none; color: white">Détail de livraison </a></div>
+            <div class="button" style="width: 180px"><a :href="'/userRequest?requestid='+request.requestId" style="text-decoration: none; color: white">Détail de livraison </a></div>
         </div>
     </template>
 
@@ -268,6 +269,7 @@
                 selectCandidate(orderId, candidate){
                     vm.selectedCandidate = candidate;
                     vm.selectedOrderId = orderId;
+                    console.log('selecteCandidate clicked')
                 },
             }
         })
@@ -280,23 +282,10 @@
                     str
                 }
             },
-            props:['demand',"orderid"],
+            props:['demand'],
             methods:{
-                getDeliverer(){
-                    /*let str ='';
-                    for (person in demand.selectedpersons)
-                        str += this.demand.selectedpersons.userName + ': ' + this.demand.selectedpersons.userTel;
-                    return str;*/
-                    return "this function is not used"
-                },
-                clientDemandMap:function(orderId){
-                    console.log("this.clientDemandMap clicked")
-                    console.log(this.$router)
-                    this.$router.push({path:'/userOrderRequest?requestid=' + orderId})
-                }
             },
             created(){
-                this.str = this.getDeliverer();
             }
         })
 
@@ -446,10 +435,12 @@
                             this.selectedCandidate = res.data.selectedpersons[0];
                         }
                     })
-                axios(this.host+'/publish/getFarmOrderContent?userId=' + window.localStorage.userId)
-                    .then((res)=>{
-                        this.farmOffers = res.data;
-                    })
+                if(window.localStorage.userType === "farmer"){
+                    axios(this.host+'/publish/getFarmOrderContent?userId=' + window.localStorage.userId)
+                        .then((res)=>{
+                            this.farmOffers = res.data;
+                        })
+                }
                 axios(this.host+'/publish/getRequests?userId='+ window.localStorage.userId)
                     .then((res)=>{
                         this.farmRequests = res.data.farmRequests;
