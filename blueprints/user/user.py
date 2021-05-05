@@ -42,26 +42,25 @@ def login():
 
 @user_bp.route('/user/confirmRequest/', methods=['PUT'])
 def confirmRequest():
-    if not request.args or not 'orderId' in request.args or not 'userId' in request.args:
+    if not request.args or not 'requestId' in request.args:
         abort(400)
     else:
-        order = Order.query.filter(Order.id == request.args.get('orderId')).first()
-        print(order)
-        req = Request.query.filter(and_(Request.orderid == request.args.get('orderId'), Request.userid == request.args.get('userId'))).first()
+        req = Request.query.filter(Request.id == request.args.get('requestId')).first()
+        order = Order.query.filter(Order.id == req.orderid).first()
         print(req)
         cl = ""
         if not order.confirmlist == None:
             cl = str(order.confirmlist)
-        db.session.query(Order).filter(Order.id == request.args.get('orderId')).update({
+        db.session.query(Order).filter(Order.id == req.orderid).update({
             "confirmlist": cl + str(req.id) + ","
         })
         db.session.commit()
-        newOrder = Order.query.filter(Order.id == request.args.get('orderId')).first()
+        newOrder = Order.query.filter(Order.id == req.orderid).first()
         if str(newOrder.requestlist) == str(newOrder.confirmlist):
-            db.session.query(Order).filter(Order.id == request.args.get('orderId')).update({"state" : 10})
-            db.session.query(Volunteer).filter(Volunteer.orderid == request.args.get('orderId')).update({"accept" : 10})
+            db.session.query(Order).filter(Order.id == req.orderid).update({"state" : 10})
+            db.session.query(Volunteer).filter(Volunteer.orderid == req.orderid).update({"accept" : 10})
             db.session.commit()
-            volunteers = Volunteer.query.filter(Volunteer.orderid == request.args.get('orderId')).all()
+            volunteers = Volunteer.query.filter(Volunteer.orderid == req.orderid).all()
             for vol in volunteers:
                 user = User.query.filter(User.id == vol.userid).first()
                 actual = 0
@@ -77,7 +76,10 @@ def confirmRequest():
                     "volunteeractual" : actual
                 })
                 db.session.commit()
-        return 'confirmed', 201
+        res = {
+            "status" : "ok"
+        }
+        return jsonify(res), 201
 
 @user_bp.route('/user/getMyRequests/', methods=['GET'])
 def getMyRequests():
