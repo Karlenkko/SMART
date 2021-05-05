@@ -341,7 +341,7 @@
                     var obj = {farmOwnerId:window.localStorage.farmownerid,userId:window.localStorage.userId,cart:this.cart,volunteer:this.benevole,deliveryTime:[this.deliveryTime],totalPrice:this.totalPrice}
 
                     //TODO: 发送post请求上传订单信息
-                    axios.post('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/request', obj)
+                    axios.post('http://' + window.location.host + '/farm/request', obj)
                     console.log(obj)
 
                     this.cart=[]
@@ -357,7 +357,7 @@
                 if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
                     window.location.href = "/login/"
                 }
-                axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/farm/getAllProducts?farmId='+window.localStorage.farmid)
+                axios.get('http://' + window.location.host + '/farm/getAllProducts?farmId='+window.localStorage.farmid)
                     .then(res=>{
                         this.products = res.data;
                     })
