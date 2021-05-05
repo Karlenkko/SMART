@@ -41,7 +41,7 @@
     <script src="/static/lib/syalert.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/js/sideBar.js"></script>
-    <script src="/static/lib/vue-resource.js-1.3.4.js"></script>
+    <script src="/static/lib/vue-resource-1.3.4.js"></script>
 
     <script>
         new Vue({
@@ -55,10 +55,10 @@
                 login: function (event) {
                     if (event) {
                         if (this.nameIn === '' || this.passwdIn === '') {
-                            alert('Vous devez saisir votre nom et le mot de pass')
+                            alert('Vous devez saisir votre nom et le mot de passe')
 
                         }else{
-                            axios.get('http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com/user/login?userName=' + this.nameIn + "&passwd=" + this.passwdIn)
+                            axios.get('http://' + window.location.host +'/user/login?userName=' + this.nameIn + "&passwd=" + this.passwdIn)
                                 .then(res=>{
                                     if (res.data.loggedin == "false"){
                                         alert(res.data.msg)

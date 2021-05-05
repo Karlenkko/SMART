@@ -102,7 +102,7 @@
 
       $.ajax({
                 type:'get',
-                url:'http://localhost:5000/algo/map/?orderid='+{{orderid}},
+                url:'http://' + window.location.host + '/algo/map/?orderid='+{{orderid}},
                 cache:false,
                 dataType:'json',
                 crossDomain: true,
@@ -248,7 +248,7 @@
                     $("#validate").click(function(){
                       $.ajax({
                         type: "GET",
-                        url: "http://localhost:5000/algo/validate?orderid="+{{orderid}},
+                        url: "http://" + window.location.host + "/algo/validate?orderid="+{{orderid}},
                         success: function(){
                           location.reload()
                         }
@@ -335,7 +335,7 @@
 
                       $.ajax({
                         type: "POST",
-                        url: "http://localhost:5000/algo/updatePath",
+                        url: "http://" + window.location.host + "/algo/updatePath",
                         data: {
                           "id" : res["id"],
                           "points" : waypts
@@ -351,7 +351,7 @@
 
                       $.ajax({
                         type: "GET",
-                        url: "http://localhost:5000/algo/test?orderid=" + {{orderid}},
+                        url: "http://" + window.location.host + "/algo/test?orderid=" + {{orderid}},
                         success: function(){
                           location.reload()
                         }

@@ -1,5 +1,5 @@
 //Target and max ==> from DB target<max
-var target = 60;
+var target = window.localStorage.volunteerActual;
 var max = 89;
 
 var cnt = document.getElementById("count");

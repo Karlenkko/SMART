@@ -119,6 +119,12 @@ def addRequest():
         description = ''
         for item in data['cart']:
             description = description + item['productName'] + "_" + str(item['amount']) + ";"
+            product = Product.query.filter(Product.name == item['productName']).first()
+            nbr = int(product.quantity) - int(item['amount'])
+            db.session.query(Product).filter(Product.name == item['productName']).update({
+                "quantity" : nbr if nbr > 0 else 0
+            })
+            db.session.commit()
         newRequest = Request(int(requestid),
                              int(requestorderid),
                              int(data['userId']),
