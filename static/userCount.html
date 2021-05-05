@@ -5,12 +5,12 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/animate.min.css">
-  <link rel="stylesheet" href="css/syalert.min.css">
-  <link rel="stylesheet" href="css/index.css">
-  <link rel="stylesheet" href="css/gestionAnnounce.css">
-  <link rel="stylesheet" href="css/userCount.css">
-  <title>COLIV</title>
+  <link rel="stylesheet" href="/static/css/animate.min.css">
+  <link rel="stylesheet" href="/static/css/syalert.min.css">
+  <link rel="stylesheet" href="/static/css/index.css">
+  <link rel="stylesheet" href="/static/css/gestionAnnounce.css">
+  <link rel="stylesheet" href="/static/css/userCount.css">
+  <title>CityFarm</title>
 </head>
 
 <body>
@@ -18,16 +18,17 @@
     <div id="app">
       <!-- 顶部菜单栏 -->
       <header class="header">
-        <a href="" class="logo">COLIV</a>
+        <a href="" class="logo">CityFarm</a>
         <nav>
           <ul class="menu-items">
-            <li><a href="" class="menu-item">Acceuil</a></li>
-            <li><a href="" class="menu-item">Mes Comptes</a></li>
-            <li><a href="" class="menu-item">Mes Annonces</a></li>
-            <li><a href="" class="menu-item">Log Out</a></li>
+            <li><a href="/" class="menu-item">Acceuil</a></li>
+            <li><a href="/myAccount" class="menu-item">Mes Comptes</a></li>
+            <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
+            <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
           </ul>
         </nav>
       </header>
+
 
       <!-- 左菜单栏 -->
       <section class="section">
@@ -36,7 +37,7 @@
             <div class="navBox">
               <ul>
                 <li>
-                  <h2 @click="changeStateVW"  class="obtain">Travaille Bénévole</h2>
+                  <h2 @click="changeStateVW"  class="obtain">Travail Bénévole</h2>
                 </li>
                 <li>
                   <h2 @click="changeStateCE" class="obtain">Émissions de carbone</h2>
@@ -55,13 +56,13 @@
 
           <!-- builtin animation -->
           <iframe
-                  src="progress.html" height="1000" width="1200"
+                  src="/static/progress.html" height="1000" width="1200"
                   style="position: relative;border:none;"
                   title="Voluntary Work Contribution"
                   v-show="state===0">
           </iframe>
           <iframe
-                  src="TreeAnime.html" height="1000" width="1200"
+                  src="/static/TreeAnime.html" height="1000" width="1200"
                   style="position: relative;border:none;"
                   title="Carbon Emission Contribution"
                   v-show="state===1">
@@ -74,7 +75,7 @@
     <!-- templates-->
     <template id="voluntaryWork">
       <div class="userCountsClass">
-        <h2>Titre: <span> {{"Travaille Bénévole"}}</span></h2>
+        <h2>Titre: <span> {{"Travail Bénévole"}}</span></h2>
         <div class="userDemandContainer">
           <div class="userinfoLeftClient userinfoLeft">
             <div> ID: <span class="twoLineEllipsis">{{vinfo.Id}}</span></div>
@@ -84,7 +85,7 @@
             <div>Actual: <span class="twoLineEllipsis">{{vinfo.volunteeractual}}</span></div>
           </div>
           <div class="userphoto">
-            <img src="" alt=""/>
+            <img :src="vinfo.photourl" alt=""/>
           </div>
         </div>
       </div>
@@ -102,18 +103,35 @@
             <div>Actual: <span class="twoLineEllipsis">{{cinfo.carbonactual}}</span></div>
           </div>
           <div class="userphoto">
-            <img src="" alt=""/>
+            <img :src="cinfo.photourl" alt=""/>
           </div>
         </div>
       </div>
     </template>
 
-    <script src="lib/vue-2.5.9.js"></script>
-    <script src="lib/vue-router-v3.0.1.js"></script>
-    <script src="lib/jquery-1.12.4.min.js"></script>
-    <script src="lib/syalert.min.js"></script>
-    <script src="js/sideBar.js"></script>
-
+    <script src="/static/lib/vue-2.5.9.js"></script>
+    <script src="/static/lib/vue-router-v3.0.1.js"></script>
+    <script src="/static/lib/jquery-1.12.4.min.js"></script>
+    <script src="/static/lib/syalert.min.js"></script>
+    <script src="/static/js/sideBar.js"></script>
+    <script>
+            function logout() {
+                window.localStorage.userId = ""
+                window.localStorage.userName = ""
+                window.localStorage.userMobiile = ""
+                window.localStorage.userType = ""
+                window.localStorage.userPhotoUrl = ""
+                window.localStorage.balance = ""
+                window.localStorage.carbonTotal = ""
+                window.localStorage.carbonActual = ""
+                window.localStorage.volunteerTotal = ""
+                window.localStorage.volunteerActual = ""
+                window.location.href = '/login/'
+            }
+            if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                        window.location.href = "/login/"
+            }
+        </script>
     <!-- Render List -->
     <script>
 
@@ -133,18 +151,22 @@
       var vm = new Vue({
         el: '#app',
         data: {
-          voluntaryWorks:[
-            {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', volunteertotal:'297',volunteeractual:'26'},
-                  Id=window.localStorage.userId,
-                  name=window.localStorage.userName,
-                  mobile=window.localStorage.userMobile,
-                  address="somewhere",
-                  photourl=window.localStorage.userPhotoUrl,
-                  volunteertotal=window.localStorage.volunteerTotal,
-                  volunteeractual=window.localStorage.volunteerActual,
-            ],
-          carbonEmissions:
-                  {Id:0,name:'user0',mobile:'0629050028', address:'somewhere1',photourl:'someurl', carbontotal:'297',carbonactual:'26'},
+          voluntaryWorks: {
+              Id : window.localStorage.userId,
+              name : window.localStorage.userName,
+              mobile : window.localStorage.userMobile,
+              photourl : window.localStorage.userPhotoUrl,
+              volunteertotal : window.localStorage.volunteerTotal,
+              volunteeractual : window.localStorage.volunteerActual,
+          },
+          carbonEmissions: {
+              Id : window.localStorage.userId,
+              name : window.localStorage.userName,
+              mobile : window.localStorage.userMobile,
+              photourl : window.localStorage.userPhotoUrl,
+              carbontotal:window.localStorage.carbonTotal,
+              carbonactual:window.localStorage.carbonActual
+          },
           state:0,
         },
         methods: {

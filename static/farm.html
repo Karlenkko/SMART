@@ -14,7 +14,7 @@
             <a href="/" class="logo">CityFarm</a>
             <nav>
                 <ul class="menu-items">
-                    <li><a href="" class="menu-item">Ma carte</a></li>
+                    <li><a href="" class="menu-item">Mon panier</a></li>
                     <li><a href="/" class="menu-item">Acceuil</a></li>
                     <li><a href="" class="menu-item">Mon Compte</a></li>
                     <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
@@ -37,9 +37,9 @@
                             <li>
                                 <h2 class="obtain">Contribution Carbonne<i></i></h2>
                                 <div class="secondary">
-                                    <h3 @click="getLowCarbon();state=4">Jusqu'à 2500 g</h3>
-                                    <h3 @click="getMoyCarbon();state=5">2500 à 5000 g</h3>
-                                    <h3 @click="getHighCarbon();state=6">5000g et plus</h3>
+                                    <h3 @click="getLowCarbon();state=4">Jusqu'à 20 g</h3>
+                                    <h3 @click="getMoyCarbon();state=5">20 à 40 g</h3>
+                                    <h3 @click="getHighCarbon();state=6">40g et plus</h3>
                                 </div>
                             </li>
                         </ul>
@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div class="sy-btn">
-                    <div class="button" onClick="syalert.syhide('alert1')" @click="saveToCart">Confirm</div>
+                    <div class="button" onClick="syalert.syhide('alert1')" @click="saveToCart">Confirmez</div>
                 </div>
             </div>
 
@@ -108,7 +108,7 @@
             <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="alert2">
                 <div class="sy-title">Réglage</div>
                 <div class="sy-content deliveryTime">
-                    <span>Chosir ci-desous le jour sur la livrason.</span>
+                    <span>Choisir ci-dessous le jour de la livrason.</span>
                     <div class="btn-group">
                         <input type="button" :class="['btn',deliveryTime.day == 'Monday'?'btn-selected':'']" value="Monday" @click="deliveryTime.day='Monday'">
                         <input type="button" :class="['btn',deliveryTime.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="deliveryTime.day='Tuesday'">
@@ -118,7 +118,7 @@
                         <input type="button" :class="['btn',deliveryTime.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="deliveryTime.day='Saturday'">
                         <input type="button" :class="['btn',deliveryTime.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="deliveryTime.day='Sunday'">
                     </div>
-                    <span>Choisir ci-desous le temps pour la livraison</span>
+                    <span>Choisir ci-dessous le temps pour la livraison</span>
                     <div>
                         <input type="radio" id="morning1"
                                value="8-10" v-model="deliveryTime.time">
@@ -150,7 +150,7 @@
                     </div>
 
                     <div v-show="benevole.do==1">
-                        <span>Merci de votre contribution! Maintenant vous devez chosir au moins un temps pour réaliser le bénévole.</span>
+                        <span>Merci de votre contribution! Maintenant vous devez choisir au moins un temps pour réaliser le bénévole.</span>
                         <div class="benevoleOption" v-for="(item,index) in benevole.timelist">
                             <span>Choisir ci-dessous le jour de la livrason. Option {{index + 1}}</span>
                             <div class="btn-group">
@@ -191,7 +191,7 @@
 
         </section>
         <div class="bottomBar">
-        <button class="validate" onClick="syalert.syopen('alert2')">Valider le cart!</button>
+        <button class="validate" onClick="syalert.syopen('alert2')">Valider le panier!</button>
         </div>
     </div>
 
@@ -208,14 +208,14 @@
                     <div class="category">Catégorie:&nbsp;<span>{{productlist.category}}</span></div>
                 </div>
                 <div class="InfoComparation">
-                    <div>Comparing with <i class="iconfont icon-bianzu"></i>&nbsp;:</div>
-                    <div><i class="iconfont icon-bianzu"></i>&nbsp; price: <span>{{productlist.carrefourPrice}}</span>€</div>
+                    <div>Comparé avec<i class="iconfont icon-bianzu"></i>&nbsp;:</div>
+                    <div><i class="iconfont icon-bianzu"></i>&nbsp; prix: <span>{{productlist.carrefourPrice}}</span>€</div>
                     <div>Origin:&nbsp;<span>{{productlist.origin}}</span></div>
-                    <div class="contribution">Donc si vous achetez nos produits, votre contribution sur la réduction de &nbsp;<i class="iconfont icon-eryanghuatan"></i>&nbsp;: <span class="contributionValue">{{productlist.carbonRedu}}</span>g</div>
+                    <div class="contribution">Si vous achetez nos produits, votre contribution sur la réduction de &nbsp;<i class="iconfont icon-eryanghuatan"></i>&nbsp;: <span class="contributionValue">{{productlist.carbonRedu}}</span>g</div>
                 </div>
             </div>
             <div class="button" @click="transtofather" onClick="syalert.syopen('alert1')">
-                Ajouter à la carte
+                Ajouter au panier
             </div>
         </div>
     </template>
@@ -295,13 +295,13 @@
                     this.productsCondition = this.products.filter(product => product.category === 'autre')
                 },
                 getLowCarbon(){
-                    this.productsCondition = this.products.filter(product => product.carbonRedu <= 2500)
+                    this.productsCondition = this.products.filter(product => product.carbonRedu <= 20)
                 },
                 getMoyCarbon(){
-                    this.productsCondition = this.products.filter(product => (product.carbonRedu > 2500 && product.carbonRedu < 5000))
+                    this.productsCondition = this.products.filter(product => (product.carbonRedu > 20 && product.carbonRedu < 40))
                 },
                 getHighCarbon(){
-                    this.productsCondition = this.products.filter(product => product.carbonRedu >= 5000)
+                    this.productsCondition = this.products.filter(product => product.carbonRedu >= 40)
                 },
                 saveProductSelected(arg){
                     this.productSelected = arg

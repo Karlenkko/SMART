@@ -24,8 +24,8 @@ def getAllFarmOrders():
             requests = Request.query.filter(Request.orderid == order.id)
             count = 0
             for req in requests:
-                if len(req.volunteertime) > 0:
-                    count = count + 1;
+                if (not req.volunteertime is None) and len(req.volunteertime) > 0:
+                    count = count + 1
             totalMembers = len(order.requestlist.split(',')) - 1
             res.append({
                 "orderId": order.id,
@@ -76,20 +76,29 @@ def getAllUserOrders():
 @cross_origin()
 def getAllFarms():
     farms = Farm.query.all()
+    farmNbr = Farm.query.count()
+    productLists = [0] * farmNbr
+    for farm in farms:
+        products = Product.query.filter(Product.farmid == farm.id)
+        str = ""
+        for product in products:
+            str += product.name + ","
+        productLists[farm.id] = str
+
     products = Product.query.all()
-    productLists = []
-    temp = 0
-    farmid = 0
-    productLists.append("")
-    for product in products:
-        if product.farmid == farmid:
-            if temp < 4:
-                productLists[farmid] += product.name + ","
-                temp = temp + 1
-            else:
-                productLists.append("")
-                farmid = farmid + 1
-                temp = 0
+
+    # temp = 0
+    # farmid = 0
+    # productLists.append("")
+    # for product in products:
+    #     if product.farmid == farmid:
+    #         if temp < farmNbr:
+    #             productLists[farmid] += product.name + ","
+    #             temp = temp + 1
+    #         else:
+    #             productLists.append("")
+    #             farmid = farmid + 1
+    #             temp = 0
     res = []
     for farm in farms:
         res.append({

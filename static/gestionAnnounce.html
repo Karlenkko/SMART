@@ -370,7 +370,7 @@
                 selectedCandidate:'not chosen',
                 selectedOrderId: '-1',
                 //host: "http://smart-env.eba-uspmif26.eu-central-1.elasticbeanstalk.com",
-                host: "http://127.0.0.1:5000",
+                host: "http://" + window.location.host,
                 loginId: window.localStorage.userId,
                 demandPost: {
                     description:'',
@@ -395,8 +395,26 @@
                     });
                 },
                 assignCandidate(){
+                    var orderId = this.selectedOrderId
+                    var candidate = this.selectedCandidate.userId
+                    var host = this.host
                     axios.put(this.host+'/publish/assignCandidate?orderId=' + this.selectedOrderId + '&candidateId=' + this.selectedCandidate.userId)
                     console.log("assignCandidate clicked")
+                    axios(this.host + '/blockchain/getLastBlock/').then((res) => {
+                        if (res.data.status == "ok") {
+                            var block = res.data.lastBlock.split(";")
+                            var previousId = block[0]
+                            var previousHash = block[4]
+                            var newBlock = {"block" : {
+                                    "index": parseInt(previousId) + 1,
+                                    "previousHash": previousHash,
+                                    "timestamp": (+new Date()).toString().substr(0, 10),
+                                    "data": "0|" + orderId + "|" + window.localStorage.userId + "|" + candidate
+                                }
+                            }
+                            axios.post(host + "/blockchain/addBlock", newBlock)
+                        }
+                    })
                 },
                 createClientDemand(){
                     axios.post(this.host+'/publish/postUserOrderContent?userId=' + vm.userId, this.demandPost)

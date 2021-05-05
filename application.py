@@ -73,7 +73,7 @@ def farm():
     return application.send_static_file('farm.html')
 @application.route("/myAccount/", methods=["GET"])
 def myAccount():
-    return application.send_static_file('gestionAccount.html')
+    return application.send_static_file('userCount.html')
 @application.route("/myAnnounce/", methods=["GET"])
 def myAnnounce():
     return application.send_static_file('gestionAnnounce.html')
