@@ -46,7 +46,7 @@ def getRequests():
             user = User.query.filter(User.id == order.ownerid).first()
             if order.description:
                 clientRequests.append({
-                    "resquestId": req.id,
+                    "requestId": req.id,
                     "state": order.state,
                     "pickUpTime": dictifyDate(req.timeproposed),
                     "description": order.description,
@@ -54,7 +54,7 @@ def getRequests():
                 })
             else:
                 farmRequests.append({
-                    "resquestId": req.id,
+                    "requestId": req.id,
                     "state": order.state,
                     "pickUpTime": dictifyDate(req.timeproposed),
                     "volunteerTime": dictifyDate(req.volunteertime),
@@ -78,11 +78,11 @@ def getUserPublishContent():
             if order.description != "":
                 requestlist = Request.query.filter(Request.orderid == order.id)
                 selectedPersons = []
-                if selectedPersons:
+                if 1:
                     selectedIdList = order.selectedperson.split(';')
                     selectedIdList.pop()
                     for selectedId in selectedIdList:
-                        selectedUser = User.query.filter(User.id == selectedId)
+                        selectedUser = User.query.filter(User.id == selectedId).first()
                         if(selectedUser):
                             selectedUserInfo = {
                                 "userId" : selectedUser.id,
@@ -120,10 +120,10 @@ def getFarmPublishContent():
     if not request.args or not 'userId' in request.args:
         abort(400)
     else:
-        farmList = Farm.query.filter(Farm.userid == request.args.get('userId'))
+        farm = Farm.query.filter(Farm.userid == request.args.get('userId')).first()
         res = []
-        if(farmList):
-            farm = farmList[0]
+        order = Order.query.filter(Order.ownerid == farm.userid).first()
+        if(farm):
             products = Product.query.filter(Product.farmid == farm.id)
             articles = []
             for product in products:
@@ -134,7 +134,7 @@ def getFarmPublishContent():
                     "remainedQuantity": product.quantity
                 })
             res.append({
-                "offerId": farm.id,
+                "orderId": order.id,
                 "name": farm.name,
                 "state": 0,
                 "articles": articles
@@ -257,16 +257,16 @@ def postFarmPublishContent():
 
 @publish_bp.route('/publish/assignCandidate/', methods=['PUT'])
 def assignCandidate():
-    if not request.args or not 'orderId' in request.form:
+    if not request.args or not 'orderId' in request.args:
         abort(400)
     else:
-        oldorder = Order.query.filter(Order.id == request.form.get('orderId', type=int)).first()
+        oldorder = Order.query.filter(Order.id == request.args.get('orderId', type=int)).first()
         db.session.query(Order).filter(
-            Order.id == request.form.get('orderId', type=int)
-        ).update({"selectedperson": request.form.get('candidateId')})
+            Order.id == request.args.get('orderId', type=int)
+        ).update({"selectedperson": request.args.get('candidateId')+';', "state": 1})
         db.session.commit()
         db.session.close()
-        return jsonify(request.form), 200
+        return jsonify(request.args), 200
 
 
 @publish_bp.route('/publish/validateDelivery/', methods=['PUT'])
