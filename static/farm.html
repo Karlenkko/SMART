@@ -37,9 +37,9 @@
                             <li>
                                 <h2 class="obtain">Contribution Carbonne<i></i></h2>
                                 <div class="secondary">
-                                    <h3 @click="getLowCarbon();state=4">Jusqu'à 2500 g</h3>
-                                    <h3 @click="getMoyCarbon();state=5">2500 à 5000 g</h3>
-                                    <h3 @click="getHighCarbon();state=6">5000g et plus</h3>
+                                    <h3 @click="getLowCarbon();state=4">Jusqu'à 20 g</h3>
+                                    <h3 @click="getMoyCarbon();state=5">20 à 40 g</h3>
+                                    <h3 @click="getHighCarbon();state=6">40g et plus</h3>
                                 </div>
                             </li>
                         </ul>
@@ -295,13 +295,13 @@
                     this.productsCondition = this.products.filter(product => product.category === 'autre')
                 },
                 getLowCarbon(){
-                    this.productsCondition = this.products.filter(product => product.carbonRedu <= 2500)
+                    this.productsCondition = this.products.filter(product => product.carbonRedu <= 20)
                 },
                 getMoyCarbon(){
-                    this.productsCondition = this.products.filter(product => (product.carbonRedu > 2500 && product.carbonRedu < 5000))
+                    this.productsCondition = this.products.filter(product => (product.carbonRedu > 20 && product.carbonRedu < 40))
                 },
                 getHighCarbon(){
-                    this.productsCondition = this.products.filter(product => product.carbonRedu >= 5000)
+                    this.productsCondition = this.products.filter(product => product.carbonRedu >= 40)
                 },
                 saveProductSelected(arg){
                     this.productSelected = arg
