@@ -16,8 +16,8 @@
             <nav>
                 <ul class="menu-items">
                     <li><a href="/" class="menu-item">Accueil</a></li>
-                    <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
-                    <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
+                    <li><a href="/myAccount" class="menu-item">Contribution</a></li>
+                    <li><a href="/myAnnounce" class="menu-item">Événements</a></li>
                     <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
                 </ul>
             </nav>
@@ -28,14 +28,14 @@
                     <div class="navBox">
                         <ul>
                             <li>
-                                <h2 class="obtain">Les propositions<i></i></h2>
+                                <h2 class="obtain">Propositions<i></i></h2>
                                 <div class="secondary">
-                                    <h3 @click="state=1">Les propositions des fermes</h3>
-                                    <h3 @click="state=2">Les propositions des clients</h3>
+                                    <h3 @click="state=1">Propositions des fermes</h3>
+                                    <h3 @click="state=2">Propositions des clients</h3>
                                 </div>
                             </li>
                             <li>
-                                <h2 class="obtain" @click="state=3">Les fermes</h2>
+                                <h2 class="obtain" @click="state=3">Fermes</h2>
                             </li>
                         </ul>
                     </div>

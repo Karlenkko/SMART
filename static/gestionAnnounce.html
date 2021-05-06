@@ -21,8 +21,8 @@
         <nav>
             <ul class="menu-items">
                 <li><a href="/" class="menu-item">Accueil</a></li>
-                <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
-                <li><a href="/myAnnounce" class="menu-item">Mes Événements</a></li>
+                <li><a href="/myAccount" class="menu-item">Contribution</a></li>
+                <li><a href="/myAnnounce" class="menu-item">Événements</a></li>
                 <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
             </ul>
         </nav>
@@ -35,14 +35,14 @@
                 <div class="navBox" style="height: 120%">
                     <ul>
                         <li>
-                            <h2 class="obtain">Mes propositions<i></i></h2>
+                            <h2 class="obtain">Propositions<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=10">Particulier</h3>
                                 <h3 @click="state=11" v-show="userType==='farmer'">Ferme</h3>
                             </div>
                         </li>
                         <li>
-                            <h2 class="obtain">Mes participations<i></i></h2>
+                            <h2 class="obtain">Participations<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=20">Particulier</h3>
                                 <h3 @click="state=21">Ferme</h3>
@@ -70,7 +70,7 @@
 
     </section>
         <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="detail">
-            <div class="sy-title">Candidat: {{ selectedCandidate.userName }}</div>
+            <div class="sy-title" v-show="selectedCandidate">Candidat: {{ selectedCandidate.userName }}</div>
             <div class="sy-content">Description: <span class="longDescription">{{ selectedCandidate.userDescription }}</span></div>
             <div class="sy-content">Tel.: <span class="longDescription">{{ selectedCandidate.userTel }}</span></div>
             <div class="sy-btn" style="display: inline-flex; width: 100%">
@@ -150,12 +150,17 @@
                 <div class="etat valide" v-show="demand.state==2">Fini</div>
             </div>
             <hr>
-            <div v-show="!demand.state">
+            <div v-show="!demand.state && demand.selectedpersons.length">
                 <h2>Candidats:</h2>
                 <div>
                         <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item" :orderId="demand.orderId"></client-candidate>
                 </div>
             </div>
+
+            <div v-show="!demand.state && !demand.selectedpersons.length">
+                <h2>Vous n'avez pas encore de candidat</h2>
+            </div>
+
             <div v-show="demand.state">
                 <h2>Personne selectionnée:</h2>
                 <div>
