@@ -110,13 +110,13 @@
                 <div class="sy-content deliveryTime">
                     <span>Choisir ci-dessous le jour de la livrason.</span>
                     <div class="btn-group">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Monday'?'btn-selected':'']" value="Monday" @click="deliveryTime.day='Monday'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="deliveryTime.day='Tuesday'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Wednesday'?'btn-selected':'']" value="Wednesday" @click="deliveryTime.day='Wednesday'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Thursday'?'btn-selected':'']" value="Thursday" @click="deliveryTime.day='Thursday'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Friday'?'btn-selected':'']" value="Friday" @click="deliveryTime.day='Friday'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="deliveryTime.day='Saturday'">
-                        <input type="button" :class="['btn',deliveryTime.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="deliveryTime.day='Sunday'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="deliveryTime.day='Lundi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="deliveryTime.day='Mardi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="deliveryTime.day='Mercredi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="deliveryTime.day='Jeudi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="deliveryTime.day='Vendredi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="deliveryTime.day='Samedi'">
+                        <input type="button" :class="['btn',deliveryTime.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="deliveryTime.day='Dimanche'">
                     </div>
                     <span>Choisir ci-dessous le temps pour la livraison</span>
                     <div>
@@ -154,13 +154,13 @@
                         <div class="benevoleOption" v-for="(item,index) in benevole.timelist">
                             <span>Choisir ci-dessous le jour de la livrason. Option {{index + 1}}</span>
                             <div class="btn-group">
-                                <input type="button" :class="['btn',item.day == 'Monday'?'btn-selected':'']" value="Monday" @click="item.day='Monday'">
-                                <input type="button" :class="['btn',item.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="item.day='Tuesday'">
-                                <input type="button" :class="['btn',item.day == 'Wednesday'?'btn-selected':'']" value="Wednesday" @click="item.day='Wednesday'">
-                                <input type="button" :class="['btn',item.day == 'Thursday'?'btn-selected':'']" value="Thursday" @click="item.day='Thursday'">
-                                <input type="button" :class="['btn',item.day == 'Friday'?'btn-selected':'']" value="Friday" @click="item.day='Friday'">
-                                <input type="button" :class="['btn',item.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="item.day='Saturday'">
-                                <input type="button" :class="['btn',item.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="item.day='Sunday'">
+                                <input type="button" :class="['btn',item.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="item.day='Lundi'">
+                                <input type="button" :class="['btn',item.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="item.day='Mardi'">
+                                <input type="button" :class="['btn',item.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="item.day='Mercredi'">
+                                <input type="button" :class="['btn',item.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="item.day='Jeudi'">
+                                <input type="button" :class="['btn',item.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="item.day='Vendredi'">
+                                <input type="button" :class="['btn',item.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="item.day='Samedi'">
+                                <input type="button" :class="['btn',item.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="item.day='Dimanche'">
                             </div>
                             <span>Choisir ci-dessous le temps pour la livraison</span>
                             <div>
@@ -277,10 +277,10 @@
                 productNotification:'',
                 productTotalPrice:"0.00",
                 cart:[],
-                deliveryTime:{day:'Monday',time:'10-12'},
+                deliveryTime:{day:'Lundi',time:'10-12'},
                 benevole:{
                     do:0,
-                    timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}]
+                    timelist:[{day:'Lundi',time:'8-10'},{day:'',time:''},{day:'',time:''}]
                 },
                 totalPrice:0
             },
@@ -347,9 +347,9 @@
                     this.cart=[]
                     this.benevole={
                         do:0,
-                        timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}]
+                        timelist:[{day:'Lundi',time:'8-10'},{day:'',time:''},{day:'',time:''}]
                     }
-                    this.deliveryTime = {day:'Monday',time:'10-12'}
+                    this.deliveryTime = {day:'Lundi',time:'10-12'}
                     this.totalPrice = 0
                 }
             },
