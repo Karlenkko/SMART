@@ -87,20 +87,21 @@ def addRequest():
         data = json.loads(request.get_data(as_text=True))
         user = User.query.filter(User.id == data['userId']).first()
         userlocation = str(user.latitude) + "," + str(user.longitude)
-        requestid = Request.query.count()
+        requstList = Request.query.all()
+        nb = Request.query.count()
+        requestid = int(requstList[nb-1].id) + 1
         desttime = ''
 
         for time in data['deliveryTime']:
             desttime = desttime + time['day'] + " " + time['time'] + ";"
 
         volunteertime = ''
-        if data['volunteer']['do'] == 1:
+        if int(data['volunteer']['do']) == 1:
             for time in data['volunteer']['timelist']:
                 volunteertime = volunteertime + time['day'] + " " + time['time'] + ";"
         requestorderid = 0
 
         existingorder = Order.query.filter(and_(Order.ownerid == data['farmOwnerId'], Order.description == "")).first()
-
         if not existingorder:
             orderid = Order.query.count()
             farm = Farm.query.filter(Farm.userid == data['farmOwnerId']).first()
@@ -144,16 +145,15 @@ def addRequest():
             "carbontotal" : int(carbon) + int (user.carbontotal)
         })
         db.session.commit()
-        newRequest = Request(int(requestid),
+        db.session.add(Request(int(requestid),
                              int(requestorderid),
                              int(data['userId']),
                              userlocation,
                              desttime,
                              volunteertime,
                              description,
-                             float(data['totalPrice']),
-                             "")
-        db.session.add(newRequest)
+                             float(data['totalPrice'])
+                             ))
         oldorder = Order.query.filter(Order.ownerid == data['farmOwnerId']).first()
         db.session.query(Order).filter(Order.ownerid == data['farmOwnerId']).update(
             {"requestlist": oldorder.requestlist + str(requestid) + ","})
