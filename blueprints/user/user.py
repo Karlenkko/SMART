@@ -57,8 +57,8 @@ def confirmRequest():
         db.session.commit()
         newOrder = Order.query.filter(Order.id == req.orderid).first()
         if str(newOrder.requestlist) == str(newOrder.confirmlist):
-            db.session.query(Order).filter(Order.id == req.orderid).update({"state" : 10})
-            db.session.query(Volunteer).filter(Volunteer.orderid == req.orderid).update({"accept" : 10})
+            db.session.query(Order).filter(Order.id == req.orderid).update({"state" : 2})
+            db.session.query(Volunteer).filter(Volunteer.orderid == req.orderid).update({"accept" : 2})
             db.session.commit()
             volunteers = Volunteer.query.filter(Volunteer.orderid == req.orderid).all()
             for vol in volunteers:
