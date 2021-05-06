@@ -85,7 +85,7 @@ class Product(db.Model, EntityBase):
     carbonredu = db.Column(db.Integer)
     origincarrefour = db.Column(db.String(100))
     pricecarrefour = db.Column(db.Float)
-    def __init__(self, id, farmid, name, price, quantity, category, photourl, origincarrefour, pricecarrefour):
+    def __init__(self, id, farmid, name, price, quantity, category, photourl, origincarrefour, pricecarrefour, carbonredu):
         self.id = id
         self.farmid = farmid
         self.name = name
@@ -96,6 +96,7 @@ class Product(db.Model, EntityBase):
         self.photourl = photourl
         self.origincarrefour = origincarrefour
         self.pricecarrefour = pricecarrefour
+        self.carbonredu = carbonredu
 
     def __repr__(self):
         return '{"id":%s,"farmid":%s,"name":%s,"quantity":%s,"price":%s,"photourl":%s,"category":%s,"carbonredu":%s,"origincarrefour":%s,"pricecarrefour":%s}' % (
@@ -137,6 +138,8 @@ class Order(db.Model, EntityBase):
         self.state = state
         self.time = time
         self.price = price
+
+        
         self.distancetotal = distancetotal
         self.clusters = clusters
         self.confirmlist = confirmlist
@@ -161,7 +164,7 @@ class Request(db.Model, EntityBase):
     cluster = db.Column(db.String(50))
     
 
-    def __init__(self,id ,orderid, userid, userlocation, timeproposed, volunteertime, description, price, cluster):
+    def __init__(self,id ,orderid, userid, userlocation, timeproposed, volunteertime, description, price):
         self.id = id
         self.orderid = orderid
         self.userid = userid
@@ -170,7 +173,6 @@ class Request(db.Model, EntityBase):
         self.volunteertime = volunteertime
         self.description = description
         self.price = price
-        self.cluster = cluster
 
     def __repr__(self):
         return '{"id":%s,"orderid":%s,"userid":%s,"userlocation":%s,"timeproposed":%s,"volunteertime":%s,"description":%s,"price":%s,"destination":%s,"volunteerid":%s, "cluster":%s}' % (
