@@ -131,8 +131,11 @@ def getFarmPublishContent():
                     "price": product.price,
                     "remainedQuantity": product.quantity
                 })
+            temp = ""
+            if (not order == None) and (not order.id == None):
+                temp = order.id
             res.append({
-                "orderId": order.id,
+                "orderId": temp,
                 "name": farm.name,
                 "state": 0,
                 "articles": articles
