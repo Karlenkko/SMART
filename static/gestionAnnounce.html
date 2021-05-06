@@ -31,11 +31,11 @@
     <section class="section" >
         <div id="menu">
             <!--显示菜单-->
-            <div id="open">
-                <div class="navBox">
+            <div id="open" style="height: 120%">
+                <div class="navBox" style="height: 120%">
                     <ul>
                         <li>
-                            <h2 class="obtain">Mes offres<i></i></h2>
+                            <h2 class="obtain">Mes propositions<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=10">Particulier</h3>
                                 <h3 @click="state=11" v-show="userType==='farmer'">Ferme</h3>
@@ -45,7 +45,7 @@
                             <h2 class="obtain">Mes participations<i></i></h2>
                             <div class="secondary">
                                 <h3 @click="state=20">Particulier</h3>
-                                <h3 @click="state=21" v-show="userType==='farmer'">Ferme</h3>
+                                <h3 @click="state=21">Ferme</h3>
                             </div>
                         </li>
                     </ul>
@@ -85,7 +85,7 @@
 
         <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createDemand">
             <div class="sy-title">Création de demande</div>
-                <div class="sy-content">
+                <div class="sy-content" style="line-height: 30px">
                     <label for="name">Description: </label> <input id="description" v-model="demandPost.description" type="text" name="description"><br>
                     <label for="name">Temps proposé: </label> <input id="timeProposed" v-model="demandPost.timeProposed" type="text" name="timeProposed"><br>
 
@@ -102,7 +102,7 @@
 
         <div class="sy-alert sy-alert-model reglage animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="alert" sy-mask="true" id="createOffer" style="width: 550px">
             <div class="sy-title">Création d'offre</div>
-                <div class="sy-content">
+                <div class="sy-content" style="line-height: 35px">
                     <label for="name">Nom: </label> <input id="name" v-model="article.name" type="text" name="name" placeholder="Description de l'article"  size="60px">
                     <br>
                     <label for="name">Prix: </label> <input id="price2" v-model="article.price" type="text" name="price">
@@ -116,7 +116,7 @@
   font-size: 14px;
   color: #527242;
   margin: 0 auto;"></textarea>
-                <div class="sy-btn" style="display: flex">
+                <div class="sy-btn" style="display: flex; padding-top: 15px">
                     <div class="button" onClick="syalert.syhide('createOffer')" style="background-color: gray; width: 50%" @click="clearData"> Annuler </div>
                     <div class="button" onClick="syalert.syhide('createOffer')" style="width: 50%" @click="createFarmOffer">Créer</div>
                 </div>
@@ -408,15 +408,15 @@
                             axios.post(host + "/blockchain/addBlock", newBlock)
                         }
                     })
-                    location.reload()
+                    this.$forceUpdate()
                 },
                 createClientDemand(){
                     axios.post(this.host+'/publish/postUserOrderContent?userId=' + vm.userId, this.demandPost)
-                    .then(location.reload)
+                    .then(this.$forceUpdate())
                 },
                 createFarmOffer(){
                     axios.post(this.host+'/publish/postFarmOrderContent?userId=' + vm.userId, this.offerPost)
-                    .then(location.reload)
+                    .then(this.$forceUpdate())
                 },
                 clearData(){
                     this.offerPost = {
