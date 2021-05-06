@@ -270,8 +270,8 @@ def map():
 	bestDayRes = bestDay(timeProposed)
 	bestday = bestDayRes["bestday"]
 
-	deliveryDay = "Monday"
-	if bestday != "Monday":
+	deliveryDay = "Lundi"
+	if bestday != "Lundi":
 		deliveryDay = dayList[dayList.index(bestday)-1]
 
 	volunteerDayRes = bestDay(volunteerTime)
