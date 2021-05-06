@@ -183,23 +183,23 @@
 
                     addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
 
-                    // directionsDisplay = new google.maps.DirectionsRenderer();
+                    directionsDisplay = new google.maps.DirectionsRenderer();
 
-                    // var directionsService = new google.maps.DirectionsService();
-                    // var request = {
-                    //   origin: res["depart"],
-                    //   destination: arrival,
-                    //   waypoints: stopovers,
-                    //   optimizeWaypoints: true,
-                    //   travelMode: google.maps.TravelMode.DRIVING
-                    // };
+                    var directionsService = new google.maps.DirectionsService();
+                    var request = {
+                      origin: res["depart"],
+                      destination: arrival,
+                      waypoints: stopovers,
+                      optimizeWaypoints: true,
+                      travelMode: google.maps.TravelMode.DRIVING
+                    };
 
-                    // directionsService.route(request, function(result, status) {
-                    //   if (status == google.maps.DirectionsStatus.OK) {
-                    //     directionsDisplay.setDirections(result);
-                    //   }
-                    // });
-                    // directionsDisplay.setMap(map);
+                    directionsService.route(request, function(result, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
+                      }
+                    });
+                    directionsDisplay.setMap(map);
 
                     } else {
                     
@@ -287,25 +287,24 @@
 
                     addMarker(res["depart"], "red", map, "DEPART" + " ("+ res["deliveryDay"] +")")  
 
-                    // directionsDisplay = new google.maps.DirectionsRenderer();
+                    directionsDisplay = new google.maps.DirectionsRenderer();
 
-                    // var directionsService = new google.maps.DirectionsService();
-                    // var request = {
-                    //   origin: res["depart"],
-                    //   destination: parking,
-                    //   waypoints: stopovers,
-                    //   optimizeWaypoints: true,
-                    //   travelMode: google.maps.TravelMode.DRIVING
-                    // };
+                    var directionsService = new google.maps.DirectionsService();
+                    var request = {
+                        origin: res["depart"],
+                        destination: parking,
+                        waypoints: stopovers,
+                        optimizeWaypoints: true,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    };
 
-                    // directionsService.route(request, function(result, status) {
-                    //   if (status == google.maps.DirectionsStatus.OK) {
-                    //     directionsDisplay.setDirections(result);
-                    //   }
-                    // });
-                    // directionsDisplay.setMap(map);
-
-                    console.log(res["volunteer"]) 
+                    directionsService.route(request, function(result, status) {
+                      if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
+                      }
+                    });
+                    directionsDisplay.setMap(map);
+                    console.log(res["volunteer"])
 
                     volunteers = res["volunteer"].split(";")
 
