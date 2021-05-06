@@ -112,7 +112,10 @@ def addRequest():
                              "",
                              0,
                              "",
-                             0)
+                             0,
+                             0,
+                             "",
+                             "")
             db.session.add(neworder)
             requestorderid = orderid
         else:
@@ -134,7 +137,8 @@ def addRequest():
                              desttime,
                              volunteertime,
                              description,
-                             float(data['totalPrice']))
+                             float(data['totalPrice']),
+                             "")
         db.session.add(newRequest)
         oldorder = Order.query.filter(Order.ownerid == data['farmOwnerId']).first()
         db.session.query(Order).filter(Order.ownerid == data['farmOwnerId']).update(
