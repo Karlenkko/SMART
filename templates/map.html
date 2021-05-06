@@ -97,6 +97,24 @@
             background-color: #2a3827;
         }
     </style>
+    <script>
+        function logout() {
+            window.localStorage.userId = ""
+            window.localStorage.userName = ""
+            window.localStorage.userMobiile = ""
+            window.localStorage.userType = ""
+            window.localStorage.userPhotoUrl = ""
+            window.localStorage.balance = ""
+            window.localStorage.carbonTotal = ""
+            window.localStorage.carbonActual = ""
+            window.localStorage.volunteerTotal = ""
+            window.localStorage.volunteerActual = ""
+            window.location.href = '/login/'
+        }
+        if (window.localStorage.userId == "" || window.localStorage.userId == undefined || window.localStorage.userId == null){
+                    window.location.href = "/login/"
+        }
+    </script>
     <script type="text/javascript">
 
 
