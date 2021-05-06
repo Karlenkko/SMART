@@ -10,7 +10,7 @@ from blueprints.publish.publish import publish_bp
 from blueprints.algo.algo import algo_bp
 from blueprints.user.user import user_bp
 from blueprints.naiveBlockchain.naiveBlockchain import naiveBlockchain_bp
-from datainit import init
+from datainit import init, initOrder
 
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
@@ -35,7 +35,7 @@ application = Flask(__name__)
 cors = CORS()
 cors.init_app(app=application, resources={r"/*": {"origins": "*"}})
 
-application.config['GOOGLEMAPS_KEY'] = ""
+application.config['GOOGLEMAPS_KEY'] = "AIzaSyAn-h2BA-6XrW5ic3DWXs_U4mfpOo05xmo"
 GoogleMaps(application)
 
 application.config.from_object(config)
@@ -57,9 +57,11 @@ application.register_blueprint(publish_bp)
 application.register_blueprint(algo_bp)
 application.register_blueprint(user_bp)
 application.register_blueprint(naiveBlockchain_bp)
+
 # @application.before_first_request
 # def setup():
 #     init()
+#     initOrder()
 
 @application.route("/", methods=['GET'])
 def index():
@@ -96,6 +98,15 @@ def userRequest():
     if request.args.get("requestid") != None:
         requestid = request.args.get("requestid")
 
+    requestID = int(requestid)
+    requestQuery = db.session.query(Request).filter(Request.id == requestID)[0]
+    orderid = int(requestQuery.orderid)
+    orderQuery = db.session.query(Order).filter(Order.id == orderid)[0]
+
+    if int(orderQuery.state) == 0:
+        return render_template("nonValidate.html")
+
+
     return render_template("userRequest.html", requestid=requestid)
 
 @application.route("/userOrder", methods=['GET'])
@@ -116,6 +127,11 @@ def userOrderRequest():
 
     requestItem = db.session.query(Request).filter(Request.id == requestid)[0]
     orderid = int(requestItem.orderid)
+
+    orderQuery = db.session.query(Order).filter(Order.id == orderid)[0]
+
+    if int(orderQuery.state) == 0:
+        return render_template("nonValidate.html")
 
     return render_template("userOrder.html", orderid=orderid)
 

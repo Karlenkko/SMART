@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style type="text/css">
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Titillium+Web:wght@400;700&display=swap");
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* header */
+        .header {
+            height : 60px;
+            font-family: Montserrat, sans-serif;
+            line-height: 1.5;
+            background: #527242;
+            position: relative;
+            width:100%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            z-index: 1;
+        }
+        .header a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .header ul {
+            list-style: none;
+        }
+        .logo {
+            font-size: 2rem;
+        }
+        .menu-items {
+            display: flex;
+            align-items: center;
+        }
+        .menu-items li {
+            padding: 0.5rem 1rem;
+            transition: background 0.3s ease-in-out;
+        }
+        .menu-items li:hover {
+            background-color: #2a3827;
+        }
+
+    </style>
+  </head>
+  <body>
+        <header class="header">
+            <a href="/" class="logo">CityFarm</a>
+            <nav>
+                <ul class="menu-items">
+                    <li><a href="/" class="menu-item">Acceuil</a></li>
+                    <li><a href="/myAccount" class="menu-item">Mon Compte</a></li>
+                    <li><a href="/myAnnounce" class="menu-item">Mes Annonces</a></li>
+                    <li><a href="" class="menu-item" onclick="logout()">Log Out</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <h1 style="text-align:center"> Votre proposition n'est pas encore validé  .</h1>
+  </body>
+</html>

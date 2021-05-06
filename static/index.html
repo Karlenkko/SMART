@@ -70,13 +70,13 @@
                 <div class="aideOption" v-for="(item,index) in aide.timelist">
                     <span>Choisir ci-dessous le jour de la livrason. Option {{index + 1}}</span>
                     <div class="btn-group">
-                        <input type="button" :class="['btn',item.day == 'Monday'?'btn-selected':'']" value="Monday" @click="item.day='Monday'">
-                        <input type="button" :class="['btn',item.day == 'Tuesday'?'btn-selected':'']" value="Tuesday" @click="item.day='Tuesday'">
-                        <input type="button" :class="['btn',item.day == 'Wednesday'?'btn-selected':'']" value="Wednesday" @click="item.day='Wednesday'">
-                        <input type="button" :class="['btn',item.day == 'Thursday'?'btn-selected':'']" value="Thursday" @click="item.day='Thursday'">
-                        <input type="button" :class="['btn',item.day == 'Friday'?'btn-selected':'']" value="Friday" @click="item.day='Friday'">
-                        <input type="button" :class="['btn',item.day == 'Saturday'?'btn-selected':'']" value="Saturday" @click="item.day='Saturday'">
-                        <input type="button" :class="['btn',item.day == 'Sunday'?'btn-selected':'']" value="Sunday" @click="item.day='Sunday'">
+                        <input type="button" :class="['btn',item.day == 'Lundi'?'btn-selected':'']" value="Lundi" @click="item.day='Lundi'">
+                        <input type="button" :class="['btn',item.day == 'Mardi'?'btn-selected':'']" value="Mardi" @click="item.day='Mardi'">
+                        <input type="button" :class="['btn',item.day == 'Mercredi'?'btn-selected':'']" value="Mercredi" @click="item.day='Mercredi'">
+                        <input type="button" :class="['btn',item.day == 'Jeudi'?'btn-selected':'']" value="Jeudi" @click="item.day='Jeudi'">
+                        <input type="button" :class="['btn',item.day == 'Vendredi'?'btn-selected':'']" value="Vendredi" @click="item.day='Vendredi'">
+                        <input type="button" :class="['btn',item.day == 'Samedi'?'btn-selected':'']" value="Samedi" @click="item.day='Samedi'">
+                        <input type="button" :class="['btn',item.day == 'Dimanche'?'btn-selected':'']" value="Dimanche" @click="item.day='Dimanche'">
                     </div>
                     <span>Choisir ci-dessous le temps pour la livraison</span>
                     <div>
@@ -243,7 +243,7 @@
                 selectedUser: {},
                 aide:{
                     description:'',
-                    timelist:[{day:'Monday',time:'8-10'},{day:'',time:''},{day:'',time:''}],
+                    timelist:[{day:'Lundi',time:'8-10'},{day:'',time:''},{day:'',time:''}],
                     orderId:'',
                     userId:window.localStorage.userId //在没有做登录系统之前使用1代表当前用户
                 },
@@ -264,7 +264,7 @@
                     axios.post('http://' + window.location.host + '/index/participateUserOrder',this.aide)
                     this.aide={
                         description:'',
-                        timelist:[{day:'Monday',time:'8~10'},{day:'',time:''},{day:'',time:''}],
+                        timelist:[{day:'Lundi',time:'8~10'},{day:'',time:''},{day:'',time:''}],
                         userId:window.localStorage.userId
                     }
                     this.selectedUser={}
