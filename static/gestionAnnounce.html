@@ -161,7 +161,7 @@
                 <div>
                         <client-candidate v-for="item in demand.selectedpersons" :key="item.id" :candidate="item" :orderId="demand.orderId"></client-candidate>
                 </div>
-                <div class="button" style="width: 180px"><a :href='"/userOrder?requestid=" + demand.orderId'  style="text-decoration: none; color: white">Détail de livraison</a> </div>
+                <div class="button" style="width: 180px"><a :href='"/userOrder?orderid=" + demand.orderId'  style="text-decoration: none; color: white">Détail de livraison</a> </div>
             </div>
         </div>
     </template>
