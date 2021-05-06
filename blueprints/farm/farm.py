@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import abort, request, jsonify
 from sqlalchemy import and_
 
-from model import Product, Request, User, Order, Farm
+from model import Product, Request, User, Order, Farm, Coupon
 from exts import db
 
 farm_bp = Blueprint('farm', __name__)
@@ -119,14 +119,28 @@ def addRequest():
             requestorderid = existingorder.id
 
         description = ''
+        carbon = 0
         for item in data['cart']:
             description = description + item['productName'] + "_" + str(item['amount']) + ";"
             product = Product.query.filter(Product.name == item['productName']).first()
+            carbon += int(product.carbonredu) * int(item['amount'])
             nbr = int(product.quantity) - int(item['amount'])
             db.session.query(Product).filter(Product.name == item['productName']).update({
                 "quantity" : nbr if nbr > 0 else 0
             })
+
             db.session.commit()
+        actual = carbon + user.carbonactual
+        if (actual >= 100):
+            actual = actual - 100
+            count = Coupon.query.count()
+            coupon = Coupon(int(count), int(user.id), 5)
+            db.session.add(coupon)
+        db.session.query(User).filter(User.id == user.id).update({
+            "carbonactual" : int(actual),
+            "carbontotal" : int(carbon) + int (user.carbontotal)
+        })
+        db.session.commit()
         newRequest = Request(int(requestid),
                              int(requestorderid),
                              int(data['userId']),
