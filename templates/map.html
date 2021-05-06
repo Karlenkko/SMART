@@ -291,11 +291,11 @@
 
                     var directionsService = new google.maps.DirectionsService();
                     var request = {
-                        origin: res["depart"],
-                        destination: parking,
-                        waypoints: stopovers,
-                        optimizeWaypoints: true,
-                        travelMode: google.maps.TravelMode.DRIVING
+                      origin: res["depart"],
+                      destination: parking,
+                      waypoints: stopovers,
+                      optimizeWaypoints: true,
+                      travelMode: google.maps.TravelMode.DRIVING
                     };
 
                     directionsService.route(request, function(result, status) {
@@ -304,7 +304,8 @@
                       }
                     });
                     directionsDisplay.setMap(map);
-                    console.log(res["volunteer"])
+
+                    console.log(res["volunteer"]) 
 
                     volunteers = res["volunteer"].split(";")
 

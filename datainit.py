@@ -15,6 +15,10 @@ carbontotalRange = 10000
 volunteertotalRange = 400
 balanceRange = 400
 
+origin = ['FRANCE', 'ESPAGNE', 'PEROU', 'UE', 'MOZAMBIQUE', 'ORIGINEPAYSTIERS', 'COLOMBIE', 'nan', 'COSTARICA', 'VIETNAM', 'AFRIQUEDUSUD', 'PORTUGAL', 'ITALIE', 'ARGENTINE', 'ISRAEL', 'CHINE', 'MAROC']
+originCarbon = [50, 300, 20000, 400, 2000, 1000, 20000, 50, 20000, 25000, 10000, 400, 250, 23000, 7500, 25000, 1000]
+
+
 farmList = [ {
 		"name" : "Earl la Seigliere",
 		"longitude" : 5.01988,
@@ -124,7 +128,7 @@ def farmInit():
 		carbontotal = randint(0, carbontotalRange)
 		volunteertotal = randint(0, volunteertotalRange)
 		balance = randint(100, balanceRange)
-		photourl = ""
+		photourl = peopleurl[i][0]
 		address = ""
 
 		db.session.add(User(userid, name, "passwd", mobile, latitude, longitude, address, "farmer", photourl, carbonactual, volunteeractual, carbontotal, volunteertotal, balance))
@@ -174,10 +178,12 @@ def productInit():
 
 			quantity = randint(10, 200)
 
-			origincarrefour = "France" if isNaN(legume[item][1]) else legume[item][1]
+			origincarrefour = "FRANCE" if isNaN(legume[item][1]) else legume[item][1]
+
+			carbonredu = float(originCarbon[origin.index(origincarrefour)]*randint(80,100)/100)
 
 
-			db.session.add(Product(id, farmid, name, price, quantity, "legume", photourl, origincarrefour, pricecarrefour))
+			db.session.add(Product(id, farmid, name, round(price,2), quantity, "legume", photourl, origincarrefour, pricecarrefour, carbonredu))
 			id = id + 1
 
 		itemList = []
@@ -199,10 +205,9 @@ def productInit():
 
 			quantity = randint(10, 200)
 
-			origincarrefour = "France" if isNaN(fruit[item][1]) else fruit[item][1]
-
-
-			db.session.add(Product(id, farmid, name, price, quantity, "fruit", photourl, origincarrefour, pricecarrefour))
+			origincarrefour = "FRANCE" if isNaN(fruit[item][1]) else fruit[item][1]
+			carbonredu = float(originCarbon[origin.index(origincarrefour)]*randint(80,100)/100)
+			db.session.add(Product(id, farmid, name, round(price,2), quantity, "fruit", photourl, origincarrefour, pricecarrefour, carbonredu))
 			id = id + 1
 
 		itemList = []
@@ -223,46 +228,47 @@ def productInit():
 			photourl = other[item][length-1]
 
 			quantity = randint(10, 200)
-
-			origincarrefour = "France" if isNaN(other[item][1]) else other[item][1]
-
-
-			db.session.add(Product(id, farmid, name, price, quantity, "other", photourl, origincarrefour, pricecarrefour))
+			
+			origincarrefour = "FRANCE" if isNaN(other[item][1]) else other[item][1]
+			
+			carbonredu = float(originCarbon[origin.index(origincarrefour)]*randint(80,100)/100)
+			db.session.add(Product(id, farmid, name, round(price,2), quantity, "other", photourl, origincarrefour, pricecarrefour, carbonredu))
+			
 			id = id + 1
 
 orderList = [	   {
 					"latitude"  : 44.8366,
 					"longitude" : -0.5781,
 					"requestlist" : [0, 1, 2, 3],
-					"time" : "Monday 8-10;Friday 16-18"
+					"time" : "Lundi 8-10;Vendredi 16-18"
 				   },
 				   {
 					"latitude"  : 43.6178,
 					"longitude" : 1.4349,
 					"requestlist" : [4, 5],
-					"time" : "Thursday 12-18"
+					"time" : "Jeudi 12-18"
 				   },
 				   {
 					"latitude"  : 43.6178,
 					"longitude" : 1.4349,
 					"requestlist" : [],
-					"time" : "Wednesday 10-12"
+					"time" : "Mercredi 10-12"
 				   },
 				   {
 					"latitude"  : 43.6241,
 					"longitude" : 3.8669,
 					"requestlist" : [6, 7, 8],
-					"time" : "Saturday 8-10;Sunday 10-18"
+					"time" : "Samedi 8-10;Dimanche 10-18"
 				   },
 				   {
 					"latitude"  : 48.8302,
 					"longitude" : 2.3590,
 					"requestlist" : [9],
-					"time" : "Monday 14-16"
+					"time" : "Lundi 14-16"
 				   }]
 
 descriptionList = ["I can help you carry something during my journey ! ", "Can someone help me to carry something ? "]
-dayList = ["Monday","Tuesday","Wednesday","Thursday","Friday", "Saturday", "Sunday"]
+dayList = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi", "Samedi", "Dimanche"]
 farmRequests = []
 
 def orderInit():
@@ -289,13 +295,13 @@ def orderInit():
 		time = orderList[i]["time"]
 		price = randint(0, 300)/100
 
-		db.session.add(Order(id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price))
+		db.session.add(Order(id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price, 0, "",""))
 		id = id + 1
 	# farm order
 
 	requestId = 10
 
-	for i in range(len(farmList)-2):
+	for i in range(len(farmList)):
 
 		farm = Farm.query.filter(Farm.name == farmList[i]["name"])[0]
 
@@ -321,7 +327,7 @@ def orderInit():
 		state = 0
 		time = ""
 		price = ""
-		db.session.add(Order(id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price))
+		db.session.add(Order(id, ownerid, entrepotlist, description, selectedperson, requestlist, state, time, price, 0, "", ""))
 
 		id = id + 1
 

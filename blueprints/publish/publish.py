@@ -4,8 +4,18 @@ from flask import Blueprint
 from flask import abort, request, jsonify
 from model import Order, User, Farm, Request, Product
 from exts import db
+import pandas as pd
+import numpy as np
+from random import randint 
 
 publish_bp = Blueprint('publish', __name__)
+
+legume = pd.read_csv("dataset/legume.csv").to_numpy().tolist()
+fruit = pd.read_csv("dataset/fruit.csv").to_numpy().tolist()
+other = pd.read_csv("dataset/other.csv").to_numpy().tolist()
+originList = ['FRANCE', 'ESPAGNE', 'PEROU', 'UE', 'MOZAMBIQUE', 'ORIGINEPAYSTIERS', 'COLOMBIE', 'nan', 'COSTARICA', 'VIETNAM', 'AFRIQUEDUSUD', 'PORTUGAL', 'ITALIE', 'ARGENTINE', 'ISRAEL', 'CHINE', 'MAROC']
+originCarbonList = [50, 300, 20000, 400, 2000, 1000, 20000, 50, 20000, 25000, 10000, 400, 250, 23000, 7500, 25000, 1000]
+
 
 
 @publish_bp.route('/publish/getRequests/', methods=['GET'])
@@ -214,6 +224,60 @@ def postUserPublishContent():
     else:
         return jsonify(request.form), 201
 
+def isNaN(string):
+    return string != string
+
+
+def getProduct(productName):
+
+    res = {
+        "category" : "",
+        "photourl" : "",
+        "origin"   : "",
+        "price"    : 0,
+        "carbon"   : 0
+    }
+    print("-------------product--------------")
+    print(productName)
+    print(legume[0][0])
+    for i in range(len(legume)):
+        if productName in legume[i][0]:
+            res["category"] = "legume"
+            res["origin"] = "FRANCE" if isNaN(legume[i][1]) else legume[i][1]
+            print("----------entering-----------")
+            res["price"] = float(legume[i][2].strip("€"))
+            print("----------entering-----------")
+            res["photourl"] = legume[i][3]
+            print("----------entering-----------")
+            print(res["origin"])
+            print(originList.index(res["origin"]))
+            print(originCarbonList[originList.index(res["origin"])])
+            res["carbon"] = int(originCarbonList[originList.index(res["origin"])]*randint(80,100)/100)
+            print("----------entering-----------")
+            return res
+
+    for i in range(len(fruit)):
+        if productName in fruit[i][0]:
+            res["category"] = "fruit"
+            res["origin"] = "FRANCE" if isNaN(fruit[i][1]) else fruit[i][1]
+            res["price"] = float(fruit[i][2].strip("€"))
+            res["photourl"] = fruit[i][3]
+            res["carbon"] = int(originCarbonList[originList.index(res["origin"])]*randint(80,100)/100)
+
+            return res
+
+    for i in range(len(other)):
+        if productName in other[i][0]:
+            res["category"] = "other"
+            res["origin"] = "FRANCE" if isNaN(other[i][1]) else other[i][1]
+            res["price"] = float(other[i][2].strip("€"))
+            res["photourl"] = other[i][3]
+            res["carbon"] = int(originCarbonList[originList.index(res["origin"])]*randint(80,100)/100)
+
+            return res
+
+    return res
+
 
 @publish_bp.route('/publish/postFarmOrderContent/', methods=['POST'])
 def postFarmPublishContent():
@@ -231,18 +295,30 @@ def postFarmPublishContent():
         productLength = Product.query.count()
         lastProductId = productList[productLength-1].id
         for article in articleList:
+            productName = article["name"]
+            res = getProduct(productName)
+
             lastProductId += 1
+
+            print("--------------article-------------")
+            print(res)
+            print("--------------article-------------")
+
             newProduct = Product(
                 lastProductId,
                 farmId,
                 article["name"],
                 article["price"],
                 article["quantity"],
-                "",
-                "",
-                "",
-                0
+                res["category"],
+                res["photourl"],
+                res["origin"],
+                res["price"],
+                res["carbon"]
             )
+
+            
+
             db.session.add(newProduct)
         db.session.commit()
     except:
