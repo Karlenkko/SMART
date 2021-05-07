@@ -395,7 +395,9 @@
                     var orderId = this.selectedOrderId
                     var candidate = this.selectedCandidate.userId
                     var host = this.host
-                    axios.put(this.host+'/publish/assignCandidate?orderId=' + this.selectedOrderId + '&candidateId=' + this.selectedCandidate.userId)
+                    axios.put(this.host+'/publish/assignCandidate?orderId=' + this.selectedOrderId + '&candidateId=' + this.selectedCandidate.userId).then((res)=>{
+                        location.reload()
+                    })
                     console.log("assignCandidate clicked")
                     axios(this.host + '/blockchain/getLastBlock/').then((res) => {
                         if (res.data.status == "ok") {
@@ -412,7 +414,6 @@
                             axios.post(host + "/blockchain/addBlock", newBlock)
                         }
                     })
-                    location.reload()
                 },
                 createClientDemand(){
                     axios.post(this.host+'/publish/postUserOrderContent?userId=' + vm.userId, this.demandPost)
