@@ -87,6 +87,7 @@
             <div class="sy-title">Création de demande</div>
                 <div class="sy-content" style="line-height: 30px">
                     <label for="name">Description: </label> <input id="description" v-model="demandPost.description" type="text" name="description"><br>
+                    <label for="name">Départ et destination: </label> <input id="entrepotlist" v-model="demandPost.entrepotlist" type="text" name="entrepotlist"><br>
                     <label for="name">Temps proposé: </label> <input id="timeProposed" v-model="demandPost.timeProposed" type="text" name="timeProposed"><br>
 
                     <label for="name">Prix: </label> <input id="price1" v-model="demandPost.price" type="text" name="price"><br>
@@ -137,6 +138,7 @@
             <h2>Demande</h2>
             <div class="DemandContainer">
                 <div class="infoLeftClient infoLeft">
+                    <div >Départ et Destination: <span>{{demand.entrepotlist}}</span></div>
                     <div >Date: <span>{{demand.dateString}}</span></div>
                     <div >Description: <span style="display: flex">{{demand.description}}</span> </div>
                     <div v-show="demand.selectedperson">Livreur: <span >{{ str }}</span> </div>
@@ -150,15 +152,11 @@
                 <div class="etat valide" v-show="demand.state==2">Fini</div>
             </div>
             <hr>
-            <div v-show="!demand.state && demand.selectedpersons.length">
+            <div v-show="!demand.state">
                 <h2>Candidats:</h2>
                 <div>
                         <client-candidate v-for="item in demand.candidates" :key="item.id" :candidate="item" :orderId="demand.orderId"></client-candidate>
                 </div>
-            </div>
-
-            <div v-show="!demand.state && !demand.selectedpersons.length">
-                <h2>Vous n'avez pas encore de candidat</h2>
             </div>
 
             <div v-show="demand.state">
@@ -371,6 +369,7 @@
                 demandPost: {
                     description:'',
                     timeProposed: '',
+                    entrepotlist: '',
                     price:0,
                     day: '',
                     hour: ''
@@ -436,6 +435,7 @@
                     this.demandPost ={
                         description:'',
                         timeProposed: '',
+                        entrepotlist:'',
                         price:0
                     }
                     this.articlesInfo = ''

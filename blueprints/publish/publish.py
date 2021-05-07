@@ -207,7 +207,7 @@ def postUserPublishContent():
         orderid = Order.query.count()
         newOrder = Order(orderid,
                          request.args.get('userId'),
-                         "",
+                         data['entrepotlist'],
                          data['description'],
                          "",
                          "",
